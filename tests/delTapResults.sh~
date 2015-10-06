@@ -1,0 +1,6 @@
+pwd
+ls -l
+cd tests && rm -f test.tap
+ls -l
+pwd
+#test
