@@ -1,4 +1,3 @@
-
 local class = require( "SDK.Lib.classy" )
 
 --Helpers
@@ -86,7 +85,7 @@ end
 -- *****************************************************************
 -- @return player
 function sys.new_player()
-  local player = player()  
+  local player = player()
   return player
 end
 

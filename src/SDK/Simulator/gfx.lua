@@ -69,7 +69,7 @@ end
 
 -- *************** Zenterio API Doc ********************************
 -- Makes any pending changes to gfx.screen visible.
--- *****************************************************************. 
+-- *****************************************************************.
 function gfx.update()
   screen:draw()
 end
@@ -81,7 +81,7 @@ end
 -- RGBA. Transparency is preserved. A call to surface:premultiply()
 -- might be necessary for transparency to work.
 -- An error is raised if not enough graphics memory can be allocated.
--- ***************************************************************** 
+-- *****************************************************************
 -- @param path location of image file
 -- @return image_data
 function gfx.loadpng(path)

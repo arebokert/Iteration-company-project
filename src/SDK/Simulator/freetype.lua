@@ -16,12 +16,12 @@ end
 ---Draw over Surface
 -- *************** Zenterio API Doc ********************************
 -- Draw a <text> on the <surface>. <freetype> is a Freetype object with set font
--- parameters before.  
+-- parameters before.
 -- *****************************************************************
 -- @param surface
 -- @param text
-function freetype:draw_over_surface(sur, text) 
-  love.graphics.setNewFont(self.fontPath, self.fontSize)   
+function freetype:draw_over_surface(sur, text)
+  love.graphics.setNewFont(self.fontPath, self.fontSize)
   sur:writeOver(text, self.fontColor, self.drawingStartPoint)
 end
 

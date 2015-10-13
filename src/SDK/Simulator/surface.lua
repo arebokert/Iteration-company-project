@@ -5,40 +5,40 @@ local surface   = class("surface")
 
 ---
 --
-function surface:__init()  
+function surface:__init()
   self.image_data = nil
 end
 
 function surface:__init(width, height)
-  
+
   if width == nil and height == nil then
-    
+
     self.image_data = nil
   else
       ADLogger.trace(width..","..height)
-      self.image_data = love.image.newImageData(width, height)      
-  end  
+      self.image_data = love.image.newImageData(width, height)
+  end
 end
 ---
--- @param path the path to the image 
+-- @param path the path to the image
 function surface:loadImage(path)
   ADLogger.trace(path)
   local tempFile = io.open(path,"rb")
   if tempFile then
-    local imageStream = tempFile:read("*a")            
-    tempFile:close()                
-    local fileData, err = love.filesystem.newFileData(imageStream, path)        
+    local imageStream = tempFile:read("*a")
+    tempFile:close()
+    local fileData, err = love.filesystem.newFileData(imageStream, path)
     self.image_data = love.image.newImageData(fileData)
   else
     ADLogger.error("Error loading image - '"..path.."'")
   end
-  
+
 end
 
 function surface:writeOver(text, fontColor, drawingStartPoint)
   local canvas = love.graphics.newCanvas(self.image_data:getDimensions())
   love.graphics.setCanvas( canvas )
-  
+
   love.graphics.draw(love.graphics.newImage(self.image_data))
 
   local r, g, b, a = love.graphics.getColor( )
@@ -47,7 +47,7 @@ function surface:writeOver(text, fontColor, drawingStartPoint)
   love.graphics.setColor(r, g, b, a)
 
   love.graphics.setCanvas()
-  
+
   self.image_data = canvas:getImageData()
   canvas = {}
 end
@@ -64,47 +64,47 @@ end
 -- @param color fill colour
 -- @param rectangle area to clear
 function surface:clear(color, rectangle)
-  
-  
-  
+
+
+
   --Defaults to transparent black
   local c = {
     r = 0,
-    g = 0, 
+    g = 0,
     b = 0,
     a = 0
   }
-  
-  if color ~= nil then 
+
+  if color ~= nil then
     c.r = color.r or 0
     c.g = color.g or 0
     c.b = color.b or 0
     c.a = color.a or 255
   end
-  
+
   --Defaults to enture surface
-  
+
   local rect = {
     x = 0,
     y = 0,
     width = self.image_data:getWidth(),
     height = self.image_data:getHeight()
   }
-  
+
   if rectangle ~= nil then
     rect.x = rectangle.x or 0
     rect.y = rectangle.y or 0
-    
+
     --Make sure that we do not fill outside of the bounds of the rectangle
     if rect.x + (rectangle.width or rectangle.w) <= rect.width then
-      rect.width = (rectangle.width or rectangle.w) 
+      rect.width = (rectangle.width or rectangle.w)
     end
-    
+
     if rect.y + (rectangle.height or rectangle.h) <= rect.height then
       rect.height = (rectangle.height or rectangle.h)
     end
   end
-  
+
   local w = rect.x + rect.width - 1
   local h = rect.y + rect.height - 1
   for i=rect.x, w do
@@ -117,8 +117,8 @@ end
 
 function surface:draw()
   image = love.graphics.newImage(self.image_data)
-  function love.draw()    
-    love.graphics.draw(image) 
+  function love.draw()
+    love.graphics.draw(image)
   end
 
 
@@ -134,7 +134,7 @@ end
 -- *****************************************************************
 -- @param color fill colour
 -- @param rectangle area to fill
-function surface:fill(color, rectangle) 
+function surface:fill(color, rectangle)
   --Not currently implemented - same as surface:clear
   self:clear(color, rectangle)
 end
@@ -168,55 +168,55 @@ end
 -- @param src_surface surface to copy from
 -- @param src_rect source rectangle
 -- @param dest_rect destination rectangle
--- @param blend_option   
+-- @param blend_option
 function surface:copyfrom(src_surface, src_rect, dest_rect, blend_option)
-  
+
   --Defaults to entire surface
   local source_rectangle = {}
-   
+
   --if src_rect is nil, defaul to entire source surface
-  if src_rect == nil then    
-    source_rectangle.x = 0 
-    source_rectangle.y = 0      
+  if src_rect == nil then
+    source_rectangle.x = 0
+    source_rectangle.y = 0
     source_rectangle.w = src_surface.image_data:getWidth()
     source_rectangle.h = src_surface.image_data:getHeight()
   else
     source_rectangle.x = src_rect.x or 0
-    source_rectangle.y = src_rect.y or 0    
-    source_rectangle.w = src_rect.w or src_surface.image_data:getWidth() 
+    source_rectangle.y = src_rect.y or 0
+    source_rectangle.w = src_rect.w or src_surface.image_data:getWidth()
     source_rectangle.h = src_rect.h or src_surface.image_data:getHeight()
   end
-  
+
   local destination_rectangle = {}
-  
+
   --if src_rect is nil, defaul to enture source surface
-  if dest_rect == nil then    
+  if dest_rect == nil then
     destination_rectangle.x = 0
-    destination_rectangle.y = 0      
+    destination_rectangle.y = 0
     destination_rectangle.w = src_surface.image_data:getWidth()
     destination_rectangle.h = src_surface.image_data:getHeight()
   else
     destination_rectangle.x = dest_rect.x or 0
-    destination_rectangle.y = dest_rect.y or 0    
+    destination_rectangle.y = dest_rect.y or 0
     destination_rectangle.w = dest_rect.w or src_surface.image_data:getWidth()
     destination_rectangle.h = dest_rect.h or src_surface.image_data:getHeight()
   end
-  
-  
+
+
   local scale_x = destination_rectangle.w / source_rectangle.w
   local scale_y = destination_rectangle.h / source_rectangle.h
-  
+
   local canvas = love.graphics.newCanvas(self.image_data:getDimensions())
   love.graphics.setCanvas( canvas )
-  
+
   love.graphics.draw(love.graphics.newImage(self.image_data))
   love.graphics.draw(love.graphics.newImage(src_surface.image_data),destination_rectangle.x,destination_rectangle.y, 0, scale_x, scale_y)
 
   love.graphics.setCanvas()
-  
+
   self.image_data = canvas:getImageData()
   canvas = {}
-  
+
 end
 
 
@@ -271,7 +271,7 @@ end
 function surface:premultiply()
 -- Not currently implemented
 end
- 
+
 ---
 ---Destroy
 -- *************** Zenterio API Doc ********************************
@@ -279,9 +279,9 @@ end
 -- eventually done automatically by Lua garbage collection for
 -- unreferenced surfaces but doing it by hand guarantees the memory is
 -- returned at once.
--- The surface can not be used again after this operation. 
+-- The surface can not be used again after this operation.
 -- *****************************************************************
-function surface:destroy() 
+function surface:destroy()
   self.image_data = nil
 end
 
@@ -297,9 +297,8 @@ function surface:set_alpha(alpha)
       r, g, b, a = self.image_data:getPixel( i, j )
       self.image_data:setPixel(i, j, r, g, b, alpha)
     end
-  end  
+  end
 end
 
 
 return surface
-
