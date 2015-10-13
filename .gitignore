@@ -1,0 +1,8 @@
+#Eclipse files
+.buildpath
+.project
+.settings
+.DS_Store
+
+#Emulator files
+src/SDK/
