@@ -67,8 +67,8 @@ function showmenu.loadMainMenu()
     mainMenuContainer:clear( {g=50, r=50, b=50} )
 
     mainMenu.containerPos = {x = 0, y=screen:get_height()-mainMenuContainer:get_height()}
-    mainMenu:print(mainMenuContainer, 140, 60, 120)
-    --mainMenu:setActive(1)
+    mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
+    mainMenu:setActive(1)
 
     gfx.update()
 end
@@ -83,6 +83,8 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
+        button = gfx.loadjpeg('data/startgame.jpg'),
+        button_marked = gfx.loadjpeg('data/startgame-marked.jpg'),
         leave = function()
             return true
         end}
@@ -91,6 +93,8 @@ function showmenu.loadSecondaryMenu()
             -- action
             return "Return Option2"
         end,
+        button = gfx.loadjpeg('data/startgame.jpg'),
+        button_marked = gfx.loadjpeg('data/startgame-marked.jpg'),
         hover = function()
             return true
         end,
@@ -105,6 +109,8 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
+        button = gfx.loadjpeg('data/startgame.jpg'),
+        button_marked = gfx.loadjpeg('data/startgame-marked.jpg'),
         leave = function()
             return true
         end}
@@ -116,6 +122,8 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
+        button = gfx.loadjpeg('data/startgame.jpg'),
+        button_marked = gfx.loadjpeg('data/startgame-marked.jpg'),
         leave = function()
             return true
         end}
@@ -127,6 +135,8 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
+        button = gfx.loadjpeg('data/startgame.jpg'),
+        button_marked = gfx.loadjpeg('data/startgame-marked.jpg'),
         leave = function()
             return true
         end}
@@ -137,7 +147,7 @@ function showmenu.loadSecondaryMenu()
     secondary.containerPos = {x = 200, y=120}
     secondaryMenuContainer:clear({g=40, r=40, b=40} )
 
-    secondary:print(secondaryMenuContainer, 20, 80, 40)
+    secondary:print(secondaryMenuContainer, 20, secondaryMenuContainer:get_height()/2, 40)
     secondary:setActive(1)
     gfx.update()
 end

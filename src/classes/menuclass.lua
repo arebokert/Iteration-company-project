@@ -21,14 +21,13 @@ function Menu:setActive(a)
     ADLogger.trace(a)
     for i = 1,self.size do
         ADLogger.trace(i)
-        activeButton = self.options[i].button
         activeButtonPos = self.options[i].buttonPos
 
         if i == a then
-            activeButton:clear({g=102, r=51, b=0})
+            activeButton = self.options[i].button_marked
             self.options[a].hover()
         else
-            activeButton:clear({g=204, r=102, b=0})
+           activeButton = self.options[i].button
         end
         self.container:copyfrom(activeButton, nil , activeButtonPos)
     end
