@@ -11,33 +11,32 @@ if ADConfig.isSimulator then
     sys = require "SDK.Simulator.sys"
 end
 
-showmenu = require "showmenu"
+showmenu = require "views/showmenu"
 
 function onKey(key, state)
     ADLogger.trace("OnKey("..key..","..state..")")
 
-    if key == "yellow" then
-        ADLogger.trace("YELLOW BUTTON")
-        mainMenu:setActive(2)
-    end
+    if state == "down" or state == "repeat" then
+        if key == "yellow" then
+            ADLogger.trace("YELLOW BUTTON")
+            mainMenu:setActive(2)
+        end
 
-    if key == "left" and state == "down" then
-        activeMenu:prev()
-    end
-    if key == "right" and state == "down" then
-        activeMenu:next()
-    end
-    if key == "ok" and state == "down" then
-        activeMenu:action()
-    end
-    if key == "up" and state == "down" and mainMenu.active == 1 then
-        activeMenu = secondary
-    end
-    if key == "down" and state == "down" and mainMenu.active == 1 then
-        activeMenu = mainMenu
-    end
-    if key == "back" and state == "down" and mainMenu.active == 1 then
-        activeMenu = mainMenu
+        if key == "left" then
+            activeMenu:prev()
+        elseif key == "right" then
+            activeMenu:next()
+        elseif key == "ok"  then
+            activeMenu:action()
+        elseif key == "up"  and mainMenu.active == 1 then
+            activeMenu = secondary
+        elseif key == "down" and mainMenu.active == 1 then
+            activeMenu = mainMenu
+        elseif key == "back" and mainMenu.active == 1 then
+            activeMenu = mainMenu
+        elseif key == "exit" then
+            sys.stop()
+        end
     end
 end
 
@@ -53,8 +52,8 @@ function onStart()
     screen:copyfrom(bg, nil)
     bg:destroy()
 
-    loadMainMenu()
-    activeMenu = mainMenu
+    showmenu.loadMainMenu()
+    _G.activeMenu = mainMenu
 end
 
 

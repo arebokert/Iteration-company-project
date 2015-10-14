@@ -16,7 +16,6 @@ end
 
 function Menu:setActive(a)
     ADLogger.trace("SET ACTIVE")
-    ADLogger.trace(a)
     self.active = a
 
     ADLogger.trace(a)
@@ -70,7 +69,6 @@ end
 
 function Menu:print(container, startx, starty, m)
     self.container = container
-
     margin = m
     width = (container:get_width() - margin*(self.size - 1) - 2*startx)/ self.size
     height = container:get_height() - 2*starty
@@ -81,10 +79,8 @@ function Menu:print(container, startx, starty, m)
         xpos = startx + (i-1)*width + (i-1)*margin
         ypos = starty
 
-        opt.button = gfx.new_surface(width, height)
         opt.buttonPos = {x=xpos,y=ypos}
-        opt.button:clear({g=204, r=102, b=200, a=20})
-        container:copyfrom(opt.button, nil, opt.buttonPos)
+        container:copyfrom(self.options[i].button, nil, opt.buttonPos)
     end
 
     -- Updating the new container on the screen
