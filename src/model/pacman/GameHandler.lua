@@ -1,5 +1,5 @@
 
-require("data.pacman.gameplan")
+require("model.pacman.gameplan")
 
 Pacman = {}
 
@@ -36,19 +36,23 @@ function Pacman:pacmanMovement(timer)
   step = 8
   -- Set new position, based on direction
   if self.direction == "right" then
-    self.x = self.x + step
+    if self.x + self.bg:get_width() + step < 1090 then
+      self.x = self.x + step
+    end
   end
   if self.direction == "up" then
     self.y = self.y - step
   end
   if self.direction == "left" then
-    self.x = self.x - step 
+    if self.x - step > 190 then
+      self.x = self.x - step
+    end
   end
   if self.direction == "down" then
     self.y = self.y + step
   end 
   -- Copy empty recatangel 'temp'
-  screen:copyfrom(temp, nil)
+  -- screen:copyfrom(temp, nil)
   -- Copy pacman-image to desired position. 
   screen:copyfrom(self.bg, nil, self:getPos())   
   
@@ -58,21 +62,6 @@ end
 
 
 function startPacman()
-    pacman = Pacman:new()   -- Initiate object
-    pacman:setPos(100, 200) -- Set start position 
-    pacman.bg = gfx.loadpng('data/pacman/pacman.png') -- Set image
-    pacman.bg.premultiply()     -- Alpha fix
-    
-    screen:copyfrom(pacman.bg, nil, pacman:getPos())  -- Place pacman-image with initial position
-    gfx.update()  -- Update GFX
-    
-    temp = gfx.new_surface(1280, 720)   -- Temp, just a rectangle with a solid color
-    temp:clear({r=100,g=0,b=100})       
-    
-    -- Timer, updating pacmans position
-    sys.new_timer(1, "pacman:pacmanMovement")
-    
-
 --[[
    ADLogger.trace("LOAD MAP1")    
    local file = io.open("data/pacman/map1.txt", "r");
@@ -82,25 +71,29 @@ function startPacman()
    end
 --]]
 
-ADLogger.trace("LOAD MAP1")   
-local file = io.open("data/pacman/map1.txt")
-local tbllines = {}
-local i = 0
-if file then
-    for line in file:lines() do
-     i = i + 1
-     ADLogger.trace(line) 
-     tbllines[i] = line
-    end
-    file:close()
-else
-    error('file not found')
-end
-   
-  ADLogger.trace("PRINT TABLE")  
-  
-  ADLogger.trace(tbllines[1])
-     
+    gameplan = Gameplan:new()
+    gameplan:loadMap()
+    gameplan:displayMap()
+
+
+    pacman = Pacman:new()   -- Initiate object
+    pacman:setPos(190,110) -- Set start position 
+--    pacman.bg = gfx.loadpng('views/pacman/data/pacman.png') -- Set image
+--    pacman.bg.premultiply()     -- Alpha fix
+    pacman.bg = gfx.new_surface(50,50)
+    pacman.bg:clear({r=255,g=255,b=51})
+    
+    
+    screen:copyfrom(pacman.bg, nil, pacman:getPos())  -- Place pacman-image with initial position
+    gfx.update()  -- Update GFX
+    
+    temp = gfx.new_surface(1280, 720)   -- Temp, just a rectangle with a solid color
+    temp:clear({r=100,g=0,b=100})       
+    -- Timer, updating pacmans position
+    sys.new_timer(1, "pacman:pacmanMovement")
+    
+
+
 end
 
 
