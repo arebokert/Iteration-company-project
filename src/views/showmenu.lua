@@ -1,6 +1,6 @@
 showmenu = {}
 
-Menu = require "classes/menuclass"
+Menu = require "model/menuclass"
 
 function showmenu.loadMainMenu()
     options = {}
