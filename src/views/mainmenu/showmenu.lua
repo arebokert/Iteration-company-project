@@ -1,6 +1,6 @@
 showmenu = {}
-
-Menu = require "model/menuclass"
+Menu = require "model/mainmenu/menuclass"
+datapath = "views/mainmenu/data"
 
 function showmenu.loadMainMenu()
     options = {}
@@ -14,10 +14,10 @@ function showmenu.loadMainMenu()
         hover = function()
 
         end,
-        button = gfx.loadjpeg('data/startgame.jpg'),
-        button_marked = gfx.loadjpeg('data/startgame-marked.jpg'),
+        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
+        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
         leave = function()
-            local bg = gfx.loadjpeg('data/bg1280-720.jpg')
+            local bg = gfx.loadjpeg(datapath .. '/bg1280-720.jpg')
             screen:copyfrom(bg, nil)
             bg:destroy()
             gfx.update()
@@ -36,8 +36,8 @@ function showmenu.loadMainMenu()
         hover = function()
 
         end,
-        button = gfx.loadjpeg('data/about.jpg'),
-        button_marked = gfx.loadjpeg('data/about-marked.jpg'),
+        button = gfx.loadjpeg(datapath .. '/about.jpg'),
+        button_marked = gfx.loadjpeg(datapath .. '/about-marked.jpg'),
         leave = function()
             return true
         end}
@@ -54,8 +54,8 @@ function showmenu.loadMainMenu()
         hover = function()
 
         end,
-        button = gfx.loadjpeg('data/exit.jpg'),
-        button_marked = gfx.loadjpeg('data/exit-marked.jpg'),
+        button = gfx.loadjpeg(datapath .. '/exit.jpg'),
+        button_marked = gfx.loadjpeg(datapath .. '/exit-marked.jpg'),
         leave = function()
             return true
         end}
@@ -83,8 +83,8 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
-        button = gfx.loadjpeg('data/startgame.jpg'),
-        button_marked = gfx.loadjpeg('data/startgame-marked.jpg'),
+        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
+        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
         leave = function()
             return true
         end}
@@ -93,8 +93,8 @@ function showmenu.loadSecondaryMenu()
             -- action
             return "Return Option2"
         end,
-        button = gfx.loadjpeg('data/startgame.jpg'),
-        button_marked = gfx.loadjpeg('data/startgame-marked.jpg'),
+        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
+        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
         hover = function()
             return true
         end,
@@ -109,8 +109,8 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
-        button = gfx.loadjpeg('data/startgame.jpg'),
-        button_marked = gfx.loadjpeg('data/startgame-marked.jpg'),
+        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
+        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
         leave = function()
             return true
         end}
@@ -122,8 +122,8 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
-        button = gfx.loadjpeg('data/startgame.jpg'),
-        button_marked = gfx.loadjpeg('data/startgame-marked.jpg'),
+        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
+        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
         leave = function()
             return true
         end}
@@ -135,8 +135,8 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
-        button = gfx.loadjpeg('data/startgame.jpg'),
-        button_marked = gfx.loadjpeg('data/startgame-marked.jpg'),
+        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
+        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
         leave = function()
             return true
         end}
