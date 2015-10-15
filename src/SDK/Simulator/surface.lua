@@ -120,8 +120,7 @@ function surface:draw()
   function love.draw()
     love.graphics.draw(image)
   end
-
-
+  collectgarbage()
 end
 
 
