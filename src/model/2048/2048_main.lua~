@@ -1,6 +1,5 @@
 Page = require("page")
 Game = require("game")
-Boxes = require("box")
 
 ADConfig = require("Config.ADConfig")
 ADLogger = require("SDK.Utils.ADLogger")
@@ -22,8 +21,8 @@ end
 
 -- key event
 function onKey(key, state)
-  Page.registerKey(key,state)
-  Game.registerKey(key,state)
+Page.registerKey(key,state)
+Game.registerKey(key,state)
 end
 
 
@@ -46,5 +45,5 @@ end
 
 -- entrance of the game
 function onStart()
-  Page.showMainPage()
+Page.showMainPage()
 end

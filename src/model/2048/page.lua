@@ -1,3 +1,4 @@
+Game = require("game")
 Page = {current_page ="main_page", current_pos_y =100, current_pos_x =100}
 
 function Page.showMainPage()
@@ -29,14 +30,6 @@ function Page.showGamePage()
    screen:fill({r=10,g=5,b=50})
    screen:clear({r=0,g=205,b=204},{x=400,y=100,w = 415, h=415})
    -- draw rows
-   bg_pos = {x = 400, y=100}
-   bg = gfx.loadpng('cell_img/2.png') 
-   screen:copyfrom(bg, {w=625,h=625}, bg_pos,true)
-   
-   bg_pos = {x = 600, y=300}
-   bg = gfx.loadpng('cell_img/2.png') 
-   screen:copyfrom(bg, {w=625,h=625}, bg_pos,true)
-   
    for i =1, 4 do
      screen:clear({r=255,g=255,b=255},{x=400+(i-1)*100,y=100,w = 5, h=415})
    end
@@ -48,7 +41,6 @@ function Page.showGamePage()
    screen:clear({r=255,g=255,b=255},{x=815,y=100,w = 5, h=420})
    screen:clear({r=255,g=255,b=255},{x=400,y=515,w = 420, h=4})
    
-     
    gfx.update()
 end
 
@@ -120,6 +112,7 @@ function Page.mainPageKeyPress(key, state)
     elseif key == "ok" then
       if Page.current_pos_y == 180 then
           Page.showGamePage()
+          Game.startGame()
       elseif Page.current_pos_y == 280 then
           Page.showOptionPage()
       elseif Page.current_pos_y == 380 then
