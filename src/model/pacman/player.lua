@@ -3,12 +3,11 @@ Player = {}
 
 function Player:Movement(timer)
   -- Set step of each movement 
-  step = 10
+  step = 50
   -- Set new position, based on direction
   
   if self:freeToMove() then
     if self.direction == "right" then
-   --   if self.x + self.bg:get_width() + step < 1090 then
         self.x = self.x + step
   --    end
     end
@@ -16,7 +15,6 @@ function Player:Movement(timer)
       self.y = self.y - step
     end
     if self.direction == "left" then
-   --   if self.x - step > 190 then
         self.x = self.x - step
   --    end
     end
@@ -30,6 +28,9 @@ function Player:Movement(timer)
     
     -- Update GFX
     gfx.update()
+  elseif self.type ~= "pacman" then
+    self:Randomdirection()
+    self:Movement()   
   end
 end
 
@@ -51,6 +52,34 @@ function Player:getPos()
   pos = {x = self.x, y = self.y}
   return pos
 end
+
+function Player:Randomdirection()
+  possibledirections = {"up", "down", "left", "right"}
+  pacmanrelativepos = {} 
+   
+  if pacman.x > self.x then
+    pacmanrelativepos[1] = "right"
+  else
+    pacmanrelativepos[1] = "left"  
+  end
+  if pacman.y > self.y then
+    pacmanrelativepos[2] = "down"
+  else
+    pacmanrelativepos[2] = "up"  
+  end
+  if math.random(2) == 1 then
+    direction = math.random(4)
+    self.direction = possibledirections[direction]
+  else  
+    direction = math.random(2)
+    self.direction = pacmanrelativepos[direction]
+  end    
+  
+    
+
+end
+
+
 
 
 function Player:freeToMove()
@@ -74,22 +103,15 @@ function Player:freeToMove()
   currentposition = string.sub(maprow, xpos, xpos)
 
   if direction == "right" then
-    ADLogger.trace(direction)
       nextposition = string.sub(maprow, xpos + 1, xpos + 1)    
   elseif direction == "left" then
-    ADLogger.trace(direction)
       nextposition = string.sub(maprow, xpos - 1, xpos - 1)
   elseif direction == "down" then
-    ADLogger.trace(direction)
       nextposition = string.sub(gameplan.map[ypos + 1], xpos, xpos)
-
   elseif direction == "up" then
-    ADLogger.trace(direction)
       nextposition = string.sub(gameplan.map[ypos - 1], xpos, xpos)
   end  
-  
-  ADLogger.trace(nextposition)
-  
+   
  
   if nextposition == "1" then
     return false
