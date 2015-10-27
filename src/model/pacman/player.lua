@@ -6,8 +6,6 @@ function Player:Movement(timer)
   step = 10
   -- Set new position, based on direction
   
-  
-  
   if self:freeToMove() then
     if self.direction == "right" then
    --   if self.x + self.bg:get_width() + step < 1090 then
@@ -57,8 +55,8 @@ end
 
 function Player:freeToMove()
   
-  xpos = pacman:getPos().x -140
-  ypos = pacman:getPos().y - 60
+  xpos = self.x -140
+  ypos = self.y - 60
   direction = self.direction
   
   ypos = ypos / 50
