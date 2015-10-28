@@ -1,11 +1,12 @@
 Player = {}
 
-
 function Player:Movement(timer)
   -- Set step of each movement 
   step = 50
   -- Set new position, based on direction
-  
+  oldxpos = self.x
+  oldypos = self.y
+    
   if self:freeToMove() then
     if self.direction == "right" then
         self.x = self.x + step
@@ -23,7 +24,11 @@ function Player:Movement(timer)
     end 
     -- Copy empty recatangel 'temp'
     -- screen:copyfrom(temp, nil)
-    -- Copy pacman-image to desired position. 
+    -- Copy pacman-image to desired position.
+    
+
+
+    screen:copyfrom(self.bgblock, nil, {x = oldxpos, y = oldypos}) 
     screen:copyfrom(self.bg, nil, self:getPos())   
     
     -- Update GFX

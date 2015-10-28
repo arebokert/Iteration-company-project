@@ -36,7 +36,7 @@ function startPacman()
 
 
     pacman = Player:new("pacman")   -- Initiate object
-    blinky = Player:new("blinky")   -- Initiate opponent
+    blinky = Player:new("ghost")   -- Initiate opponent
     
     pacman:setPos(190,110) -- Set start position 
     blinky:setPos(1040,560)
@@ -47,6 +47,11 @@ function startPacman()
     blinky.bg = gfx.new_surface(50,50)
     blinky.bg:clear({r=0,g=255,b=51})
     
+    -- Creating a new background block object. Should preferably be moved to a global variable in "Player"
+    pacman.bgblock = gfx.new_surface(50,50)
+    blinky.bgblock = gfx.new_surface(50,50)
+    pacman.bgblock:clear({r=200,b=200,g=200})
+    blinky.bgblock:clear({r=200,b=200,g=200})
     
     screen:copyfrom(pacman.bg, nil, pacman:getPos())  -- Place pacman-image with initial position
     screen:copyfrom(blinky.bg, nil, blinky:getPos())  -- Place pacman-image with initial position
@@ -60,7 +65,7 @@ function startPacman()
     
     sys.new_timer(1, "blinky:Movement")
     sys.new_timer(1, "pacman:Movement")
-    
+  --  sys.new_timer(1000, "blinky:Randomdirection")
 
 
 end
