@@ -1,42 +1,38 @@
 Player = {}
 
-function Player:Movement(timer)
+function Player:Movement()
   -- Set step of each movement 
-  step = 50
+  step = 10
   -- Set new position, based on direction
   oldxpos = self.x
   oldypos = self.y
+  
+  local new_pos = {}
+  new_pos.x = self.x
+  new_pos.y = self.y
+  
+  
+  if self.direction == "right" then
+      new_pos.x = self.x + step
+  end
+  if self.direction == "up" then
+      new_pos.y = self.y - step
+  end
+  if self.direction == "left" then
+      new_pos.x = self.x - step
+  end
+  if self.direction == "down" then
+      new_pos.y = self.y + step
+  end 
+  
     
-  if self:freeToMove() then
-    if self.direction == "right" then
-        self.x = self.x + step
-  --    end
-    end
-    if self.direction == "up" then
-      self.y = self.y - step
-    end
-    if self.direction == "left" then
-        self.x = self.x - step
-  --    end
-    end
-    if self.direction == "down" then
-      self.y = self.y + step
-    end 
-    -- Copy empty recatangel 'temp'
-    -- screen:copyfrom(temp, nil)
-    -- Copy pacman-image to desired position.
-    
-
-
-    screen:copyfrom(self.bgblock, nil, {x = oldxpos, y = oldypos}) 
-    screen:copyfrom(self.bg, nil, self:getPos())   
-    
-    -- Update GFX
-    gfx.update()
+  return new_pos
+  --[[
   elseif self.type ~= "pacman" then
     self:Randomdirection()
     self:Movement()   
   end
+  --]]
 end
 
 
@@ -88,7 +84,8 @@ end
 
 
 function Player:freeToMove()
-  
+  return true
+  --[[
   xpos = self.x -140
   ypos = self.y - 60
   direction = self.direction
@@ -122,6 +119,6 @@ function Player:freeToMove()
     return false
   end
   return true
-  
+  --]] 
 
 end

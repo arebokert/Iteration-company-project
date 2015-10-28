@@ -7,6 +7,19 @@ end
 
 Gameplan = {}
 
+function Gameplan:addPlayer(player)
+  if self.players == nil then
+    self.players = {}
+  end
+  table.insert(self.players, player)
+end
+
+function Gameplan:setPacmanDirection(dir) 
+  pacman_direction = dir
+  self.players[1].direction = dir
+end
+
+
 function Gameplan:new ()
   obj = {}   -- create object if user does not provide one
   setmetatable(obj, self)
@@ -68,10 +81,9 @@ function Gameplan:displayMap(container, map)
   container_width = 1000
   container_height = 600
   container = gfx.new_surface(container_width, container_height)
+  self.containerpos = {x = 140, y = 60}
   
-  ADLogger.trace( self.xcells )
-  ADLogger.trace( self.ycells )     
-  
+    
   self.block = container_width / self.xcells   
   
   background = {}
@@ -79,7 +91,6 @@ function Gameplan:displayMap(container, map)
   background["1"] = createWall(self.block)
   -- 0 <=> aisle 
   background["0"] = createAisle(self.block)
-
   
   for key, value in pairs(map) do
     self.logicalMap[key] = {}
@@ -90,8 +101,24 @@ function Gameplan:displayMap(container, map)
           container:copyfrom(background[c], nil, pos)
         elseif c == "S" then
           -- STARTPOSITION
-          self.startposition = pos
-          container:copyfrom(background["0"], nil, pos)
+          pacman = Player:new("pacman")   -- Initiate object
+          -- Start position for pacman
+          pacman:setPos(pos.x, pos.y)
+          pacman.bg = gfx.new_surface(50,50)
+          pacman.bg:clear({r=255,g=255,b=51})
+          
+          container:copyfrom(pacman.bg, nil, pacman:getPos())
+          pacman.direction = "right"
+          
+          self:addPlayer(pacman)
+        elseif c == "B" then
+          blinky = Player:new("ghost")
+          blinky:setPos(pos.x, pos.y)
+          blinky.bg = gfx.new_surface(50,50)
+          blinky.bg:clear({r=0,g=255,b=51})      
+          container:copyfrom(blinky.bg, nil, blinky:getPos())
+          blinky.direction = "left"    
+          self:addPlayer(blinky)
         end
         self.logicalMap[key][i] = c     
         -- ADLogger.trace( c )   
@@ -103,7 +130,7 @@ function Gameplan:displayMap(container, map)
   ADLogger.trace( self.block ) 
   -- dump(self.logicalMap )
   
-  self.containerpos = {x = 140, y = 60}
+
   screen:copyfrom(container, nil, self.containerpos)   
   
   
@@ -112,15 +139,24 @@ function Gameplan:displayMap(container, map)
 end
 
 
-function Gameplan:repaint(cell)
-    
-
-
+function Gameplan:repaint(player)
+  local absPos = self:relativeToAbsolutePosition(player:getPos().x,player:getPos().y)
+  screen:copyfrom(player.bg, nil, absPos)
+  gfx.update()
 end
+
+
+function Gameplan:relativeToAbsolutePosition(x, y)
+  local pos = {}
+  pos.x = x + self.containerpos.x
+  pos.y = y + self.containerpos.y
+  return pos
+end
+
+
 
 function Gameplan:checkMap(cell)
   dump(cell)
-  dump(self.logicalMap[cell.y][cell.x])
   return self.logicalMap[cell.y][cell.x]
 end
 
@@ -133,31 +169,73 @@ function Gameplan:cellToXY(cell)
   return pos
 end
 
+
+
 function Gameplan:xyToCell(x,y) 
-  
-  local xcell = math.ceil( (x-self.containerpos.x)/self.block )
-  local ycell = math.ceil( (y-self.containerpos.y)/self.block )
+  -- RELATIVE COORDINATES 
+  local xcell = math.ceil( (x+1)/self.block )
+  local ycell = math.ceil( (y+1)/self.block )
   local pos = {x=xcell, y=ycell}
   
   return pos
-  
-  --[[
-  self.grid = {}
-  
-  for i=1,container_width do 
-    self.grid[i] = {}
-    for j=1,container_height do
-      local x = math.ceil( i/self.block )
-      local y = math.ceil( j/self.block )
-      local pos = {x=x, y=y}
-      self.grid[i][j] = pos
-    end
-  end
-  
-  dump( self.grid[960][580] )  
-  dump( self.logicalMap[self.grid[960][580].y][self.grid[960][580].x])
-  --]] 
-  
 end
 
 
+function Gameplan:refresh()
+  -- dump(self.players)
+  for k,player in pairs(self.players) do
+    local new_pos = player:Movement()
+    local target = {}
+    target.x = new_pos.x
+    target.y = new_pos.y    
+    if player.direction == "right" then
+      target.x = target.x + 50 -1
+    end
+    if player.direction == "down" then
+      target.y = new_pos.y + 50 - 1        
+    end
+
+
+    ADLogger.trace(player.type)
+    ADLogger.trace("CURRENT POS:")
+    dump(player:getPos())
+    
+    ADLogger.trace("NEW POS:")
+    dump(new_pos)
+
+    ADLogger.trace("TARGET")
+    dump(target)
+
+    local new_cell = self:xyToCell(target.x, target.y)
+    ADLogger.trace("NEW CELL")
+    dump(new_cell)    
+    local new_cell_content = self:checkMap(new_cell)
+        
+    if new_cell_content == "0" then
+      -- New cell is an aisle, OK!
+      player:setPos(new_pos.x, new_pos.y)
+      self:repaint(player)
+    end
+    if new_cell_content == "1" then 
+      -- New sell is a wall, not ok! 
+    
+    end
+  end
+  ADLogger.trace("refresh")
+end
+
+
+function Gameplan:dumpPlayerPos()
+  -- dump(self.players)
+  
+  for k,player in pairs(self.players) do
+    local pos = player:getPos()
+    ADLogger.trace("PLAYERS:")  
+    dump(pos)
+    local absPos = self:relativeToAbsolutePosition(pos.x, pos.y)
+    dump(absPos)
+    local cell = self:xyToCell(pos.x, pos.y)
+    dump(cell)
+    ADLogger.trace("END PLAYER")      
+  end
+end

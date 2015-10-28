@@ -35,36 +35,29 @@ function startPacman()
     gameplan:displayMap()
 
 
-    pacman = Player:new("pacman")   -- Initiate object
-    blinky = Player:new("ghost")   -- Initiate opponent
     
-    pacman:setPos(190,110) -- Set start position 
-    blinky:setPos(1040,560)
---    pacman.bg = gfx.loadpng('views/pacman/data/pacman.png') -- Set image
---    pacman.bg.premultiply()     -- Alpha fix
-    pacman.bg = gfx.new_surface(50,50)
-    pacman.bg:clear({r=255,g=255,b=51})
-    blinky.bg = gfx.new_surface(50,50)
-    blinky.bg:clear({r=0,g=255,b=51})
+    
+    --blinky.bg = gfx.new_surface(50,50)
+    --blinky.bg:clear({r=0,g=255,b=51})
     
     -- Creating a new background block object. Should preferably be moved to a global variable in "Player"
-    pacman.bgblock = gfx.new_surface(50,50)
-    blinky.bgblock = gfx.new_surface(50,50)
-    pacman.bgblock:clear({r=200,b=200,g=200})
-    blinky.bgblock:clear({r=200,b=200,g=200})
+    --pacman.bgblock = gfx.new_surface(50,50)
+    --blinky.bgblock = gfx.new_surface(50,50)
+    --pacman.bgblock:clear({r=200,b=200,g=200})
+    --blinky.bgblock:clear({r=200,b=200,g=200})
     
-    screen:copyfrom(pacman.bg, nil, pacman:getPos())  -- Place pacman-image with initial position
-    screen:copyfrom(blinky.bg, nil, blinky:getPos())  -- Place pacman-image with initial position
+    --screen:copyfrom(pacman.bg, nil, pacman:getPos())  -- Place pacman-image with initial position
+    --screen:copyfrom(blinky.bg, nil, blinky:getPos())  -- Place pacman-image with initial position
     gfx.update()  -- Update GFX
     
-    temp = gfx.new_surface(1280, 720)   -- Temp, just a rectangle with a solid color
-    temp:clear({r=100,g=0,b=100})       
+    --temp = gfx.new_surface(1280, 720)   -- Temp, just a rectangle with a solid color
+    --temp:clear({r=100,g=0,b=100})       
     -- Timer, updating pacmans position
-    pacman.direction = "right"
-    blinky.direction = "left"
+    --pacman.direction = "right"
+    --blinky.direction = "left"
     
-    sys.new_timer(1, "blinky:Movement")
-    sys.new_timer(1, "pacman:Movement")
+    --sys.new_timer(1, "blinky:Movement")
+    --sys.new_timer(1, "pacman:Movement")
   --  sys.new_timer(1000, "blinky:Randomdirection")
 
 
@@ -75,11 +68,16 @@ function pacmanOnKey(key, state)
 
   if state == "down" then
     if key == "down" or key == "up" or key == "left" or key == "right" then 
-      pacman.direction = key
-      ADLogger.trace(key)
+      gameplan:setPacmanDirection(key)
+    end
+    
+    if key == "yellow" then
+      gameplan:refresh()
     end
   end
-  
+    if key == "ok" then
+      gameplan:dumpPlayerPos()
+    end
 end
 
 
