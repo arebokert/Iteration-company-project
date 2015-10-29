@@ -8,6 +8,7 @@ function apitest()
 --gfx.update()
 --luaunit.assertEquals(1,1)
 dettabordekrascharnärdetkör
+borde absolut krascha
 
 end
 
