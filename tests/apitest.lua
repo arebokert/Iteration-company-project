@@ -2,7 +2,7 @@ luaunit = require('luaunit')
 
 local pathOfThisFile = ...
 local folderOfThisFile = (...):match("(.-)[^%.]+$")
-local oneFolderUp = (...):match("(.-)[^%.]+$") --:match("(.-)[^%.]+$")
+local oneFolderUp = folderOfThisFile:match("(.-)[^%.]+$")
 
 -- perhaps path must be specified differently, as SDK is not a folder from where this file is located.
 gfx = require(oneFolderUp .. "src/SDK.Simulator.gfx")
