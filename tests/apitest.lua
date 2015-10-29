@@ -1,7 +1,7 @@
 luaunit = require('luaunit')
 
 -- perhaps path must be specified differently, as SDK is not a folder from where this file is located.
-gfx = require "SDK.Simulator.gfx"
+gfx = require "../src/SDK.Simulator.gfx"
 
 function apitest()
 
