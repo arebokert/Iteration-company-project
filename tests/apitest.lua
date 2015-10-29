@@ -4,7 +4,7 @@ local pathOfThisFile = ...
 local folderOfThisFile = (...):match("(.-)[^%.]+$")
 local oneFolderUp = folderOfThisFile:match("(.-)[^%.]+$")
 
--- perhaps path must be specified differently, as SDK is not a folder from where this file is located.
+-- this gives nil value on onefolderup it seems.
 gfx = require(oneFolderUp .. "src/SDK.Simulator.gfx")
 
 function apitest()
