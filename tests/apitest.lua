@@ -5,10 +5,8 @@ gfx = require "SDK.Simulator.gfx"
 
 function apitest()
 
---gfx.update()
---luaunit.assertEquals(1,1)
-dettabordekrascharnärdetkör
-borde absolut krascha
+gfx.update()
+luaunit.assertEquals(1,1)
 
 end
 
