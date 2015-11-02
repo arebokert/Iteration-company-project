@@ -1,4 +1,5 @@
 require("model.pacman.dumper")
+require("model.pacman.collisionhandler")
 
 -- Define a shortcut function for testing
 function dump(...)
@@ -247,7 +248,7 @@ function Gameplan:refresh()
     local new_cell_content = self:checkMap(new_cell)
     local new_cell2_content = self:checkMap(new_cell2)
     
-    if new_cell_content == "0" and new_cell2_content == "0" then
+    if new_cell_content ~= "1" and new_cell2_content ~= "1" then
       -- New cell is an aisle, OK!
       -- New cell is an aisle, OK!
       local oldPos = player:getPos()
@@ -256,10 +257,13 @@ function Gameplan:refresh()
     end
     if new_cell_content == "1" then 
       -- New cell is a wall, not ok! 
+      if player.type ~= "pacman" then
+       player:Randomdirection()
+      end
     end
   end
   ADLogger.trace("refresh")
-  return true
+  return not checkCollision(self.players)
 end
 
 
