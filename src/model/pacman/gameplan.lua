@@ -219,28 +219,25 @@ function Gameplan:xyToCell(x,y)
   return pos
 end
 
-
-function Gameplan:refresh()
-  -- dump(self.players)
-  for k,player in pairs(self.players) do
-    local new_pos = player:Movement()
+function Gameplan:possibleMovement(direction, new_pos)
+    ADLogger.trace(direction)
     local target = {}
     target.x = new_pos.x
-    target.y = new_pos.y    
-
+    target.y = new_pos.y  
+      
     local new_cell = self:xyToCell(target.x, target.y)    
     local new_cell2 = self:xyToCell(target.x, target.y) 
     
-    if player.direction == "right" then 
+    if direction == "right" then 
       new_cell = self:xyToCell(target.x + 50 - 1, target.y)    
       new_cell2 = self:xyToCell(target.x + 50 - 1, target.y + 50 - 1 )
-    elseif player.direction == "down" then 
+    elseif direction == "down" then 
       new_cell = self:xyToCell(target.x, target.y + 50 -1)    
       new_cell2 = self:xyToCell(target.x + 50 - 1, target.y + 50 - 1 )
-    elseif player.direction == "left" then 
+    elseif direction == "left" then 
       new_cell = self:xyToCell(target.x, target.y)    
       new_cell2 = self:xyToCell(target.x, target.y + 50 - 1 )      
-    elseif player.direction == "up" then 
+    elseif direction == "up" then 
       new_cell = self:xyToCell(target.x, target.y)    
       new_cell2 = self:xyToCell(target.x + 50 -1, target.y)      
     end 
@@ -249,13 +246,58 @@ function Gameplan:refresh()
     local new_cell2_content = self:checkMap(new_cell2)
     
     if new_cell_content ~= "1" and new_cell2_content ~= "1" then
+      return true
+    else 
+      return false
+    end
+
+end
+
+function Gameplan:getPossibleMovements(position)
+    local directions = {left = false, right = false, up = false, down = false}
+    local pos = {}
+    pos.x = position.x
+    pos.y = position.y
+    local step = 10
+    for k, v in pairs(directions) do
+      if k == "left" then
+        pos.x = position.x - 10
+     elseif k == "right" then
+        pos.x = position.x + 10
+      elseif k == "up" then
+          pos.y = position.y + 10
+      elseif k == "down" then
+          pos.y = position.y - 10   
+      end
+      ADLogger.trace("POSSIBLE MOVEMENTS")
+      dump(pos)
+      directions[k] = self:possibleMovement(k, pos)
+    end 
+    
+    return directions
+
+end
+
+
+function Gameplan:refresh()
+  -- dump(self.players)
+  for k,player in pairs(self.players) do
+    local new_pos = player:movement()
+    
+    
+    if player.type ~= "pacman" then
+      local dir = self:getPossibleMovements(player:getPos())
+      dump(dir)
+    end
+    
       -- New cell is an aisle, OK!
       -- New cell is an aisle, OK!
+    if self:possibleMovement(player.direction, new_pos) == true then
       local oldPos = player:getPos()
       player:setPos(new_pos.x, new_pos.y)
-      self:repaint(player, oldPos)
+      self:repaint(player, oldPos)    
     end
-    if new_cell_content == "1" then 
+    if self:possibleMovement(player.direction, new_pos) == false  then 
       -- New cell is a wall, not ok! 
       if player.type ~= "pacman" then
        player:Randomdirection()

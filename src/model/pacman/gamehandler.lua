@@ -30,6 +30,8 @@ end
 function refresh()
   if gameStatus == true then 
     gameStatus = gameplan:refresh()
+  elseif gameStatus == false then 
+    gameTimer:stop()
   end
 end
 
@@ -52,6 +54,10 @@ function pacmanOnKey(key, state)
         gameTimer:stop()
       end
     end   
+    if key == "backspace" then
+      loadPacman()
+    end   
+        
   end
     if key == "ok" then
       gameplan:dumpPlayerPos()
