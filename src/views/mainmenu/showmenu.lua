@@ -14,17 +14,17 @@ function showmenu.loadMainMenu()
         hover = function()
 
         end,
-        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
+        button = gfx.loadjpeg(datapath .. '/Games-normal.png'),
+        button_marked = gfx.loadjpeg(datapath .. '/Games-selected.png'),
         leave = function()
-            local bg = gfx.loadjpeg(datapath .. '/bg1280-720.jpg')
+            local bg = gfx.loadjpeg(datapath .. '/bg1280-720.png')
             screen:copyfrom(bg, nil)
             bg:destroy()
             gfx.update()
             return true
         end}
 
-    options[2] = {title = "About",
+    options[2] = {title = "Highscore",
         action = function()
             rect = gfx.new_surface(200, 200)
             rect:clear( {g=0, r=255, b=0} )
@@ -36,8 +36,8 @@ function showmenu.loadMainMenu()
         hover = function()
 
         end,
-        button = gfx.loadjpeg(datapath .. '/about.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/about-marked.jpg'),
+        button = gfx.loadjpeg(datapath .. '/Highscore-normal.png'),
+        button_marked = gfx.loadjpeg(datapath .. '/Highscore-selected.png'),
         leave = function()
             return true
         end}
@@ -54,17 +54,19 @@ function showmenu.loadMainMenu()
         hover = function()
 
         end,
-        button = gfx.loadjpeg(datapath .. '/exit.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/exit-marked.jpg'),
+        button = gfx.loadjpeg(datapath .. '/Exit-normal.png'),
+        button_marked = gfx.loadjpeg(datapath .. '/Exit-selected.png'),
         leave = function()
             return true
         end}
+    
 
+    
     mainMenu = Menu:new()
     mainMenu:setOptions(options)
 
-    mainMenuContainer = gfx.new_surface(screen:get_width(), screen:get_height()/5)
-    mainMenuContainer:clear( {g=50, r=50, b=50} )
+    mainMenuContainer = gfx.new_surface(screen:get_width(), screen:get_height()/3.0)
+    mainMenuContainer:clear( {g=0, r=0, b=255, a=25} )
 
     mainMenu.containerPos = {x = 0, y=screen:get_height()-mainMenuContainer:get_height()}
     mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
@@ -145,7 +147,7 @@ function showmenu.loadSecondaryMenu()
 
     secondaryMenuContainer = gfx.new_surface(880, 300)
     secondary.containerPos = {x = 200, y=120}
-    secondaryMenuContainer:clear({g=40, r=40, b=40} )
+    secondaryMenuContainer:clear({g=0, r=0, b=255, a=20} )
 
     secondary:print(secondaryMenuContainer, 20, secondaryMenuContainer:get_height()/2, 40)
     secondary:setActive(1)
