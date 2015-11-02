@@ -18,9 +18,7 @@ function Menu:setActive(a)
     ADLogger.trace("SET ACTIVE")
     self.active = a
 
-    ADLogger.trace(a)
     for i = 1,self.size do
-        ADLogger.trace(i)
         activeButtonPos = self.options[i].buttonPos
 
         if i == a then

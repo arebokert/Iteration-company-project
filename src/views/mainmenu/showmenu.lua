@@ -6,13 +6,19 @@ function showmenu.loadMainMenu()
     options = {}
     options[1] = {title = "Game",
         action = function()
-            showmenu.loadSecondaryMenu()
+            mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
             activeMenu = secondary
+            secondary:setActive(1)
             gfx.update()
             return "Return Option1"
         end,
         hover = function()
-
+            local bg = gfx.loadjpeg(datapath .. '/bg1280-720.jpg')
+            screen:copyfrom(bg, nil)
+            bg:destroy()
+            mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
+            showmenu.loadSecondaryMenu()
+            gfx.update()
         end,
         button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
         button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
@@ -24,35 +30,39 @@ function showmenu.loadMainMenu()
             return true
         end}
 
-    options[2] = {title = "About",
+    options[2] = {title = "HighScore",
         action = function()
+
+            return "Return Option2"
+        end,
+        hover = function()
+            local bg = gfx.loadjpeg(datapath .. '/bg1280-720.jpg')
+            screen:copyfrom(bg, nil)
+            bg:destroy()
+            mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
             rect = gfx.new_surface(200, 200)
             rect:clear( {g=0, r=255, b=0} )
             rectPos = {x = 500, y=100}
             screen:copyfrom(rect, nil, rectPos)
             gfx.update()
-            return "Return Option2"
-        end,
-        hover = function()
-
         end,
         button = gfx.loadjpeg(datapath .. '/about.jpg'),
         button_marked = gfx.loadjpeg(datapath .. '/about-marked.jpg'),
         leave = function()
             return true
-        end}
+        end }
 
     options[3] = {title = "Exit",
         action = function()
-            rect = gfx.new_surface(200, 200)
-            rect:clear( {g=255, r=0, b=0} )
-            rectPos = {x = 500, y=100}
-            screen:copyfrom(rect, nil, rectPos)
-            gfx.update()
+            sys.stop()
             return "Return Option3"
         end,
         hover = function()
-
+             local bg = gfx.loadjpeg(datapath .. '/bg1280-720.jpg')
+            screen:copyfrom(bg, nil)
+            bg:destroy()
+            mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
+            gfx.update()
         end,
         button = gfx.loadjpeg(datapath .. '/exit.jpg'),
         button_marked = gfx.loadjpeg(datapath .. '/exit-marked.jpg'),
@@ -148,7 +158,6 @@ function showmenu.loadSecondaryMenu()
     secondaryMenuContainer:clear({g=40, r=40, b=40} )
 
     secondary:print(secondaryMenuContainer, 20, secondaryMenuContainer:get_height()/2, 40)
-    secondary:setActive(1)
     gfx.update()
 end
 
