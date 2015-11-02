@@ -65,7 +65,7 @@ end
 
 
 function pacmanOnKey(key, state)
-
+  
   if state == "down" then
     if key == "down" or key == "up" or key == "left" or key == "right" then 
       gameplan:setPacmanDirection(key)
@@ -74,10 +74,20 @@ function pacmanOnKey(key, state)
     if key == "yellow" then
       gameplan:refresh()
     end
+    
+    if key == "play" then
+      gameTimer = sys.new_timer(100, "gameplan:refresh")
+    end    
+    if key == "pause" then
+      if gameTimer then
+        gameTimer:stop()
+      end
+    end   
   end
     if key == "ok" then
       gameplan:dumpPlayerPos()
     end
+    
 end
 
 

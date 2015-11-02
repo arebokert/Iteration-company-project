@@ -76,6 +76,14 @@ function createYellowDot(psize, ppos)
 end
 
 
+-- Print a yellow dot to a cell
+function Gameplan:printYellowDot(cell) 
+  local dotpos = {x = (cell.x-1)*self.block +18, y = (cell.y-1)*self.block +18 }--position of yellow dot
+  local absPos = self:relativeToAbsolutePosition(dotpos.x, dotpos.y)
+  screen:copyfrom(background["d"], nil, absPos) --print yellow dot
+end
+
+
 function Gameplan:displayMap(container, map)
   self.logicalMap = {}
   
@@ -98,8 +106,10 @@ function Gameplan:displayMap(container, map)
   background["d"] = createYellowDot(self.dsize)
   
   for key, value in pairs(map) do
+    collectgarbage()
     self.logicalMap[key] = {}
-    for i = 1, #value do    
+    for i = 1, #value do 
+        
         local pos = {x = (i-1)*self.block, y = (key-1)*self.block }
         local dotpos = {x = (i-1)*self.block +18, y = (key-1)*self.block +18 }--position of yellow dot
         local c = value:sub(i,i)
@@ -152,8 +162,23 @@ end
 
 
 function Gameplan:repaint(player, oldPos)
+  if oldPos == nil then
+    return false
+  end
   local absOldPos = self:relativeToAbsolutePosition(oldPos.x,oldPos.y)
   screen:copyfrom(background["0"], nil, absOldPos) 
+  
+  if player.type ~= "pacman" then
+    -- If player not pacman, print yellow dot. 
+    local cell = self:xyToCell(oldPos.x, oldPos.y)
+    if player.direction == "left" then 
+      cell = self:xyToCell(oldPos.x + 50 -1, oldPos.y)
+    elseif player.direction == "up" then
+      cell = self:xyToCell(oldPos.x, oldPos.y + 50 -1)
+    end
+    self:printYellowDot(cell)
+  end
+   
   local absPos = self:relativeToAbsolutePosition(player:getPos().x,player:getPos().y)
   screen:copyfrom(player.bg, nil, absPos)
   gfx.update()
@@ -166,7 +191,6 @@ function Gameplan:relativeToAbsolutePosition(x, y)
   pos.y = y + self.containerpos.y
   return pos
 end
-
 
 
 function Gameplan:checkMap(cell)
@@ -203,21 +227,8 @@ function Gameplan:refresh()
     target.x = new_pos.x
     target.y = new_pos.y    
 
-
-
-    ADLogger.trace(player.type)
-    ADLogger.trace("CURRENT POS:")
-    dump(player:getPos())
-    
-    ADLogger.trace("NEW POS:")
-    dump(new_pos)
-
-    ADLogger.trace("TARGET")
-    dump(target)
-
     local new_cell = self:xyToCell(target.x, target.y)    
     local new_cell2 = self:xyToCell(target.x, target.y) 
-    
     
     if player.direction == "right" then 
       new_cell = self:xyToCell(target.x + 50 - 1, target.y)    
@@ -233,10 +244,6 @@ function Gameplan:refresh()
       new_cell2 = self:xyToCell(target.x + 50 -1, target.y)      
     end 
     
-    
-    ADLogger.trace("NEW CELL")
-    dump(new_cell)    
-    dump(new_cell2)        
     local new_cell_content = self:checkMap(new_cell)
     local new_cell2_content = self:checkMap(new_cell2)
     
@@ -249,7 +256,6 @@ function Gameplan:refresh()
     end
     if new_cell_content == "1" then 
       -- New cell is a wall, not ok! 
-    
     end
   end
   ADLogger.trace("refresh")
