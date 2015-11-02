@@ -222,7 +222,7 @@ function Gameplan:refresh()
     if player.direction == "right" then 
       new_cell = self:xyToCell(target.x + 50 - 1, target.y)    
       new_cell2 = self:xyToCell(target.x + 50 - 1, target.y + 50 - 1 )
-    elseif player.direction == down then 
+    elseif player.direction == "down" then 
       new_cell = self:xyToCell(target.x, target.y + 50 -1)    
       new_cell2 = self:xyToCell(target.x + 50 - 1, target.y + 50 - 1 )
     elseif player.direction == "left" then 
@@ -236,6 +236,7 @@ function Gameplan:refresh()
     
     ADLogger.trace("NEW CELL")
     dump(new_cell)    
+    dump(new_cell2)        
     local new_cell_content = self:checkMap(new_cell)
     local new_cell2_content = self:checkMap(new_cell2)
     
@@ -297,3 +298,5 @@ end
 function checkDotStatus(pos)
   return yellowdotmatrix[pos.y][pos.x] 
 end
+
+
