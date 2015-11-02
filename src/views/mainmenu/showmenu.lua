@@ -6,24 +6,21 @@ function showmenu.loadMainMenu()
     options = {}
     options[1] = {title = "Game",
         action = function()
-            mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
             activeMenu = secondary
             secondary:setActive(1)
-            gfx.update()
             return "Return Option1"
         end,
         hover = function()
-            local bg = gfx.loadjpeg(datapath .. '/bg1280-720.jpg')
+            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
             screen:copyfrom(bg, nil)
             bg:destroy()
-            mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
             showmenu.loadSecondaryMenu()
             gfx.update()
         end,
-        button = gfx.loadjpeg(datapath .. '/Games-normal.png'),
-        button_marked = gfx.loadjpeg(datapath .. '/Games-selected.png'),
+        button = gfx.loadpng(datapath .. '/games-normal.png'),
+        button_marked = gfx.loadpng(datapath .. '/games-selected.png'),
         leave = function()
-            local bg = gfx.loadjpeg(datapath .. '/bg1280-720.png')
+            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
             screen:copyfrom(bg, nil)
             bg:destroy()
             gfx.update()
@@ -36,18 +33,17 @@ function showmenu.loadMainMenu()
             return "Return Option2"
         end,
         hover = function()
-            local bg = gfx.loadjpeg(datapath .. '/bg1280-720.jpg')
+            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
             screen:copyfrom(bg, nil)
             bg:destroy()
-            mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
             rect = gfx.new_surface(200, 200)
             rect:clear( {g=0, r=255, b=0} )
             rectPos = {x = 500, y=100}
             screen:copyfrom(rect, nil, rectPos)
             gfx.update()
         end,
-        button = gfx.loadjpeg(datapath .. '/Highscore-normal.png'),
-        button_marked = gfx.loadjpeg(datapath .. '/Highscore-selected.png'),
+        button = gfx.loadpng(datapath .. '/highscore-normal.png'),
+        button_marked = gfx.loadpng(datapath .. '/highscore-selected.png'),
         leave = function()
             return true
         end }
@@ -58,14 +54,13 @@ function showmenu.loadMainMenu()
             return "Return Option3"
         end,
         hover = function()
-             local bg = gfx.loadjpeg(datapath .. '/bg1280-720.jpg')
+             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
             screen:copyfrom(bg, nil)
             bg:destroy()
-            mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
             gfx.update()
         end,
-        button = gfx.loadjpeg(datapath .. '/Exit-normal.png'),
-        button_marked = gfx.loadjpeg(datapath .. '/Exit-selected.png'),
+        button = gfx.loadpng(datapath .. '/exit-normal.png'),
+        button_marked = gfx.loadpng(datapath .. '/exit-selected.png'),
         leave = function()
             return true
         end}

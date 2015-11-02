@@ -18,6 +18,8 @@ function Menu:setActive(a)
     ADLogger.trace("SET ACTIVE")
     self.active = a
 
+    self.container:clear()
+
     for i = 1,self.size do
         activeButtonPos = self.options[i].buttonPos
 
@@ -65,6 +67,7 @@ function Menu:action()
 end
 
 function Menu:print(container, startx, starty, m)
+
     self.container = container
     margin = m
     width = (container:get_width() - margin*(self.size - 1) - 2*startx)/ self.size
