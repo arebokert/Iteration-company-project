@@ -50,7 +50,7 @@ function onStart()
     end
 
     screen:clear({g=120, r=10, b=20})
-    local bg = gfx.loadjpeg('views/mainmenu/data/bg1280-720.jpg')
+    local bg = gfx.loadjpeg('views/mainmenu/data/bg1280-720.png')
     screen:copyfrom(bg, nil)
     bg:destroy()
 

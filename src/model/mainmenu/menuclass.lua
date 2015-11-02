@@ -36,7 +36,7 @@ function Menu:setActive(a)
     else
         screen:copyfrom(self.container, nil )
     end
-
+    
     gfx.update()
 end
 

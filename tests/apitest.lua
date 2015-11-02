@@ -1,16 +1,19 @@
 luaunit = require('luaunit')
 
-local pathOfThisFile = ...
-local folderOfThisFile = (...):match("(.-)[^%.]+$")
---local oneFolderUp = folderOfThisFile:match("(.-)[^%.]+$")
+package.path = package.path .. ";../src/SDK/Simulator/?.lua"
 
--- this gives nil value on onefolderup it seems.
--- gfx = require(oneFolderUp .. "src/SDK.Simulator.gfx")
+gfx = require('gfx')
+player = require('player')
+zto = require('zto')
+surface = require('surface')
+freetype = require('freetype')
+sys = require('sys')
 
 function apitest()
 
--- gfx.update()
-luaunit.assertEquals(folderOfThisFile,"/tests")
+gfx.update()
+player.get_state()
+luaunit.assertEquals()
 
 end
 
