@@ -68,6 +68,13 @@ function createAisle(block)
   return a
 end
 
+function createYellowDot(psize, ppos)
+  local dot = gfx.new_surface(psize, psize)
+  dot:clear({r=255, g=255, b=51})
+  --container:copyfrom(dot, nil, ppos)
+  return dot
+end
+
 function getBackground(type) 
 
 
@@ -85,20 +92,27 @@ function Gameplan:displayMap(container, map)
   
     
   self.block = container_width / self.xcells   
+  self.dsize = 14
   
   background = {}
   -- 1 <=> wall 
   background["1"] = createWall(self.block)
   -- 0 <=> aisle 
   background["0"] = createAisle(self.block)
+  -- 0 <=> yellow dot
+  background["d"] = createYellowDot(self.dsize)
   
   for key, value in pairs(map) do
     self.logicalMap[key] = {}
     for i = 1, #value do    
         local pos = {x = (i-1)*self.block, y = (key-1)*self.block }
+        local dotpos = {x = (i-1)*self.block +18, y = (key-1)*self.block +18 }--position of yellow dot
         local c = value:sub(i,i)
         if c == "1" or c == "0" then
           container:copyfrom(background[c], nil, pos)
+          if c == "0" then
+            container:copyfrom(background["d"], nil, dotpos) --print yellow dot
+          end
         elseif c == "S" then
           -- STARTPOSITION
           pacman = Player:new("pacman")   -- Initiate object
@@ -123,6 +137,9 @@ function Gameplan:displayMap(container, map)
         self.logicalMap[key][i] = c     
         -- ADLogger.trace( c )   
     end
+    -- Instantiates a matrix representing which cells have yellow dots
+    yellowdotmatrix = {}
+    yellowdotmatrix = yellowDotStatus(map)
 
   end
   ADLogger.trace( self.logicalMap[1][1] )   
@@ -238,4 +255,32 @@ function Gameplan:dumpPlayerPos()
     dump(cell)
     ADLogger.trace("END PLAYER")      
   end
+end
+
+-- Creates a matrix that describes if a cell has a yellow dot or not 
+--  True means that it has a yellow dot
+function yellowDotStatus(map)
+  dotmatrix = {} 
+  for key, value in pairs(map) do
+     dotmatrix[key] = {}
+    for i = 1, #value do  
+        local c = value:sub(i,i)
+        if c == "0" then
+        dotmatrix[key][i] = "True"
+        else 
+         dotmatrix[key][i] = "False"
+        end    
+    end
+  end
+  return dotmatrix
+end
+
+-- Updates cells to not have a yellow dot
+function updateDotStatus(pos)
+  yellowdotmatrix[pos.y][pos.x] = "False"
+end
+
+-- Checks if a cell has a yellow dot
+function checkDotStatus(pos)
+  return yellowdotmatrix[pos.y][pos.x] 
 end
