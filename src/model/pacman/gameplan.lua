@@ -75,11 +75,6 @@ function createYellowDot(psize, ppos)
   return dot
 end
 
-function getBackground(type) 
-
-
-
-end 
 
 function Gameplan:displayMap(container, map)
   self.logicalMap = {}
@@ -138,8 +133,8 @@ function Gameplan:displayMap(container, map)
         -- ADLogger.trace( c )   
     end
     -- Instantiates a matrix representing which cells have yellow dots
-    yellowdotmatrix = {}
-    yellowdotmatrix = yellowDotStatus(map)
+    --yellowdotmatrix = {}
+    --yellowdotmatrix = yellowDotStatus(map)
 
   end
   ADLogger.trace( self.logicalMap[1][1] )   
@@ -156,7 +151,9 @@ function Gameplan:displayMap(container, map)
 end
 
 
-function Gameplan:repaint(player)
+function Gameplan:repaint(player, oldPos)
+  local absOldPos = self:relativeToAbsolutePosition(oldPos.x,oldPos.y)
+  screen:copyfrom(background["0"], nil, absOldPos) 
   local absPos = self:relativeToAbsolutePosition(player:getPos().x,player:getPos().y)
   screen:copyfrom(player.bg, nil, absPos)
   gfx.update()
@@ -205,12 +202,7 @@ function Gameplan:refresh()
     local target = {}
     target.x = new_pos.x
     target.y = new_pos.y    
-    if player.direction == "right" then
-      target.x = target.x + 50 -1
-    end
-    if player.direction == "down" then
-      target.y = new_pos.y + 50 - 1        
-    end
+
 
 
     ADLogger.trace(player.type)
@@ -223,18 +215,39 @@ function Gameplan:refresh()
     ADLogger.trace("TARGET")
     dump(target)
 
-    local new_cell = self:xyToCell(target.x, target.y)
+    local new_cell = self:xyToCell(target.x, target.y)    
+    local new_cell2 = self:xyToCell(target.x, target.y) 
+    
+    
+    if player.direction == "right" then 
+      new_cell = self:xyToCell(target.x + 50 - 1, target.y)    
+      new_cell2 = self:xyToCell(target.x + 50 - 1, target.y + 50 - 1 )
+    elseif player.direction == down then 
+      new_cell = self:xyToCell(target.x, target.y + 50 -1)    
+      new_cell2 = self:xyToCell(target.x + 50 - 1, target.y + 50 - 1 )
+    elseif player.direction == "left" then 
+      new_cell = self:xyToCell(target.x, target.y)    
+      new_cell2 = self:xyToCell(target.x, target.y + 50 - 1 )      
+    elseif player.direction == "up" then 
+      new_cell = self:xyToCell(target.x, target.y)    
+      new_cell2 = self:xyToCell(target.x + 50 -1, target.y)      
+    end 
+    
+    
     ADLogger.trace("NEW CELL")
     dump(new_cell)    
     local new_cell_content = self:checkMap(new_cell)
-        
-    if new_cell_content == "0" then
+    local new_cell2_content = self:checkMap(new_cell2)
+    
+    if new_cell_content == "0" and new_cell2_content == "0" then
       -- New cell is an aisle, OK!
+      -- New cell is an aisle, OK!
+      local oldPos = player:getPos()
       player:setPos(new_pos.x, new_pos.y)
-      self:repaint(player)
+      self:repaint(player, oldPos)
     end
     if new_cell_content == "1" then 
-      -- New sell is a wall, not ok! 
+      -- New cell is a wall, not ok! 
     
     end
   end
