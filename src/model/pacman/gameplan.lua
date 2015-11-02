@@ -259,6 +259,7 @@ function Gameplan:refresh()
     end
   end
   ADLogger.trace("refresh")
+  return true
 end
 
 
