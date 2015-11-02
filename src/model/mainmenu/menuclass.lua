@@ -24,12 +24,13 @@ function Menu:setActive(a)
         activeButtonPos = self.options[i].buttonPos
 
         if i == a then
-            activeButton = self.options[i].button_marked
+            activeButton = gfx.loadpng(self.options[i].button_marked)
             self.options[a].hover()
         else
-           activeButton = self.options[i].button
+           activeButton = gfx.loadpng(self.options[i].button)
         end
         self.container:copyfrom(activeButton, nil , activeButtonPos)
+        activeButton:destroy()
     end
 
     -- Updating the new container on the screen
@@ -46,7 +47,7 @@ end
 function Menu:next()
     local next = self.active + 1
 
-    if self.active + 1 > self.size then
+    if (self.active + 1) > self.size then
         next = 1
     end
 
@@ -66,6 +67,10 @@ function Menu:action()
     self.options[self.active].action()
 end
 
+function Menu:hover()
+    self.options[self.active].hover()
+end
+
 function Menu:print(container, startx, starty, m)
 
     self.container = container
@@ -79,8 +84,11 @@ function Menu:print(container, startx, starty, m)
         xpos = startx + (i-1)*width + (i-1)*margin
         ypos = starty
 
-        opt.buttonPos = {x=xpos,y=ypos}
-        container:copyfrom(self.options[i].button, nil, opt.buttonPos)
+        opt.buttonPos = {x=xpos,y=ypos }
+        local temppic = gfx.loadpng(self.options[i].button)
+        container:copyfrom(temppic, nil, opt.buttonPos)
+        temppic:destroy()
+        collectgarbage()
     end
 
     -- Updating the new container on the screen

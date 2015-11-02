@@ -15,10 +15,11 @@ function showmenu.loadMainMenu()
             screen:copyfrom(bg, nil)
             bg:destroy()
             showmenu.loadSecondaryMenu()
-            gfx.update()
+            collectgarbage()
+            return true
         end,
-        button = gfx.loadpng(datapath .. '/games-normal.png'),
-        button_marked = gfx.loadpng(datapath .. '/games-selected.png'),
+        button = datapath .. '/games-normal.png',
+        button_marked =datapath .. '/games-selected.png',
         leave = function()
             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
             screen:copyfrom(bg, nil)
@@ -40,10 +41,11 @@ function showmenu.loadMainMenu()
             rect:clear( {g=0, r=255, b=0} )
             rectPos = {x = 500, y=100}
             screen:copyfrom(rect, nil, rectPos)
-            gfx.update()
+            collectgarbage()
+            return true
         end,
-        button = gfx.loadpng(datapath .. '/highscore-normal.png'),
-        button_marked = gfx.loadpng(datapath .. '/highscore-selected.png'),
+        button =datapath..'/highscore-normal.png',
+        button_marked = datapath .. '/highscore-selected.png',
         leave = function()
             return true
         end }
@@ -54,20 +56,18 @@ function showmenu.loadMainMenu()
             return "Return Option3"
         end,
         hover = function()
-             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
+            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
             screen:copyfrom(bg, nil)
             bg:destroy()
-            gfx.update()
+            return true
         end,
-        button = gfx.loadpng(datapath .. '/exit-normal.png'),
-        button_marked = gfx.loadpng(datapath .. '/exit-selected.png'),
+        button = datapath .. '/exit-normal.png',
+        button_marked = datapath .. '/exit-selected.png',
         leave = function()
             return true
         end}
-    
 
-    
-    mainMenu = Menu:new()
+    _G.mainMenu = Menu:new()
     mainMenu:setOptions(options)
 
     mainMenuContainer = gfx.new_surface(screen:get_width(), screen:get_height()/3.0)
@@ -90,8 +90,8 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
-        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
+        button = datapath .. '/startgame.png',
+        button_marked = datapath .. '/startgame-marked.png',
         leave = function()
             return true
         end}
@@ -100,8 +100,8 @@ function showmenu.loadSecondaryMenu()
             -- action
             return "Return Option2"
         end,
-        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
+        button = datapath .. '/startgame.png',
+        button_marked = datapath .. '/startgame-marked.png',
         hover = function()
             return true
         end,
@@ -116,8 +116,8 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
-        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
+        button = datapath .. '/startgame.png',
+        button_marked = datapath .. '/startgame-marked.png',
         leave = function()
             return true
         end}
@@ -129,8 +129,8 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
-        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
+        button = datapath .. '/startgame.png',
+        button_marked = datapath .. '/startgame-marked.png',
         leave = function()
             return true
         end}
@@ -142,12 +142,12 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
-        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
+        button = datapath .. '/startgame.png',
+        button_marked = datapath .. '/startgame-marked.png',
         leave = function()
             return true
         end}
-    secondary = Menu:new()
+    _G.secondary = Menu:new()
     secondary:setOptions(o)
 
     secondaryMenuContainer = gfx.new_surface(880, 300)

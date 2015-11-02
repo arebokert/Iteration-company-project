@@ -11,7 +11,7 @@ if ADConfig.isSimulator then
     sys = require "SDK.Simulator.sys"
 end
 
-showmenu = require "views/mainmenu/showmenu"
+showmenu = require "views.mainmenu.showmenu"
 
 function onKey(key, state)
     ADLogger.trace("OnKey("..key..","..state..")")
@@ -50,7 +50,7 @@ function onStart()
     end
 
     screen:clear({g=120, r=10, b=20})
-    local bg = gfx.loadjpeg('views/mainmenu/data/bg1280-720.png')
+    local bg = gfx.loadpng('views/mainmenu/data/bg1280-720.png')
     screen:copyfrom(bg, nil)
     bg:destroy()
 
