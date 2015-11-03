@@ -11,11 +11,11 @@ function checkCollision(x)
   
   if inRange(blinky.x + 1, pacman.x, pacman.x + 50) or inRange(pacman.x + 1, blinky.x, blinky.x + 50) then
     if inRange(blinky.y + 1, pacman.y, pacman.y + 50) or inRange(pacman.y + 1, blinky.y, blinky.y + 50) then
-      ADLogger.trace("KROCK")
+--      ADLogger.trace("KROCK")
       return true
     end
   end    
-  ADLogger.trace("INTE KROCK")
+--  ADLogger.trace("INTE KROCK")
   
   return false
   

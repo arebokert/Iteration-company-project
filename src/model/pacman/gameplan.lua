@@ -6,7 +6,9 @@ function dump(...)
   print(DataDumper(...), "\n---")
 end
 
+
 Gameplan = {}
+
 
 function Gameplan:addPlayer(player)
   if self.players == nil then
@@ -14,6 +16,7 @@ function Gameplan:addPlayer(player)
   end
   table.insert(self.players, player)
 end
+
 
 function Gameplan:setPacmanDirection(dir) 
   pacman_direction = dir
@@ -50,7 +53,6 @@ function Gameplan:loadMap(filename)
       error('file not found')
   end
      
-  ADLogger.trace("PRINT TABLE")  
   self.map = tbllines
   
   self.ycells = i
@@ -125,37 +127,43 @@ function Gameplan:displayMap(container, map)
           -- Start position for pacman
           pacman:setPos(pos.x, pos.y)
           pacman.bg = gfx.new_surface(50,50)
-          pacman.bg:clear({r=255,g=255,b=51})
-          
+          --pacman.bg:clear({r=255,g=255,b=51})
+          local p = gfx.loadpng('views/pacman/data/pacman50px.png')
+          pacman.bg:copyfrom(p, nil)
+          pacman.bg:premultiply()
+          p:destroy()
+          -- BAD SOLUTION!!! 
+          container:copyfrom(background["0"], nil, pos)
           container:copyfrom(pacman.bg, nil, pacman:getPos())
           pacman.direction = "right"
           
           self:addPlayer(pacman)
         elseif c == "B" then
+          -- BAD SOLUTION!!! 
+          container:copyfrom(background["0"], nil, pos)
+          
           blinky = Player:new("ghost")
           blinky:setPos(pos.x, pos.y)
           blinky.bg = gfx.new_surface(50,50)
-          blinky.bg:clear({r=0,g=255,b=51})      
+          -- blinky.bg:clear({r=0,g=255,b=51}) 
+          local b = gfx.loadpng('views/pacman/data/ghost50.png')
+          blinky.bg:copyfrom(b, nil)
+          blinky.bg:premultiply()          
+          b:destroy()  
+             
           container:copyfrom(blinky.bg, nil, blinky:getPos())
           blinky.direction = "left"    
           self:addPlayer(blinky)
         end
         self.logicalMap[key][i] = c     
-        -- ADLogger.trace( c )   
     end
     -- Instantiates a matrix representing which cells have yellow dots
     --yellowdotmatrix = {}
     --yellowdotmatrix = yellowDotStatus(map)
 
-  end
-  ADLogger.trace( self.logicalMap[1][1] )   
-  ADLogger.trace( self.logicalMap[2][2] )    
-  ADLogger.trace( self.block ) 
-  -- dump(self.logicalMap )
-  
+  end  
 
   screen:copyfrom(container, nil, self.containerpos)   
-  
   
   -- Update GFX
   gfx.update()
@@ -195,19 +203,16 @@ end
 
 
 function Gameplan:checkMap(cell)
-  dump(cell)
   return self.logicalMap[cell.y][cell.x]
 end
+
 
 function Gameplan:cellToXY(cell)
   local x = (cell.x-1) * self.block
   local y = (cell.y-1) * self.block
   local pos = {x=x, y=y}
-  ADLogger.trace("CELL TO XY")
-  dump(pos)
   return pos
 end
-
 
 
 function Gameplan:xyToCell(x,y) 
@@ -220,7 +225,6 @@ function Gameplan:xyToCell(x,y)
 end
 
 function Gameplan:possibleMovement(direction, new_pos)
-    ADLogger.trace(direction)
     local target = {}
     target.x = new_pos.x
     target.y = new_pos.y  
@@ -269,8 +273,6 @@ function Gameplan:getPossibleMovements(position)
       elseif k == "down" then
           pos.y = position.y - 10   
       end
-      ADLogger.trace("POSSIBLE MOVEMENTS")
-      dump(pos)
       directions[k] = self:possibleMovement(k, pos)
     end 
     
@@ -280,17 +282,14 @@ end
 
 
 function Gameplan:refresh()
-  -- dump(self.players)
   for k,player in pairs(self.players) do
     local new_pos = player:movement()
     
     
     if player.type ~= "pacman" then
       local dir = self:getPossibleMovements(player:getPos())
-      dump(dir)
     end
     
-      -- New cell is an aisle, OK!
       -- New cell is an aisle, OK!
     if self:possibleMovement(player.direction, new_pos) == true then
       local oldPos = player:getPos()
@@ -304,7 +303,7 @@ function Gameplan:refresh()
       end
     end
   end
-  ADLogger.trace("refresh")
+
   return not checkCollision(self.players)
 end
 
@@ -323,6 +322,7 @@ function Gameplan:dumpPlayerPos()
     ADLogger.trace("END PLAYER")      
   end
 end
+
 
 -- Creates a matrix that describes if a cell has a yellow dot or not 
 --  True means that it has a yellow dot

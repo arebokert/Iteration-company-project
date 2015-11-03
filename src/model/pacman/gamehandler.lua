@@ -57,12 +57,19 @@ function pacmanOnKey(key, state)
     if key == "backspace" then
       loadPacman()
     end   
-        
+    if key == "exit" then 
+      screen:destroy()
+      screen = gfx.new_surface(1280, 720)
+      screen:clear({r=100,g=0,b=0})          
+      return false
+    end      
   end
+  
     if key == "ok" then
       gameplan:dumpPlayerPos()
     end
     
+    return true
 end
 
 

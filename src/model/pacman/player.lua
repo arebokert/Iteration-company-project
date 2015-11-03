@@ -1,6 +1,6 @@
 Player = {}
 
-function Player:Movement()
+function Player:movement()
   -- Set step of each movement 
   step = 10
   -- Set new position, based on direction
@@ -76,49 +76,5 @@ function Player:Randomdirection()
     self.direction = pacmanrelativepos[direction]
   end    
   
-    
-
 end
 
-
-
-
-function Player:freeToMove()
-  return true
-  --[[
-  xpos = self.x -140
-  ypos = self.y - 60
-  direction = self.direction
-  
-  ypos = ypos / 50
-  xpos = xpos / 50
-  
-  if direction == "right" or direction == "down" then
-    ypos = math.floor(ypos) + 1 
-    xpos = math.floor(xpos) + 1
-  else
-    ypos = math.ceil(ypos) + 1
-    xpos = math.ceil(xpos) + 1
-  end
-  
-  maprow =  gameplan.map[ypos]
-  currentposition = string.sub(maprow, xpos, xpos)
-
-  if direction == "right" then
-      nextposition = string.sub(maprow, xpos + 1, xpos + 1)    
-  elseif direction == "left" then
-      nextposition = string.sub(maprow, xpos - 1, xpos - 1)
-  elseif direction == "down" then
-      nextposition = string.sub(gameplan.map[ypos + 1], xpos, xpos)
-  elseif direction == "up" then
-      nextposition = string.sub(gameplan.map[ypos - 1], xpos, xpos)
-  end  
-   
- 
-  if nextposition == "1" then
-    return false
-  end
-  return true
-  --]] 
-
-end
