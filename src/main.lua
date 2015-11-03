@@ -22,7 +22,7 @@ function onKey(key, state)
     ADLogger.trace("OnKey("..key..","..state..")")
 
     if state == "down" or state == "repeat" then
-        if _G.activeView == "menu" then
+        if activeView == "menu" then
             -- Should be lifted out!
             if key == "left" then
                 activeMenu:prev()
@@ -42,11 +42,11 @@ function onKey(key, state)
                 sys.stop()
             end
 
-        elseif _G.activeView == "pacman" then
-            if gamehandler.pacmanOnKey(key,state) == false then
-                _G.activeView = "menu"
+        elseif activeView == "pacman" then
+            if gamehandler.pacmanOnKey(key) == false then
+                activeView = "menu"
                 showmenu.loadMainMenu()
-                _G.activeMenu = mainMenu
+                activeMenu = mainMenu
             end
         end
     end
@@ -63,7 +63,6 @@ function onStart()
         if arg[#arg] == "-debug" then require("mobdebug").start() end
     end
 
-    --gamehandler.loadPacman()
     showmenu.loadMainMenu()
     _G.activeMenu = mainMenu
 end

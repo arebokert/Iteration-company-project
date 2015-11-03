@@ -126,28 +126,22 @@ function Gameplan:displayMap(container, map)
                 pacman:setPos(pos.x, pos.y)
                 pacman.bg = gfx.new_surface(50,50)
                 --pacman.bg:clear({r=255,g=255,b=51})
-                local p = gfx.loadpng('views/pacman/data/pacman50px.png')
-                pacman.bg:copyfrom(p, nil)
-                pacman.bg:premultiply()
-                p:destroy()
+                pacman.bg = gfx.loadpng('views/pacman/data/pacman50px.png')
                 -- BAD SOLUTION!!!
                 container:copyfrom(background["0"], nil, pos)
+                pacman.bg:premultiply()
                 container:copyfrom(pacman.bg, nil, pacman:getPos())
                 pacman.direction = "right"
                 self:addPlayer(pacman)
             elseif c == "B" then
                 -- BAD SOLUTION!!!
-                container:copyfrom(background["0"], nil, pos)
-
                 blinky = Player:new("ghost")
                 blinky:setPos(pos.x, pos.y)
                 blinky.bg = gfx.new_surface(50,50)
                 -- blinky.bg:clear({r=0,g=255,b=51})
-                local b = gfx.loadpng('views/pacman/data/ghost50.png')
-                blinky.bg:copyfrom(b, nil)
+                blinky.bg = gfx.loadpng('views/pacman/data/ghost50.png')
+                container:copyfrom(background["0"], nil, pos)
                 blinky.bg:premultiply()
-                b:destroy()
-
                 container:copyfrom(blinky.bg, nil, blinky:getPos())
                 blinky.direction = "left"
                 self:addPlayer(blinky)
@@ -279,6 +273,7 @@ end
 
 
 function Gameplan:refresh()
+
     for k,player in pairs(self.players) do
         local new_pos = player:movement()
 
@@ -300,6 +295,7 @@ function Gameplan:refresh()
             end
         end
     end
+
 
     return not checkCollision(self.players)
 end

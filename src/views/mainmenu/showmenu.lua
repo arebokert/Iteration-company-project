@@ -85,7 +85,7 @@ function showmenu.loadSecondaryMenu()
     o[1] = {title = "Game",
         action = function()
             --action
-            _G.activeView = "pacman"
+            activeView = "pacman"
             gamehandler.loadPacman()
 
             return "Start pacman"
