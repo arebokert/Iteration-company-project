@@ -22,9 +22,7 @@ function startPacman()
     gameStatus = true
    
     gfx.update()  -- Update GFX
-
 end
-
 
 
 function refresh()
@@ -34,6 +32,7 @@ function refresh()
     gameTimer:stop()
   end
 end
+
 
 function pacmanOnKey(key, state)
   

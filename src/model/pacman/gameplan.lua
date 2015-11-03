@@ -35,7 +35,7 @@ end
 function Gameplan:loadMap(filename)
   filename = "model/pacman/map1.txt"
   
-  screen:clear({r=0, g=200, b=20})
+  screen:clear({r=0, g=100, b=20})
   local file = io.open(filename)
   local tbllines = {}
   local result = {}

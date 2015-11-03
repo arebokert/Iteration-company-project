@@ -86,7 +86,7 @@ function showmenu.loadSecondaryMenu()
         action = function()
             -- action
             _G.activeView = "pacman"
-            loadPacman()
+            loadPacman()           
             return "Start pacman"
         end,
         hover = function()
