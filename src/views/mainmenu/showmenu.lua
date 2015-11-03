@@ -6,65 +6,72 @@ function showmenu.loadMainMenu()
     options = {}
     options[1] = {title = "Game",
         action = function()
-            showmenu.loadSecondaryMenu()
             activeMenu = secondary
-            gfx.update()
+            secondary:setActive(1)
             return "Return Option1"
         end,
         hover = function()
-
+            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
+            screen:copyfrom(bg, nil)
+            bg:destroy()
+            showmenu.loadSecondaryMenu()
+            collectgarbage()
+            return true
         end,
-        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
+        button = datapath .. '/games-normal.png',
+        button_marked =datapath .. '/games-selected.png',
         leave = function()
-            local bg = gfx.loadjpeg(datapath .. '/bg1280-720.jpg')
+            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
             screen:copyfrom(bg, nil)
             bg:destroy()
             gfx.update()
             return true
         end}
 
-    options[2] = {title = "About",
+    options[2] = {title = "HighScore",
         action = function()
+
+            return "Return Option2"
+        end,
+        hover = function()
+            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
+            screen:copyfrom(bg, nil)
+            bg:destroy()
             rect = gfx.new_surface(200, 200)
             rect:clear( {g=0, r=255, b=0} )
             rectPos = {x = 500, y=100}
             screen:copyfrom(rect, nil, rectPos)
-            gfx.update()
-            return "Return Option2"
+            collectgarbage()
+            return true
         end,
-        hover = function()
-
-        end,
-        button = gfx.loadjpeg(datapath .. '/about.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/about-marked.jpg'),
+        button =datapath..'/highscore-normal.png',
+        button_marked = datapath .. '/highscore-selected.png',
         leave = function()
             return true
-        end}
+        end }
 
     options[3] = {title = "Exit",
         action = function()
-            rect = gfx.new_surface(200, 200)
-            rect:clear( {g=255, r=0, b=0} )
-            rectPos = {x = 500, y=100}
-            screen:copyfrom(rect, nil, rectPos)
-            gfx.update()
+            sys.stop()
             return "Return Option3"
         end,
         hover = function()
-
+            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
+            screen:copyfrom(bg, nil)
+            bg:destroy()
+            return true
         end,
-        button = gfx.loadjpeg(datapath .. '/exit.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/exit-marked.jpg'),
+        button = datapath .. '/exit-normal.png',
+        button_marked = datapath .. '/exit-selected.png',
         leave = function()
             return true
         end}
 
-    mainMenu = Menu:new()
+    _G.mainMenu = Menu:new()
     mainMenu:setOptions(options)
 
-    mainMenuContainer = gfx.new_surface(screen:get_width(), screen:get_height()/5)
-    mainMenuContainer:clear( {g=50, r=50, b=50} )
+    mainMenuContainer = gfx.new_surface(screen:get_width(), screen:get_height()/3.0)
+    mainMenuContainer:clear( {g=0, r=0, b=255, a=25} )
 
     mainMenu.containerPos = {x = 0, y=screen:get_height()-mainMenuContainer:get_height()}
     mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
@@ -78,23 +85,26 @@ function showmenu.loadSecondaryMenu()
     o[1] = {title = "Game",
         action = function()
             -- action
-            return "Return Option1"
+            _G.activeView = "pacman"
+            loadPacman()           
+            return "Start pacman"
         end,
         hover = function()
             return true
         end,
-        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
+        button = datapath .. '/startgame.png',
+        button_marked = datapath .. '/startgame-marked.png',
         leave = function()
             return true
         end}
+        --[[
     o[2] = {title = "Settings",
         action = function()
             -- action
             return "Return Option2"
         end,
-        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
+        button = datapath .. '/startgame.png',
+        button_marked = datapath .. '/startgame-marked.png',
         hover = function()
             return true
         end,
@@ -109,8 +119,8 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
-        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
+        button = datapath .. '/startgame.png',
+        button_marked = datapath .. '/startgame-marked.png',
         leave = function()
             return true
         end}
@@ -122,8 +132,8 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
-        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
+        button = datapath .. '/startgame.png',
+        button_marked = datapath .. '/startgame-marked.png',
         leave = function()
             return true
         end}
@@ -135,20 +145,20 @@ function showmenu.loadSecondaryMenu()
         hover = function()
             return true
         end,
-        button = gfx.loadjpeg(datapath .. '/startgame.jpg'),
-        button_marked = gfx.loadjpeg(datapath .. '/startgame-marked.jpg'),
+        button = datapath .. '/startgame.png',
+        button_marked = datapath .. '/startgame-marked.png',
         leave = function()
             return true
         end}
-    secondary = Menu:new()
+        --]]
+    _G.secondary = Menu:new()
     secondary:setOptions(o)
 
     secondaryMenuContainer = gfx.new_surface(880, 300)
     secondary.containerPos = {x = 200, y=120}
-    secondaryMenuContainer:clear({g=40, r=40, b=40} )
+    secondaryMenuContainer:clear({g=0, r=0, b=255, a=20} )
 
     secondary:print(secondaryMenuContainer, 20, secondaryMenuContainer:get_height()/2, 40)
-    secondary:setActive(1)
     gfx.update()
 end
 
