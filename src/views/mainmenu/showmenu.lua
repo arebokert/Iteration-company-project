@@ -85,7 +85,9 @@ function showmenu.loadSecondaryMenu()
     o[1] = {title = "Game",
         action = function()
             -- action
-            return "Return Option1"
+            _G.activeView = "pacman"
+            loadPacman()
+            return "Start pacman"
         end,
         hover = function()
             return true
@@ -95,6 +97,7 @@ function showmenu.loadSecondaryMenu()
         leave = function()
             return true
         end}
+        --[[
     o[2] = {title = "Settings",
         action = function()
             -- action
@@ -147,6 +150,7 @@ function showmenu.loadSecondaryMenu()
         leave = function()
             return true
         end}
+        --]]
     _G.secondary = Menu:new()
     secondary:setOptions(o)
 
