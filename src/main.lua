@@ -39,7 +39,7 @@ function onKey(key, state)
                 sys.stop()
             end
         end    
-    --------------- 
+
     elseif _G.activeView == "pacman" then
       if pacmanOnKey(key,state) == false then
         _G.activeView = "menu"
@@ -49,6 +49,7 @@ function onKey(key, state)
     end 
    
 end
+
 
 function onStart()
     
@@ -63,6 +64,5 @@ function onStart()
     showmenu.loadMainMenu()
     _G.activeMenu = mainMenu
 end
-
 
 
