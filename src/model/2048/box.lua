@@ -3,8 +3,8 @@ Boxes = {
   tag =0,
   current_zero = 16,
   box_table = {
-               0,0,0,0,
-               0,0,0,0,
+               0,2,0,0,
+               0,0,4,0,
                0,0,0,0,
                0,0,0,0
               }
@@ -17,18 +17,20 @@ function Boxes.init()
 end
 
 function Boxes.showMove()
+  bg = gfx.new_surface(100,100)
   for i = 1, 4 do
     for j = 0, 3 do
-      bg_pos = {x = i*100+300, y=j*100+100}
+      bg_pos = {x = i*102+305, y=j*105+102, w= 100, h =100}
       if(Boxes.box_table[i+j*4] == 0) then
-        img = "cell_img/empty.png"
+        img = "data/cell_img/empty.png"
       else
-        img = "cell_img/" .. Boxes.box_table[i+j*4] .. ".png"
+        img = "data/cell_img/" .. Boxes.box_table[i+j*4] .. ".png"
       end
       bg = gfx.loadpng(img) 
-      screen:copyfrom(bg, {w = 625,h = 625},bg_pos,true)
+      screen:copyfrom(bg, nil,bg_pos,true)
     end
   end
+  bg:destroy()
   gfx.update() 
 end
 
@@ -175,7 +177,7 @@ function Boxes.moveBottom()
     end
     -- change palces, make a promise, no 0 is left of numbers
      count = 3 -- number of >= 0 
-     for j =3,1,-1 do
+     for j =3,0,-1 do
        if(Boxes.box_table[i+j*4] ~= 0) then
          Boxes.box_table[i+count*4] = Boxes.box_table[i+j*4]
          count = count - 1

@@ -6,22 +6,22 @@ function Page.showMainPage()
   
   screen:clear({r=80,g=20,b=20},{x=400,y=180,w=450,h=100})
   Page.current_pos_y = 180
-  Page.showPageText()
-  ADLogger.trace("showInsidePage")
+  --Page.showPageText()
+  --ADLogger.trace("showInsidePage")
 end
 
 function Page.showPageText()
 
-  start_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=500,y=200},"data/grasping.ttf")
+  start_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=500,y=200},"data/font/grasping.ttf")
   start_btn:draw_over_surface(screen,"Start Game")
   
-  option_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=500,y=300},"data/grasping.ttf")
+  option_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=500,y=300},"data/font/grasping.ttf")
   option_btn:draw_over_surface(screen,"Options")
   
-  highScore_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=500,y=400},"data/grasping.ttf")
+  highScore_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=500,y=400},"data/font/grasping.ttf")
   highScore_btn:draw_over_surface(screen,"High Score")
   
-  exit_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=500,y=500},"data/grasping.ttf")
+  exit_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=500,y=500},"data/font/grasping.ttf")
   exit_btn:draw_over_surface(screen,"Exit")
   gfx.update()
 end
@@ -53,25 +53,25 @@ end
 
 function Page.showExitPage()
   screen:fill({g=5,r=10,b=50})
-  exit_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=300,y=200},"data/grasping.ttf")
+  exit_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=300,y=200},"data/font/grasping.ttf")
   exit_btn:draw_over_surface(screen,"Are you sure?")
-  yes_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=300,y=300},"data/grasping.ttf")
+  yes_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=300,y=300},"data/font/grasping.ttf")
   yes_btn:draw_over_surface(screen,"Yes")
-  cancel_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=500,y=300},"data/grasping.ttf")
+  cancel_btn = sys.new_freetype({g=100,r=100,b=100}, 50, {x=500,y=300},"data/font/grasping.ttf")
   cancel_btn:draw_over_surface(screen,"No")
   gfx.update()
 end
 
 function Page.showScorePage()
   screen:fill({g=5, r=10, b=50})
-  high_score = sys.new_freetype({{g=100,r=100,b=100}, 50, {x=300,y=200},"data/grasping.ttf"})
+  high_score = sys.new_freetype({{g=100,r=100,b=100}, 50, {x=300,y=200},"data/font/grasping.ttf"})
   high_score:draw_over_surface()
 end
 
 function Page.registerKey(key, state)
   current_page = Page.current_page
   if current_page == "game_page" then
-     
+    Game.registerKey(key, state)
   elseif current_page == "main_page" then
     Page.mainPageKeyPress(key, state)
   elseif current_page == "option_page" then
@@ -111,6 +111,7 @@ function Page.mainPageKeyPress(key, state)
       Page.showPageText()
     elseif key == "ok" then
       if Page.current_pos_y == 180 then
+          Page.current_page = "game_page"
           Page.showGamePage()
           Game.startGame()
       elseif Page.current_pos_y == 280 then
