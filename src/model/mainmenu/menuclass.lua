@@ -79,6 +79,7 @@ function Menu:print(container, startx, starty, m)
     height = container:get_height() - 2*starty
 
     for i = 1,self.size do
+
         opt = self.options[i]
 
         xpos = startx + (i-1)*width + (i-1)*margin

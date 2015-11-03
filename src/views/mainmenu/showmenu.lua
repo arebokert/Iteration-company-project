@@ -84,9 +84,10 @@ function showmenu.loadSecondaryMenu()
     o = {}
     o[1] = {title = "Game",
         action = function()
-            -- action
+            --action
             _G.activeView = "pacman"
-            loadPacman()           
+            gamehandler.loadPacman()
+
             return "Start pacman"
         end,
         hover = function()
