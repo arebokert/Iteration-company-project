@@ -3,7 +3,7 @@ luaunit = require('luaunit')
 package.path = package.path .. ";../src/?.lua"
 
 ADConfig = require("Config.ADConfig")
-ADLogger = require("SDK.Utils.ADLogger")
+--ADLogger = require("SDK.Utils.ADLogger")
 ADLogger.trace("Applicatio Init")
 
 root_path = ""
