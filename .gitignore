@@ -5,4 +5,6 @@
 .DS_Store
 
 #Emulator files
-src/SDK/
+src/SDK/Lib
+src/SDK/Simulator
+src/SDK/Utils
