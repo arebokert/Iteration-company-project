@@ -20,28 +20,10 @@ gamehandler = require "model.pacman.gamehandler"
 
 function onKey(key, state)
     ADLogger.trace("OnKey("..key..","..state..")")
-
+    
     if state == "down" or state == "repeat" then
         if activeView == "menu" then
-            -- Should be lifted out!
-            if key == "left" then
-                activeMenu:prev()
-            elseif key == "right" then
-                activeMenu:next()
-            elseif key == "ok"  then
-                activeMenu:action()
-            elseif key == "up"  and mainMenu == activeMenu then
-                activeMenu:action()
-            elseif key == "down" and secondary == activeMenu then
-                secondary:print(secondaryMenuContainer, 20, secondaryMenuContainer:get_height()/2, 40)
-                activeMenu = mainMenu
-                mainMenu:setActive(1)
-            elseif key == "back" and mainMenu.active == 1 then
-                activeMenu = mainMenu
-            elseif key == "exit" then
-                sys.stop()
-            end
-
+           showmenu.registerKey(key, state)
         elseif activeView == "pacman" then
             if gamehandler.pacmanOnKey(key) == false then
                 activeView = "menu"
