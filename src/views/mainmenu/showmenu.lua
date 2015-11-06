@@ -30,7 +30,8 @@ function showmenu.loadMainMenu()
 
     options[2] = {title = "HighScore",
         action = function()
-
+            activeMenu =highScoreMenu
+            secondary:setActive(1)
             return "Return Option2"
         end,
         hover = function()
@@ -80,6 +81,34 @@ function showmenu.loadMainMenu()
     gfx.update()
 end
 
+-- mainly show the highscore page
+function showmenu.loadHighScoreMenu()
+ o = {}
+ o[1] = {title = "highScore",
+         action = function()
+                    activeView = "highScore"
+                    return "show high score"
+                  end, 
+         hover = function()
+                    return true
+                 end,
+         button = datapath .. '/startgame.png',
+         button_marked = datapath .. '/startgame-marked.png',
+         leave = function()
+                   return true
+         end
+        }
+  _G.highScoreMenu = Menu:new()
+  highScoreMenu:setOptions(o)
+
+  highScoreMenuContainer = gfx.new_surface(880, 300)
+  highScoreMenu.containerPos = {x = 200, y=120}
+  highScoreMenuContainer:clear({g=0, r=0, b=255, a=20} )
+
+  highScore:print(highScoreMenuContainer, 20, highScoreMenuContainer:get_height()/2, 40)
+  gfx.update()
+end
+
 function showmenu.loadSecondaryMenu()
     o = {}
     o[1] = {title = "Game",
@@ -99,12 +128,15 @@ function showmenu.loadSecondaryMenu()
             return true
         end}
         --[[
-    o[2] = {title = "Settings",
+    o[2] = {title = "HighScore",
         action = function()
             -- action
-            return "Return Option2"
+            return "Return HighScore"
         end,
-        button = datapath .. '/startgame.png',
+        hover = function()
+           return true
+        end,
+        button = datapath .. '/highscore.png',
         button_marked = datapath .. '/startgame-marked.png',
         hover = function()
             return true
@@ -113,32 +145,6 @@ function showmenu.loadSecondaryMenu()
             return true
         end}
     o[3] = {title = "Settings",
-        action = function()
-            -- action
-            return "Return Option2"
-        end,
-        hover = function()
-            return true
-        end,
-        button = datapath .. '/startgame.png',
-        button_marked = datapath .. '/startgame-marked.png',
-        leave = function()
-            return true
-        end}
-    o[4] = {title = "Settings",
-        action = function()
-            -- action
-            return "Return Option2"
-        end,
-        hover = function()
-            return true
-        end,
-        button = datapath .. '/startgame.png',
-        button_marked = datapath .. '/startgame-marked.png',
-        leave = function()
-            return true
-        end}
-    o[5] = {title = "Settings",
         action = function()
             -- action
             return "Return Option2"
@@ -161,6 +167,27 @@ function showmenu.loadSecondaryMenu()
 
     secondary:print(secondaryMenuContainer, 20, secondaryMenuContainer:get_height()/2, 40)
     gfx.update()
+end
+
+function showmenu.registerKey(key, state)
+ -- Should be lifted out!
+    if key == "left" then
+        activeMenu:prev()
+    elseif key == "right" then
+        activeMenu:next()
+    elseif key == "ok"  then
+        activeMenu:action()
+    elseif key == "up"  and mainMenu == activeMenu then
+        activeMenu:action()
+    elseif key == "down" and secondary == activeMenu then
+        secondary:print(secondaryMenuContainer, 20, secondaryMenuContainer:get_height()/2, 40)
+        activeMenu = mainMenu
+        mainMenu:setActive(1)
+    elseif key == "back" and mainMenu.active == 1 then
+        activeMenu = mainMenu
+    elseif key == "exit" then
+        sys.stop()
+    end
 end
 
 return showmenu
