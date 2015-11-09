@@ -1,5 +1,6 @@
 showmenu = {}
 Menu = require "model/mainmenu/menuclass"
+highScoreMenu = require "views/mainmenu/highScoreMenu"
 datapath = "views/mainmenu/data"
 
 function showmenu.loadMainMenu()
@@ -7,7 +8,7 @@ function showmenu.loadMainMenu()
     options[1] = {title = "Game",
         action = function()
             activeMenu = secondary
-            secondary:setActive(1)
+            --secondary:setActive(1)
             return "Return Option1"
         end,
         hover = function()
@@ -30,24 +31,23 @@ function showmenu.loadMainMenu()
 
     options[2] = {title = "HighScore",
         action = function()
-            activeMenu =highScoreMenu
-            secondary:setActive(1)
             return "Return Option2"
         end,
         hover = function()
             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
             screen:copyfrom(bg, nil)
             bg:destroy()
-            rect = gfx.new_surface(200, 200)
-            rect:clear( {g=0, r=255, b=0} )
-            rectPos = {x = 500, y=100}
-            screen:copyfrom(rect, nil, rectPos)
+            showmenu.loadMenu("highScore")
             collectgarbage()
             return true
         end,
         button =datapath..'/highscore-normal.png',
         button_marked = datapath .. '/highscore-selected.png',
         leave = function()
+            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
+            screen:copyfrom(bg, nil)
+            bg:destroy()
+            gfx.update()
             return true
         end }
 
@@ -77,36 +77,28 @@ function showmenu.loadMainMenu()
     mainMenu.containerPos = {x = 0, y=screen:get_height()-mainMenuContainer:get_height()}
     mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
     mainMenu:setActive(1)
-
     gfx.update()
 end
 
 -- mainly show the highscore page
-function showmenu.loadHighScoreMenu()
- o = {}
- o[1] = {title = "highScore",
-         action = function()
-                    activeView = "highScore"
-                    return "show high score"
-                  end, 
-         hover = function()
-                    return true
-                 end,
-         button = datapath .. '/startgame.png',
-         button_marked = datapath .. '/startgame-marked.png',
-         leave = function()
-                   return true
-         end
-        }
-  _G.highScoreMenu = Menu:new()
-  highScoreMenu:setOptions(o)
+function showmenu.loadMenu(tag)
+  _G.subMenu = Menu:new()
+  subMenuContainer = gfx.new_surface(screen:get_width(), 2.0*screen:get_height()/3.0)
+  
+  subMenuContainer:clear({g=0, r=0, b=255, a=20} )
+  --showmenu.writeWord("start", nil, 20, nil, subMenuContainer)
 
-  highScoreMenuContainer = gfx.new_surface(880, 300)
-  highScoreMenu.containerPos = {x = 200, y=120}
-  highScoreMenuContainer:clear({g=0, r=0, b=255, a=20} )
-
-  highScore:print(highScoreMenuContainer, 20, highScoreMenuContainer:get_height()/2, 40)
+  --subMenu.containerPos = {x = 0, y = 0}
+  --subMenu:printSub(subMenuContainer)
+  ADLogger.trace("23231232")
+  if(tag == "highScore") then
+    highScoreMenu.loadMenu(subMenuContainer)
+  elseif(tag == "singlePlayer") then
+  
+  end
+  subMenu:printSub(subMenuContainer)
   gfx.update()
+  collectgarbage()
 end
 
 function showmenu.loadSecondaryMenu()

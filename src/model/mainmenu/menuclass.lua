@@ -71,6 +71,13 @@ function Menu:hover()
     self.options[self.active].hover()
 end
 
+function Menu:printSub(container)
+    self.container = container
+    width = container:get_width()
+    height = container:get_height()
+    screen:copyfrom(container, nil, self.containerPos)
+end
+
 function Menu:print(container, startx, starty, m)
 
     self.container = container
