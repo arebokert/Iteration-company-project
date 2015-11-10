@@ -51,10 +51,27 @@ function showmenu.loadMainMenu()
             return true
         end }
 
-    options[3] = {title = "Exit",
+	options[3] = {title = "Multiplayer",
         action = function()
             sys.stop()
             return "Return Option3"
+        end,
+        hover = function()
+            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
+            screen:copyfrom(bg, nil)
+            bg:destroy()
+            return true
+        end,
+        button = datapath .. '/multi-normal.png',
+        button_marked = datapath .. '/multi-selected.png',
+        leave = function()
+            return true
+        end}
+	
+    options[4] = {title = "Exit",
+        action = function()
+            sys.stop()
+            return "Return Option4"
         end,
         hover = function()
             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')

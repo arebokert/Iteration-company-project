@@ -1,6 +1,8 @@
 ADConfig = require("Config.ADConfig")
 ADLogger = require("SDK.Utils.ADLogger")
+http = require("socket.http")
 ADLogger.trace("Applicatio Init")
+hasInternet=""
 
 root_path = ""
 if ADConfig.isSimulator then
@@ -44,7 +46,14 @@ function onStart()
     if ADConfig.isSimulator then
         if arg[#arg] == "-debug" then require("mobdebug").start() end
     end
-
+	if ADConfig.isSimulator then
+        if arg[#arg] == "-debug" then require("mobdebug").start() end
+    end
+	if http.request( "http://www.google.com" ) == nil then
+		hasInternet=false
+	else
+		hasInternet=true
+	end
     showmenu.loadMainMenu()
     _G.activeMenu = mainMenu
 end
