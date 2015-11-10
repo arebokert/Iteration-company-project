@@ -1,9 +1,9 @@
-package.path = package.path .. ";../src/model/mainmenu/?.lua"
+package.path = package.path .. ";../src/model/mainmenu/?.lua" .. ";../src/SDK/Mocked/?.lua"
 
 EXPORT_ASSERT_TO_GLOBALS = true;
 
 require('luaunit') -- always start a test file with this line
-
+require('ADLogger')
 require('menuclass')
 
 function testCrashMenuclass()
