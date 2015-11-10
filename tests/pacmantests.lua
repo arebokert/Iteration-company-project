@@ -1,10 +1,19 @@
-package.path = package.path .. ";../src/model/pacman/?.lua"
+package.path = package.path .. ";../src/?.lua"
 
 EXPORT_ASSERT_TO_GLOBALS = true;
 
 require('luaunit') -- always start a test file with this line
 
-require('player')
+--Include mock SDK
+ADLogger = require('SDK.Mocked.ADLogger')
+ADLogger = require('SDK.Mocked.ADLogger')
+gfx = require "SDK.Mocked.gfx"
+surface = require "SDK.Mocked.surface"
+player = require "SDK.Mocked.player"
+freetype = require "SDK.Mocked.freetype"
+sys = require "SDK.Mocked.sys"
+
+require('model.pacman.player')
 
 function testCrashPlayer() -- tests if any of the functions in Player.lua crashes
   assertTrue(runPlayerFunctions())
