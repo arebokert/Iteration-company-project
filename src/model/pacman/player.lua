@@ -2,7 +2,7 @@ Player = {}
 
 function Player:movement()
   -- Set step of each movement 
-  step = 10
+  step = 5
   -- Set new position, based on direction
   oldxpos = self.x
   oldypos = self.y

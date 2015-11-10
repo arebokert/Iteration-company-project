@@ -14,7 +14,6 @@ function gamehandler.startPacman()
   gameplan = Gameplan:new()
   gameplan:loadMap()
   gameplan:displayMap()
-
   gameStatus = true
 end
 

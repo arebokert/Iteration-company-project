@@ -32,8 +32,8 @@ end
 
 function Gameplan:loadMap()
     local filename = root_path .. 'model/pacman/map1.txt'
-
-    screen:clear({r=0, g=100, b=20})
+    pacmanbg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
+    screen:copyfrom(pacmanbg, nil)
     local file = io.open(filename, "r")
     local tbllines = {}
     local result = {}
@@ -59,27 +59,28 @@ end
 
 function createWall(block)
     local w = gfx.new_surface(block, block)
-    w:clear({r=0, g=0, b=0})
+    w:clear({r=0, g=0, b=200})
     return w
 end
 
 function createAisle(block)
     local a = gfx.new_surface(block, block)
-    a:clear({r=200, g=200, b=200})
+    a:clear({r=0, g=0, b=0})
     return a
 end
 
-function createYellowDot(psize, ppos)
+function createYellowDot(psize)
     local dot = gfx.new_surface(psize, psize)
     dot:clear({r=255, g=255, b=51})
-    --container:copyfrom(dot, nil, ppos)
     return dot
 end
 
 
 -- Print a yellow dot to a cell
+--@param cell: The cell-value in cell coordiantes
 function Gameplan:printYellowDot(cell)
-    local dotpos = {x = (cell.x-1)*self.block +18, y = (cell.y-1)*self.block +18 }--position of yellow dot
+    local dotoffset = math.ceil((self.block - self.dsize)/2)  
+    local dotpos = {x = (cell.x-1)*self.block + dotoffset, y = (cell.y-1)*self.block + dotoffset}--position of yellow dot
     local absPos = self:relativeToAbsolutePosition(dotpos.x, dotpos.y)
     screen:copyfrom(background["d"], nil, absPos) --print yellow dot
 end
@@ -87,7 +88,6 @@ end
 
 function Gameplan:displayMap(container, map)
     self.logicalMap = {}
-
     map = self.map
     container_width = 1000
     container_height = 600
@@ -96,7 +96,7 @@ function Gameplan:displayMap(container, map)
 
 
     self.block = container_width / self.xcells
-    self.dsize = 14
+    self.dsize = math.ceil(self.block / 7)
 
     background = {}
     -- 1 <=> wall
@@ -110,23 +110,26 @@ function Gameplan:displayMap(container, map)
         collectgarbage()
         self.logicalMap[key] = {}
         for i = 1, #value do
-
-            local pos = {x = (i-1)*self.block, y = (key-1)*self.block }
-            local dotpos = {x = (i-1)*self.block +18, y = (key-1)*self.block +18 }--position of yellow dot
-            local c = value:sub(i,i)
+            
+              local pos = {x = (i-1)*self.block, y = (key-1)*self.block }
+              local dotoffset = math.ceil((self.block - self.dsize)/2)
+              local dotpos = {x = (i-1)*self.block + dotoffset, y = (key-1)*self.block + dotoffset}--position of yellow dot
+              local c = value:sub(i,i)
             if c == "1" or c == "0" then
                 container:copyfrom(background[c], nil, pos)
                 if c == "0" then
-                    container:copyfrom(background["d"], nil, dotpos) --print yellow dot
+                  container:copyfrom(background["d"], nil, dotpos) --print yellow dot
                 end
+            elseif c == "D" then
+              self:paintdoor({x=i, y=key})
             elseif c == "S" then
                 -- STARTPOSITION
                 pacman = Player:new("pacman")   -- Initiate object
                 -- Start position for pacman
                 pacman:setPos(pos.x, pos.y)
-                pacman.bg = gfx.new_surface(50,50)
+                pacman.bg = gfx.new_surface(self.block,self.block)
                 --pacman.bg:clear({r=255,g=255,b=51})
-                pacman.bg = gfx.loadpng('views/pacman/data/pacman50px.png')
+                pacman.bg = gfx.loadpng('views/pacman/data/pacman25px.png')
                 -- BAD SOLUTION!!!
                 container:copyfrom(background["0"], nil, pos)
                 pacman.bg:premultiply()
@@ -137,9 +140,9 @@ function Gameplan:displayMap(container, map)
                 -- BAD SOLUTION!!!
                 blinky = Player:new("ghost")
                 blinky:setPos(pos.x, pos.y)
-                blinky.bg = gfx.new_surface(50,50)
+                blinky.bg = gfx.new_surface(self.block,self.block)
                 -- blinky.bg:clear({r=0,g=255,b=51})
-                blinky.bg = gfx.loadpng('views/pacman/data/ghost50.png')
+                blinky.bg = gfx.loadpng('views/pacman/data/ghost25.png')
                 container:copyfrom(background["0"], nil, pos)
                 blinky.bg:premultiply()
                 container:copyfrom(blinky.bg, nil, blinky:getPos())
@@ -153,11 +156,17 @@ function Gameplan:displayMap(container, map)
         --yellowdotmatrix = yellowDotStatus(map)
 
     end
-
+    yellowdotmatrix = yellowDotStatus(map)
     screen:copyfrom(container, nil, self.containerpos)
 
     -- Update GFX
     gfx.update()
+end
+
+function Gameplan:paintdoor(cell) 
+  door = gfx.new_surface(self.block,self.block)
+  door:clear({r=200,g=80,b=51})
+  screen:copyfrom(door, nil, self:cellToXY(cell))
 end
 
 
@@ -172,11 +181,13 @@ function Gameplan:repaint(player, oldPos)
         -- If player not pacman, print yellow dot.
         local cell = self:xyToCell(oldPos.x, oldPos.y)
         if player.direction == "left" then
-            cell = self:xyToCell(oldPos.x + 50 -1, oldPos.y)
+            cell = self:xyToCell(oldPos.x + self.block -1, oldPos.y)
         elseif player.direction == "up" then
-            cell = self:xyToCell(oldPos.x, oldPos.y + 50 -1)
+            cell = self:xyToCell(oldPos.x, oldPos.y + self.block -1)
         end
-        self:printYellowDot(cell)
+        if checkDotStatus(cell) == true then
+          self:printYellowDot(cell)
+        end  
     end
 
     local absPos = self:relativeToAbsolutePosition(player:getPos().x,player:getPos().y)
@@ -211,7 +222,6 @@ function Gameplan:xyToCell(x,y)
     local xcell = math.ceil( (x+1)/self.block )
     local ycell = math.ceil( (y+1)/self.block )
     local pos = {x=xcell, y=ycell}
-
     return pos
 end
 
@@ -224,17 +234,17 @@ function Gameplan:possibleMovement(direction, new_pos)
     local new_cell2 = self:xyToCell(target.x, target.y)
 
     if direction == "right" then
-        new_cell = self:xyToCell(target.x + 50 - 1, target.y)
-        new_cell2 = self:xyToCell(target.x + 50 - 1, target.y + 50 - 1 )
+        new_cell = self:xyToCell(target.x + self.block - 1, target.y)
+        new_cell2 = self:xyToCell(target.x + self.block - 1, target.y + self.block - 1 )
     elseif direction == "down" then
-        new_cell = self:xyToCell(target.x, target.y + 50 -1)
-        new_cell2 = self:xyToCell(target.x + 50 - 1, target.y + 50 - 1 )
+        new_cell = self:xyToCell(target.x, target.y + self.block -1)
+        new_cell2 = self:xyToCell(target.x + self.block - 1, target.y + self.block - 1 )
     elseif direction == "left" then
         new_cell = self:xyToCell(target.x, target.y)
-        new_cell2 = self:xyToCell(target.x, target.y + 50 - 1 )
+        new_cell2 = self:xyToCell(target.x, target.y + self.block - 1 )
     elseif direction == "up" then
         new_cell = self:xyToCell(target.x, target.y)
-        new_cell2 = self:xyToCell(target.x + 50 -1, target.y)
+        new_cell2 = self:xyToCell(target.x + self.block -1, target.y)
     end
 
     local new_cell_content = self:checkMap(new_cell)
@@ -253,16 +263,16 @@ function Gameplan:getPossibleMovements(position)
     local pos = {}
     pos.x = position.x
     pos.y = position.y
-    local step = 10
+    local step = 5
     for k, v in pairs(directions) do
         if k == "left" then
-            pos.x = position.x - 10
+            pos.x = position.x - step
         elseif k == "right" then
-            pos.x = position.x + 10
+            pos.x = position.x + step
         elseif k == "up" then
-            pos.y = position.y + 10
+            pos.y = position.y + step
         elseif k == "down" then
-            pos.y = position.y - 10
+            pos.y = position.y - step
         end
         directions[k] = self:possibleMovement(k, pos)
     end
@@ -287,6 +297,9 @@ function Gameplan:refresh()
             local oldPos = player:getPos()
             player:setPos(new_pos.x, new_pos.y)
             self:repaint(player, oldPos)
+            if player.type == "pacman" then
+               updateDotStatus(self:xyToCell(new_pos.x,new_pos.y))
+            end
         end
         if self:possibleMovement(player.direction, new_pos) == false  then
             -- New cell is a wall, not ok!
@@ -296,8 +309,7 @@ function Gameplan:refresh()
         end
     end
 
-
-    return not checkCollision(self.players)
+    return not checkCollision(self.players[1],self.players[2])
 end
 
 
@@ -319,6 +331,7 @@ end
 
 -- Creates a matrix that describes if a cell has a yellow dot or not 
 --  True means that it has a yellow dot
+-- Should be run when map is instantiated
 function yellowDotStatus(map)
     dotmatrix = {}
     for key, value in pairs(map) do
@@ -326,9 +339,9 @@ function yellowDotStatus(map)
         for i = 1, #value do
             local c = value:sub(i,i)
             if c == "0" then
-                dotmatrix[key][i] = "True"
+                dotmatrix[key][i] = true
             else
-                dotmatrix[key][i] = "False"
+                dotmatrix[key][i] = false
             end
         end
     end
@@ -337,7 +350,7 @@ end
 
 -- Updates cells to not have a yellow dot
 function updateDotStatus(pos)
-    yellowdotmatrix[pos.y][pos.x] = "False"
+    yellowdotmatrix[pos.y][pos.x] = "false"
 end
 
 -- Checks if a cell has a yellow dot
