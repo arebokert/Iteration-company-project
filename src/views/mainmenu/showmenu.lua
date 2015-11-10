@@ -8,7 +8,7 @@ function showmenu.loadMainMenu()
     options[1] = {title = "Game",
         action = function()
             activeMenu = secondary
-            --secondary:setActive(1)
+            secondary:setActive(1)
             return "Return Option1"
         end,
         hover = function()
