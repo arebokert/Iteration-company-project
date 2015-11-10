@@ -46,6 +46,7 @@ function loadHighscore(gameName)
   
   -- Filename is e.g. "pacmanHighscore"
   local fileName = gameName.."Highscore"
+  local rawJsonString
   
   -- If the file does not exists, nothing happens.
   local f = io.open(fileName, "r")
@@ -65,6 +66,7 @@ end
 
 -- Inserts a highscore into highscoreTable, in descending order.
 -- @param a - The highscore-object to be inserted.
+-- @param o - The object (self) to insert into.
 function insert(a, o)
 
   if o.highscoreTable[1] == nil then
