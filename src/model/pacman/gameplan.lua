@@ -5,6 +5,7 @@
 
 require("model.pacman.dumper")
 require("model.pacman.collisionhandler")
+GameplanGraphics = require("model.pacman.gameplangraphics")
 
 -- Define a shortcut function for testing
 function dump(...)
@@ -26,6 +27,7 @@ function Gameplan:new ()
     return obj
 end
 
+
 --
 -- Load the pacman map. 
 --
@@ -37,28 +39,28 @@ function Gameplan:loadMap(map)
     
     -- The map file
     local filename = root_path .. 'model/pacman/' .. map
-  
     local file = io.open(filename, "r")
-    local tbllines = {}
-    local result = {}
+    local tabellines = {}
     local i = 0
-    local j = 0
-
+    
+    -- Read the map-file and save to an ixj-array. If no file is found, return false. 
     if file then
         for line in file:lines() do
             i = i + 1
-
-            tbllines[i] = line
-            j = string.len(line)
+            tabellines[i] = line
         end
         io.close(file)
     else
         error('file not found')
+        -- No file found, return false. 
+        return false
     end
-
-    self.map = tbllines
+    
+    self.map = tabellines
     self.ycells = i
-    self.xcells = j
+    self.xcells = string.len(tabellines[1])
+    -- File is saved to a table, return true. 
+    return true
 end
 
 
@@ -80,29 +82,6 @@ end
 function Gameplan:setPacmanDirection(dir)
     pacman_direction = dir
     self.players[1].direction = dir
-end
-
-
-
-
-
-
-function createWall(block)
-    local w = gfx.new_surface(block, block)
-    w:clear({r=0, g=0, b=200})
-    return w
-end
-
-function createAisle(block)
-    local a = gfx.new_surface(block, block)
-    a:clear({r=0, g=0, b=0})
-    return a
-end
-
-function createYellowDot(psize)
-    local dot = gfx.new_surface(psize, psize)
-    dot:clear({r=255, g=255, b=51})
-    return dot
 end
 
 
@@ -130,11 +109,11 @@ function Gameplan:displayMap(container, map)
 
     background = {}
     -- 1 <=> wall
-    background["1"] = createWall(self.block)
+    background["1"] = GameplanGraphics.createWall(self.block)
     -- 0 <=> aisle
-    background["0"] = createAisle(self.block)
+    background["0"] = GameplanGraphics.createAisle(self.block)
     -- 0 <=> yellow dot
-    background["d"] = createYellowDot(self.dsize)
+    background["d"] = GameplanGraphics.createYellowDot(self.dsize)
 
     for key, value in pairs(map) do
         collectgarbage()
@@ -285,7 +264,6 @@ function Gameplan:possibleMovement(direction, new_pos)
     else
         return false
     end
-
 end
 
 function Gameplan:getPossibleMovements(position)
@@ -308,8 +286,8 @@ function Gameplan:getPossibleMovements(position)
     end
 
     return directions
-
 end
+
 
 
 function Gameplan:refresh()
@@ -343,9 +321,9 @@ function Gameplan:refresh()
 end
 
 
+
 function Gameplan:dumpPlayerPos()
     -- dump(self.players)
-
     for k,player in pairs(self.players) do
         local pos = player:getPos()
         ADLogger.trace("PLAYERS:")

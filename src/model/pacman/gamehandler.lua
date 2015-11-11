@@ -23,7 +23,10 @@ function Gamehandler.startPacman()
   
   -- Choose map to load 
   local map = 'map1.txt'  
-  gameplan:loadMap(map)
+  if gameplan:loadMap(map) == false then
+    -- Return false if the map is not found. 
+    return false
+  end 
   
   -- Display the map 
   gameplan:displayMap()
