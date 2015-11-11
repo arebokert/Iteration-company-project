@@ -20,15 +20,8 @@ function showmenu.loadMainMenu()
             return true
         end,
         button = datapath .. '/games-normal.png',
-        button_marked =datapath .. '/games-selected.png',
-        leave = function()
-            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
-            screen:copyfrom(bg, nil)
-            bg:destroy()
-            gfx.update()
-            return true
-        end}
-
+        button_marked =datapath .. '/games-selected.png'
+    }
     options[2] = {title = "HighScore",
         action = function()
             return "Return Option2"
@@ -42,14 +35,8 @@ function showmenu.loadMainMenu()
             return true
         end,
         button =datapath..'/highscore-normal.png',
-        button_marked = datapath .. '/highscore-selected.png',
-        leave = function()
-            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
-            screen:copyfrom(bg, nil)
-            bg:destroy()
-            gfx.update()
-            return true
-        end }
+        button_marked = datapath .. '/highscore-selected.png'
+    }
 
 	options[3] = {title = "Multiplayer",
         action = function()
@@ -63,10 +50,8 @@ function showmenu.loadMainMenu()
             return true
         end,
         button = datapath .. '/multi-normal.png',
-        button_marked = datapath .. '/multi-selected.png',
-        leave = function()
-            return true
-        end}
+        button_marked = datapath .. '/multi-selected.png'
+    }
 	
     options[4] = {title = "Exit",
         action = function()
@@ -80,10 +65,8 @@ function showmenu.loadMainMenu()
             return true
         end,
         button = datapath .. '/exit-normal.png',
-        button_marked = datapath .. '/exit-selected.png',
-        leave = function()
-            return true
-        end}
+        button_marked = datapath .. '/exit-selected.png'
+    }
 
     _G.mainMenu = Menu:new()
     mainMenu:setOptions(options)
@@ -132,41 +115,9 @@ function showmenu.loadSecondaryMenu()
             return true
         end,
         button = datapath .. '/startgame.png',
-        button_marked = datapath .. '/startgame-marked.png',
-        leave = function()
-            return true
-        end}
-        --[[
-    o[2] = {title = "HighScore",
-        action = function()
-            -- action
-            return "Return HighScore"
-        end,
-        hover = function()
-           return true
-        end,
-        button = datapath .. '/highscore.png',
-        button_marked = datapath .. '/startgame-marked.png',
-        hover = function()
-            return true
-        end,
-        leave = function()
-            return true
-        end}
-    o[3] = {title = "Settings",
-        action = function()
-            -- action
-            return "Return Option2"
-        end,
-        hover = function()
-            return true
-        end,
-        button = datapath .. '/startgame.png',
-        button_marked = datapath .. '/startgame-marked.png',
-        leave = function()
-            return true
-        end}
-        --]]
+        button_marked = datapath .. '/startgame-marked.png'
+    }
+
     _G.secondary = Menu:new()
     secondary:setOptions(o)
 

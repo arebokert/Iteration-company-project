@@ -1,5 +1,7 @@
 Menu = {title = "Main Menu"}
 
+-- Creates a new menu object
+-- @return obj - the menu object that was created
 function Menu:new ()
     obj = {}   -- create object if user does not provide one
     setmetatable(obj, self)
@@ -7,13 +9,16 @@ function Menu:new ()
     return obj
 end
 
-
+-- Sets the options of the menu
+-- @param  options -  a table containing the options to be added to the menu
 function Menu:setOptions(options)
     self.options = options
     self.size = #options -- # is the length operator in Lua
     ADLogger.trace("Menu initiated")
 end
 
+-- Loads a highscore-table from file, if it does not exist it returns an empty (new) table.
+-- @param  a - an integer representing which item in the menu to be active
 function Menu:setActive(a)
     ADLogger.trace("SET ACTIVE")
     self.active = a
