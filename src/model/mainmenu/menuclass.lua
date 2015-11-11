@@ -21,14 +21,23 @@ function Menu:setActive(a)
     self.container:clear()
 
     for i = 1,self.size do
-        activeButtonPos = self.options[i].buttonPos
-
-        if i == a then
+        if (((i == a) and (a ~=3)) or ((i == a) and (a == 3) and (hasInternet==true))) then
+			activeButtonPos = self.options[i].buttonPos
             activeButton = gfx.loadpng(self.options[i].button_marked)
             self.options[a].hover()
-        else
-           activeButton = gfx.loadpng(self.options[i].button)
-        end
+		else
+			activeButtonPos = self.options[i].buttonPos
+			activeButton = gfx.loadpng(self.options[i].button)
+		end
+		if ((i ~= a) and (a == 3) and (hasInternet==false)) then
+			activeButtonPos = self.options[i].buttonPos
+			activeButton = gfx.loadpng(self.options[i].button)
+		end
+		if ((i == a) and (a == 3) and (hasInternet==false)) then
+			activeButtonPos = self.options[i].buttonPos
+			activeButton = gfx.loadpng(self.options[i].button)
+			a = a+1
+		end
         self.container:copyfrom(activeButton, nil , activeButtonPos)
         activeButton:destroy()
     end
@@ -46,7 +55,9 @@ end
 
 function Menu:next()
     local next = self.active + 1
-
+	if ((next == 3) and (hasInternet==false)) then
+		next = next+1
+	end
     if (self.active + 1) > self.size then
         next = 1
     end
@@ -56,7 +67,10 @@ end
 
 function Menu:prev()
     local prev = self.active - 1
-    if self.active - 1 < 1 then
+    if ((prev == 3) and (hasInternet==false)) then
+		prev = prev-1
+	end
+	if self.active - 1 < 1 then
         prev = self.size
     end
 
@@ -69,6 +83,13 @@ end
 
 function Menu:hover()
     self.options[self.active].hover()
+end
+
+function Menu:printSub(container)
+    self.container = container
+    width = container:get_width()
+    height = container:get_height()
+    screen:copyfrom(container, nil, self.containerPos)
 end
 
 function Menu:print(container, startx, starty, m)
