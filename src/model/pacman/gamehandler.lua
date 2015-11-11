@@ -1,4 +1,4 @@
-gamehandler = {}
+Gamehandler = {}
 
 Gameplan = require "model.pacman.gameplan"
 require("model.pacman.player")
@@ -6,28 +6,34 @@ require("model.pacman.player")
 --
 -- Load a game of pacman 
 --
-function gamehandler.loadPacman()
+function Gamehandler.loadPacman()
   -- Set the background for the view. 
   local pacmanbg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
   screen:copyfrom(pacmanbg, nil)
   pacmanbg:destroy()
   
   -- Initiate pacman 
-  gamehandler.startPacman()
+  Gamehandler.startPacman()
 end
 
 
-function gamehandler.startPacman()
-  
-  local map = 'map1.txt'
+function Gamehandler.startPacman()
+  -- Initiate gameplan 
   gameplan = Gameplan:new()
+  
+  -- Choose map to load 
+  local map = 'map1.txt'  
   gameplan:loadMap(map)
+  
+  -- Display the map 
   gameplan:displayMap()
+  
+  -- Gamestatus ? 
   gameStatus = true
 end
 
 
-function gamehandler.refresh()
+function Gamehandler.refresh()
   if gameStatus == true then
     gameStatus = gameplan:refresh()
   elseif gameStatus == false then
@@ -36,7 +42,7 @@ function gamehandler.refresh()
 end
 
 
-function gamehandler.pacmanOnKey(key)
+function Gamehandler.pacmanOnKey(key)
   --For testing
   if key == "0" then
     gameplan:refresh()
@@ -62,7 +68,7 @@ function gamehandler.pacmanOnKey(key)
   end
 
   if key == "1" then
-    gamehandler.startPacman()
+    Gamehandler.startPacman()
   end
 
   if key == "exit" then
@@ -81,9 +87,9 @@ function gamehandler.pacmanOnKey(key)
 end
 
 callback = function(timer)
-    gamehandler.refresh()
+    Gamehandler.refresh()
 end
-return gamehandler
+return Gamehandler
 
 
 
