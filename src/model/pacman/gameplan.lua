@@ -138,7 +138,13 @@ function Gameplan:displayMap(container, map)
                 pacman:setPos(pos.x, pos.y)
                 pacman.bg = gfx.new_surface(self.block,self.block)
                 --pacman.bg:clear({r=255,g=255,b=51})
-                pacman.bg = gfx.loadpng('views/pacman/data/pacman25px.png')
+                
+                 -- pacman attributes to keep track of picture for animation
+                pacman.moveanim = 1
+                pacman.picture0 = 'views/pacman/data/pacmanright0.png'
+                pacman.picture1 = 'views/pacman/data/pacmanright1.png'
+                pacman.bg = gfx.loadpng(pacman.picture1)
+                
                 -- BAD SOLUTION!!!
                 container:copyfrom(background["0"], nil, pos)
                 pacman.bg:premultiply()
@@ -151,7 +157,14 @@ function Gameplan:displayMap(container, map)
                 blinky:setPos(pos.x, pos.y)
                 blinky.bg = gfx.new_surface(self.block,self.block)
                 -- blinky.bg:clear({r=0,g=255,b=51})
-                blinky.bg = gfx.loadpng('views/pacman/data/ghost25.png')
+                
+                 -- ghost attributes to keep track of picture for animation
+                blinky.moveanim = 1
+                blinky.picture0 = 'views/pacman/data/blinkyright0.png'
+                blinky.picture1 = 'views/pacman/data/blinkyright1.png'
+                blinky.ghostname = "blinky"
+                blinky.bg = gfx.loadpng(blinky.picture1)
+                
                 container:copyfrom(background["0"], nil, pos)
                 blinky.bg:premultiply()
                 container:copyfrom(blinky.bg, nil, blinky:getPos())
@@ -288,6 +301,28 @@ function Gameplan:getPossibleMovements(position)
     return directions
 end
 
+-- function to update direction of player picture depending on direction
+function Gameplan:updatePlayerRotation(player)       
+  if player.type == "pacman" then
+    player.picture0 = 'views/pacman/data/'..player.type..player.direction..'0'..'.png'
+    player.picture1 = 'views/pacman/data/'..player.type..player.direction..'1'..'.png'
+  else
+    player.picture0 = 'views/pacman/data/'..player.ghostname..player.direction..'0'..'.png'
+    player.picture1 = 'views/pacman/data/'..player.ghostname..player.direction..'1'..'.png'
+   end
+end
+
+-- function that change between different pictures (animation) each time a player moves to new cell
+function Gameplan:updatePlayerGraphic(player)
+    self:updatePlayerRotation(player)
+    if player.moveanim == 0 then
+      player.bg = gfx.loadpng(player.picture0)
+      player.moveanim = 1
+    elseif player.moveanim == 1 then 
+      player.bg = gfx.loadpng(player.picture1)
+      player.moveanim = 0
+    end  
+end
 
 
 function Gameplan:refresh()
@@ -304,6 +339,8 @@ function Gameplan:refresh()
         if self:possibleMovement(player.direction, new_pos) == true then
             local oldPos = player:getPos()
             player:setPos(new_pos.x, new_pos.y)
+            
+            self:updatePlayerGraphic(player)  
             self:repaint(player, oldPos)
             if player.type == "pacman" then
                updateDotStatus(self:xyToCell(new_pos.x,new_pos.y))
