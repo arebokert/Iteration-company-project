@@ -3,8 +3,6 @@
 ---- Relative position starts at (0,0)
 ---- Cell grid position starts at (1,1)  
 
-Gameplan = {}
-
 require("model.pacman.dumper")
 require("model.pacman.collisionhandler")
 
@@ -13,20 +11,14 @@ function dump(...)
     print(DataDumper(...), "\n---")
 end
 
-function Gameplan:addPlayer(player)
-    if self.players == nil then
-        self.players = {}
-    end
-    table.insert(self.players, player)
-end
+
+-- The Gameplan class. 
+Gameplan = {}
 
 
-function Gameplan:setPacmanDirection(dir)
-    pacman_direction = dir
-    self.players[1].direction = dir
-end
-
-
+--
+-- Create an instance of a gameplan. 
+--
 function Gameplan:new ()
     obj = {}   -- create object if user does not provide one
     setmetatable(obj, self)
@@ -34,11 +26,18 @@ function Gameplan:new ()
     return obj
 end
 
-
-function Gameplan:loadMap()
-    local filename = root_path .. 'model/pacman/map1.txt'
-    pacmanbg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
-    screen:copyfrom(pacmanbg, nil)
+--
+-- Load the pacman map. 
+--
+function Gameplan:loadMap(map)
+    -- If map is not specified, default is "map1.txt"
+    if map == nil then
+      map = 'map1.txt'
+    end
+    
+    -- The map file
+    local filename = root_path .. 'model/pacman/' .. map
+  
     local file = io.open(filename, "r")
     local tbllines = {}
     local result = {}
@@ -61,6 +60,32 @@ function Gameplan:loadMap()
     self.ycells = i
     self.xcells = j
 end
+
+
+
+-- 
+-- Function to add a player to a gameplan. 
+--
+function Gameplan:addPlayer(player)
+    if self.players == nil then
+        self.players = {}
+    end
+    table.insert(self.players, player)
+end
+
+
+--
+-- Set direction of pacman. Obs! Hardcoded as player 1, needs to be adjusted. 
+--
+function Gameplan:setPacmanDirection(dir)
+    pacman_direction = dir
+    self.players[1].direction = dir
+end
+
+
+
+
+
 
 function createWall(block)
     local w = gfx.new_surface(block, block)

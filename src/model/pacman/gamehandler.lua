@@ -3,16 +3,25 @@ gamehandler = {}
 Gameplan = require "model.pacman.gameplan"
 require("model.pacman.player")
 
-
+--
+-- Load a game of pacman 
+--
 function gamehandler.loadPacman()
+  -- Set the background for the view. 
+  local pacmanbg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
+  screen:copyfrom(pacmanbg, nil)
+  pacmanbg:destroy()
+  
+  -- Initiate pacman 
   gamehandler.startPacman()
 end
 
 
 function gamehandler.startPacman()
-
+  
+  local map = 'map1.txt'
   gameplan = Gameplan:new()
-  gameplan:loadMap()
+  gameplan:loadMap(map)
   gameplan:displayMap()
   gameStatus = true
 end
