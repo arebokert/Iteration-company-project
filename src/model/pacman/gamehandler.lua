@@ -28,8 +28,12 @@ function Gamehandler.startPacman()
     return false
   end 
   
-  -- Display the map 
-  gameplan:displayMap()
+  -- Display the map on a container
+  container_width = 1000
+  container_height = 600
+  container = gfx.new_surface(container_width, container_height)
+  containerPos = {x = 140, y = 60}
+  gameplan:displayMap(container, containerPos)
   
   -- Gamestatus ? 
   gameStatus = true
