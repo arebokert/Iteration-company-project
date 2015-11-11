@@ -1,3 +1,8 @@
+---- Coords -----
+---- Absolute position starts at (1,1)
+---- Relative position starts at (0,0)
+---- Cell grid position starts at (1,1)  
+
 Gameplan = {}
 
 require("model.pacman.dumper")
