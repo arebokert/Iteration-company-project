@@ -5,12 +5,19 @@ require "highscore"
 HighscoreHandler = {gameName = "", highscoreTable = {}}
 HighscoreHandler.__index = HighscoreHandler
 
--- Constructor for the handler object
--- @param gameName - The name of the game
-function HighscoreHandler:new(gameName)
+-- Constructor for the handler object.
+-- @param gameName - The name of the game.
+-- @param global - A bool to fetch global highscores.
+-- @param numberOfHighscores - The number of highscores to be fetched. Standard is 10.
+function HighscoreHandler:new(gameName, numberOfHighscores, global)
+  numberOfHighscores = numberOfHighscores or 10
   local self = setmetatable({}, self)
   self.gameName = gameName
-  self.highscoreTable = loadHighscore(gameName)
+  if global then
+    -- TODO: Add global highscore fetch.
+  else
+    self.highscoreTable = loadHighscore(gameName, numberOfHighscores)
+  end
   return self
 end
 
@@ -41,12 +48,12 @@ end
 
 -- Loads a highscore-table from file, if it does not exist it returns an empty (new) table.
 -- @param  gameName - The name of the game which highscore should be loaded.
+-- @param  numberOfHighscores - The number of highscores that should be loaded.
 -- @return highscoreTable - The table of highscores from file.
-function loadHighscore(gameName)
+function loadHighscore(gameName, numberOfHighscores)
   
   -- Filename is e.g. "pacmanHighscore"
   local fileName = gameName.."Highscore"
-  local rawJsonString
   
   -- If the file does not exists, nothing happens.
   local f = io.open(fileName, "r")
@@ -59,14 +66,15 @@ function loadHighscore(gameName)
   if rawJsonString == nil then highscoreTable = {} else
     highscoreTable = JSON:decode(rawJsonString)
   end
+
+  if #highscoreTable < numberOfHighscores then numberOfHighscores = #highscoreTable end
   
-  return highscoreTable
+  return {unpack(highscoreTable, 1, numberOfHighscores)}
   
 end
 
 -- Inserts a highscore into highscoreTable, in descending order.
 -- @param a - The highscore-object to be inserted.
--- @param o - The object (self) to insert into.
 function insert(a, o)
 
   if o.highscoreTable[1] == nil then
