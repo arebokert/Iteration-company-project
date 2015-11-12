@@ -1,7 +1,7 @@
 showmenu = {}
 Menu = require "model/mainmenu/menuclass"
 highScoreMenu = require "views/mainmenu/highScoreMenu"
-datapath = "views/mainmenu/data"
+datapath = root_path .. "views/mainmenu/data"
 
 function showmenu.loadMainMenu()
     options = {}
@@ -80,20 +80,34 @@ function showmenu.loadMainMenu()
     gfx.update()
 end
 
+function showmenu.loadBackground()
+  _G.subMenu = Menu:new()
+  subMenuContainer = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
+  
+  subMenuContainer:clear({r=7, g = 19, b=77, a=60}, {x =screen:get_width()/20, y = screen:get_height()/20, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
+ 
+  return subMenuContainer
+end
+
+
 -- mainly show the highscore page
 function showmenu.loadMenu(tag)
-  _G.subMenu = Menu:new()
-  subMenuContainer = gfx.new_surface(screen:get_width(), 2.0*screen:get_height()/3.0)
   
-  subMenuContainer:clear({g=0, r=0, b=255, a=20} )
   --showmenu.writeWord("start", nil, 20, nil, subMenuContainer)
 
   --subMenu.containerPos = {x = 0, y = 0}
   --subMenu:printSub(subMenuContainer)
-  ADLogger.trace("23231232")
+  -- use subMenuContainer as an arguments to your screen, and then show it
+  subMenuContainer = showmenu.loadBackground()
+  
   if(tag == "highScore") then
+  
     highScoreMenu.loadMenu(subMenuContainer)
   elseif(tag == "singlePlayer") then
+  
+  elseif(tag == "multiplayer") then
+  
+  elseif(tag == "exit") then
   
   end
   subMenu:printSub(subMenuContainer)
