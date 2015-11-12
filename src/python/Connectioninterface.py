@@ -1,7 +1,7 @@
 import socket
 import sys
 import json
-import hiscore_handler      #MAKE CORRECT
+import Highscorehandler
 import multiplayer_handler  #MAKE CORRECT
 
 def sendScore(jsonObj):
@@ -57,29 +57,27 @@ while True:
     # RECEIVE DATA
     data = conn.recv(1024)
 
-    # GGGFF   G = game, F = function (Format of incoming string)
 
-    if data[:3] == 'PAC' or '204':
-        if data[4:5] == 'SE':
-            sendScore(data[5:])
-        elif data[4:5] == 'RS':
-            requestGlobalScore(data[5:])
-        elif data[4:5] == 'RO':
-            requestOwnScore(data[5:])
-        elif data[4:5] == 'QS':
-            quickStart(data[5:])
-        elif data[4:5] == 'SS':
-            submitScore(data[5:])
-        elif data[4:5] == 'FG':
-            fetchGames(data[5:])
-        elif data[4:5] == 'FS':
-            fetchStatus(data[5:])
-        elif data[4:5] == 'TG':
-            terminateGame(data[5:])
-        else:
-           print 'Incorrect operation.'
+    # FF   F = function (Format of incoming string)
+
+    if data[:2] == 'SE':
+        sendScore(data[2:])
+    elif data[:2] == 'RS':
+        requestGlobalScore(data[2:])
+    elif data[:2] == 'RO':
+        requestOwnScore(data[2:])
+    elif data[:2] == 'QS':
+        quickStart(data[2:])
+    elif data[:2] == 'SS':
+        submitScore(data[2:])
+    elif data[:2] == 'FG':
+        fetchGames(data[2:])
+    elif data[:2] == 'FS':
+        fetchStatus(data[2:])
+    elif data[:2] == 'TG':
+        terminateGame(data[2:])
     else:
-        print'Incorrect game.'
+       print 'Incorrect operation.'
 
 
     conn.close()    # When we are out of the loop, we're done, close
