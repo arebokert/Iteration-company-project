@@ -47,7 +47,7 @@ function submitGlobalHighscore(playerName, score)
     score = score
   })
   
-  Networkhandler:sendJSON(newHighscore, "sendcode") -- Temporary send code
+  NetworkHandler:sendJSON(newHighscore, "sendcode") -- Temporary send code
 end
 
 -- Saves the array of highscores to the file, in JSON-format.
