@@ -20,7 +20,7 @@ function showmenu.loadMainMenu()
             return true
         end,
         button = datapath .. '/games-normal.png',
-        button_marked =datapath .. '/games-selected.png'
+        button_marked = datapath .. '/games-selected.png'
     }
     options[2] = {title = "HighScore",
         action = function()
@@ -122,6 +122,7 @@ function showmenu.loadSecondaryMenu()
             --action
             activeView = "pacman"
             gamehandler.loadPacman()
+            --controller:loadGame()
 
             return "Start pacman"
         end,

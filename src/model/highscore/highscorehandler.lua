@@ -1,8 +1,8 @@
 local JSON = assert(loadfile "JSON.lua")()
 require "highscore"
 
--- The highscore object
-HighscoreHandler = {gameName = "", highscoreTable = {}}
+-- The highscore object, highscoretable is the number of "active" highscores and fullHighscoreTable is all the highscores. 
+HighscoreHandler = {gameName = "", highscoreTable = {}, fullHighscoreTable = {}}
 HighscoreHandler.__index = HighscoreHandler
 
 -- Constructor for the handler object.
@@ -16,7 +16,9 @@ function HighscoreHandler:new(gameName, numberOfHighscores, global)
   if global then
     -- TODO: Add global highscore fetch.
   else
-    self.highscoreTable = loadHighscore(gameName, numberOfHighscores)
+    self.fullHighscoreTable = loadHighscore(gameName)
+    if #fullHighscoreTable < numberOfHighscores then numberOfHighscores = #fullHighscoreTable end
+    self.highscoreTable = {unpack(fullHighscoreTable, 1, numberOfHighscores)}
   end
   return self
 end
@@ -25,10 +27,27 @@ end
 -- @param playerName - The playername associated with the score.
 -- @param score - The score.
 function HighscoreHandler:newEntry(playerName, score)
-
+  
   local a = Highscore:new(playerName, score)
   insert(a, self)
+  submitGlobalHighscore(playerName, score)
 
+end
+
+-- Creates and inserts a new highscore-object in to the global highscore list
+-- @param playerName - The playername associated with the score.
+-- @param score - The score.
+function submitGlobalHighscore(playerName, score)
+  local macAddress = "00-00-00-00-00-00-00-E0" -- Temporary hardcoded mac address
+  
+  local newHighscore = JSON:encode({
+    macAddress = macAddress,
+    gameName = self.gameName,
+    playerName = playerName,
+    score = score
+  })
+  
+  NetworkHandler:sendJSON(newHighscore, "sendcode") -- Temporary send code
 end
 
 -- Saves the array of highscores to the file, in JSON-format.
@@ -40,7 +59,7 @@ function HighscoreHandler:saveHighscore()
   local f = io.open(fileName, "w")
   
   -- Encodes into JSON and writes to file
-  f:write(JSON:encode(highscoreTable))
+  f:write(JSON:encode(fullHighscoreTable))
 
   f:close()
   
@@ -48,9 +67,8 @@ end
 
 -- Loads a highscore-table from file, if it does not exist it returns an empty (new) table.
 -- @param  gameName - The name of the game which highscore should be loaded.
--- @param  numberOfHighscores - The number of highscores that should be loaded.
--- @return highscoreTable - The table of highscores from file.
-function loadHighscore(gameName, numberOfHighscores)
+-- @return fullHighscoreTable - The table of highscores from file.
+function loadHighscore(gameName)
   
   -- Filename is e.g. "pacmanHighscore"
   local fileName = gameName.."Highscore"
@@ -63,13 +81,11 @@ function loadHighscore(gameName, numberOfHighscores)
   end
 
   -- If the file is not loaded, creates an empty table, otherwise it decodes the JSON-data to a table.
-  if rawJsonString == nil then highscoreTable = {} else
-    highscoreTable = JSON:decode(rawJsonString)
+  if rawJsonString == nil then fullHighscoreTable = {} else
+    fullHighscoreTable = JSON:decode(rawJsonString)
   end
-
-  if #highscoreTable < numberOfHighscores then numberOfHighscores = #highscoreTable end
   
-  return {unpack(highscoreTable, 1, numberOfHighscores)}
+  return fullHighscoreTable
   
 end
 
@@ -77,20 +93,21 @@ end
 -- @param a - The highscore-object to be inserted.
 function insert(a, o)
 
-  if o.highscoreTable[1] == nil then
-    o.highscoreTable[1] = a
+  if o.fullHighscoreTable[1] == nil then
+    o.fullHighscoreTable[1] = a
   else
 
     local i = 1
 
-    while o.highscoreTable[i].score > a.score do
+    while o.fullHighscoreTable[i].score > a.score do
       i = i + 1
 
-      if(o.highscoreTable[i] == nil) then break end
+      if(o.fullHighscoreTable[i] == nil) then break end
 
     end
 
-    table.insert(o.highscoreTable, i, a)
+    table.insert(o.fullHighscoreTable, i, a)
+    o.highscoreTable = {unpack(o.fullHighscoreTable, 1, #o.highscoreTable)}
 
   end
 
