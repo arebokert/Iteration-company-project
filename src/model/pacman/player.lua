@@ -25,6 +25,7 @@ function Player:movement(gameplan)
   if self.direction == "down" then
       new_pos.y = self.y + step
   end 
+
   if self.type == "ghost" then
     self:changeGhostDir(gameplan,new_pos)
   end
@@ -34,8 +35,8 @@ end
 
 -- This function checks which possible direction the ghost can move, and randomizes which way to go
 -- This enables the ghost to change direction when a new aisle appears
--- @param: gameplan: the gameplan
--- @param: new_pos: The pos that ghost is at
+-- @gameplan: the gameplan
+-- @new_pos: The pos that ghost is at
 function Player:changeGhostDir(gameplan,new_pos)
 
     local posdir = {}
@@ -48,27 +49,18 @@ function Player:changeGhostDir(gameplan,new_pos)
       end
     end  
     local newdir = posdir[math.random(count-1)]
-    if newdir == "left" then
-        if self.direction ~= "right" then
-          self.direction = newdir
-        end
+    if newdir == "left" and self.direction ~= "right" then
+       self.direction = newdir
     end
-    if newdir == "right" then
-        if self.direction ~= "left" then
-          self.direction = newdir
-        end
+    if newdir == "right" and self.direction ~= "left" then
+       self.direction = newdir
     end
-    if newdir == "up" then
-        if self.direction ~= "down" then
-          self.direction = newdir
-        end
+    if newdir == "up" and self.direction ~= "down" then
+       self.direction = newdir
     end
-    if newdir == "down" then
-        if self.direction ~= "up" then
-          self.direction = newdir
-        end
+    if newdir == "down" and self.direction ~= "up" then
+       self.direction = newdir
     end
-
 end
 
 function Player:new (type)

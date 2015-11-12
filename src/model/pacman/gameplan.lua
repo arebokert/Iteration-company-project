@@ -154,6 +154,7 @@ function Gameplan:displayMap(container, containerPos)
                 end 
             elseif c == "D" then
                 --self:paintdoor({x=i, y=key})
+                container:copyfrom(bg["0"], nil, pos)
                 container:copyfrom(bg["D"], nil, pos)
             elseif c == "S" then
                 -- STARTPOSITION
@@ -354,10 +355,6 @@ function Gameplan:refresh()
 
     for k,player in pairs(self.players) do
         local new_pos = player:movement(self)
-
-        if player.type ~= "pacman" then
-            local dir = self:getPossibleMovements(player:getPos())
-        end
 
         -- New cell is an aisle, OK!
         if self:possibleMovement(player.direction, new_pos) == true then
