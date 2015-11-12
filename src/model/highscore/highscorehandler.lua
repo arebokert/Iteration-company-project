@@ -27,10 +27,27 @@ end
 -- @param playerName - The playername associated with the score.
 -- @param score - The score.
 function HighscoreHandler:newEntry(playerName, score)
-
+  
   local a = Highscore:new(playerName, score)
   insert(a, self)
+  submitGlobalHighscore(playerName, score)
 
+end
+
+-- Creates and inserts a new highscore-object in to the global highscore list
+-- @param playerName - The playername associated with the score.
+-- @param score - The score.
+function submitGlobalHighscore(playerName, score)
+  local macAddress = "00-00-00-00-00-00-00-E0" -- Temporary hardcoded mac address
+  
+  local newHighscore = JSON:encode({
+    macAddress = macAddress,
+    gameName = self.gameName,
+    playerName = playerName,
+    score = score
+  })
+  
+  Networkhandler:sendJSON(newHighscore, "sendcode") -- Temporary send code
 end
 
 -- Saves the array of highscores to the file, in JSON-format.
