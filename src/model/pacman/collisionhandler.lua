@@ -1,26 +1,22 @@
-require("model.pacman.dumper")
--- Define a shortcut function for testing
-function dump(...)
-  print(DataDumper(...), "\n---")
-end
-
-function checkCollision(x)
-
-  pacman = x[1]
-  blinky = x[2]
-  
-  if inRange(blinky.x + 1, pacman.x, pacman.x + 50) or inRange(pacman.x + 1, blinky.x, blinky.x + 50) then
-    if inRange(blinky.y + 1, pacman.y, pacman.y + 50) or inRange(pacman.y + 1, blinky.y, blinky.y + 50) then
---      ADLogger.trace("KROCK")
+--This function checks whether two object with a block size has collided (preferably rewritten to work with all objects)
+--@param: player1 - the first player that is to be checked for collision
+--@param: player1 - the second player that is to be checked for collision
+--return: true if collison
+--return: false if no collison
+function checkCollision(player1, player2)
+  local block = 25
+  if inRange(player2.x + 1, player1.x, player1.x + block) or inRange(player1.x + 1, player2.x, player2.x + block) then
+    if inRange(player2.y + 1, player1.y, player1.y + block) or inRange(player1.y + 1, player2.y, player2.y + block) then
       return true
     end
   end    
---  ADLogger.trace("INTE KROCK")
-  
   return false
-  
 end
 
+--This function checks if one number is in a range (strict comparison)
+--@param compare: the number to be checked if in range
+--@param start: lower boundary of range
+--@param stop: upper boundary of range
 function inRange(compare, start, stop)
 
   if compare > start then
