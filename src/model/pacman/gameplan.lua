@@ -124,6 +124,7 @@ function Gameplan:displayMap(container, containerPos)
     self.containerpos = containerPos
     self.container_width = container:get_width()
     self.container_height = container:get_height()
+
     
     -- Block-size is calculated as width/number of x-cells 
     self.block = self.container_width / self.xcells
@@ -303,20 +304,23 @@ end
 function Gameplan:getPossibleMovements(position)
     local directions = {left = false, right = false, up = false, down = false}
     local pos = {}
-    pos.x = position.x
-    pos.y = position.y
     local step = 5
     for k, v in pairs(directions) do
+        pos.x = position.x
+        pos.y = position.y
         if k == "left" then
             pos.x = position.x - step
+            directions.left = self:possibleMovement(k, pos)
         elseif k == "right" then
             pos.x = position.x + step
+            directions.right = self:possibleMovement(k, pos)
         elseif k == "up" then
-            pos.y = position.y + step
-        elseif k == "down" then
             pos.y = position.y - step
+            directions.up = self:possibleMovement(k, pos)
+        elseif k == "down" then
+            pos.y = position.y + step
+            directions.down = self:possibleMovement(k, pos)
         end
-        directions[k] = self:possibleMovement(k, pos)
     end
 
     return directions
@@ -349,7 +353,7 @@ end
 function Gameplan:refresh()
 
     for k,player in pairs(self.players) do
-        local new_pos = player:movement()
+        local new_pos = player:movement(self)
 
         if player.type ~= "pacman" then
             local dir = self:getPossibleMovements(player:getPos())
@@ -358,9 +362,17 @@ function Gameplan:refresh()
         -- New cell is an aisle, OK!
         if self:possibleMovement(player.direction, new_pos) == true then
             local oldPos = player:getPos()
-            player:setPos(new_pos.x, new_pos.y)
             
-            self:updatePlayerGraphic(player)  
+            -- If the player enters the "teleportation" aisle he is teleported to the other end
+            -- This requires that the map "teleportation doors" are at the same cell height 
+            if new_pos.x < 0 then
+              new_pos.x = self.container_width - self.block
+            elseif new_pos.x > self.container_width - self.block then
+              new_pos.x = 0
+            end  
+            
+            player:setPos(new_pos.x, new_pos.y)
+            self:updatePlayerGraphic(player)
             self:repaint(player, oldPos)
             if player.type == "pacman" then
                updateDotStatus(self:xyToCell(new_pos.x,new_pos.y))
@@ -373,11 +385,10 @@ function Gameplan:refresh()
             end
         end
     end
-
+    -- checks if there is a collision between pacman and blinky. 
+    -- Should preferably be implemented with a loop to compare all players when more are added.
     return not checkCollision(self.players[1],self.players[2])
 end
-
-
 
 function Gameplan:dumpPlayerPos()
     -- dump(self.players)
