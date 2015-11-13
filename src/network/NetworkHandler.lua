@@ -1,33 +1,33 @@
 socket = require("socket")
 
-function operationAbreviation(operation)
-    if operation == "QuickStart" then
+function convertRequestToPrefix(request)
+    if request == "QuickStart" then
         return "QS"
-    else if operation == "SubmitScore" then
+    else if request == "SubmitScore" then
         return "SS"
-    else if operation == "FetchCurrentGames" then
+    else if request == "FetchCurrentGames" then
         return "FG"
-    else if operation == "FetchStatus" then
+    else if request == "FetchStatus" then
         return "FS"
-    else if operation == "TerminateGame" then
+    else if request == "TerminateGame" then
         return "TG"
-    else if operation == "SendScore" then
+    else if request == "SendScore" then
         return "SE"
-    else if operation == "RequestReadGlobalScore" then
+    else if request == "RequestReadGlobalScore" then
         return "RS"
-    else if operation == "RequestReadYourOwnScore" then
+    else if request == "RequestReadYourOwnScore" then
         return "RO"
     else
         return error("Invalid input")
     end
 end
 
-function sendJSON(JSONObject, operation)
+function sendJSON(JSONObject, request)
 
     --Retrieves the abreviation for the operation
-    operation = operationAbreviation(operation)
+    requestPrefix = convertRequestToPrefix(request)
 
-    if operation == "Invalid input" then
+    if requestPrefix == "Invalid input" then
         error("Invalid operation input!")
     end
 
@@ -37,7 +37,7 @@ function sendJSON(JSONObject, operation)
     assert(connection:connect("2015-1.pumi.ida.liu.se", 24069), "Connection failed!")
 
     -- Concatenates the operation with the JSONObject
-    object = operation .. JSONObject
+    object = requestPrefix .. JSONObject
 
     --Sends the object to the server
     assert(connection:send(object), "Object could not be delivered!")
