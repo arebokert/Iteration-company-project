@@ -1,19 +1,18 @@
 socket = require("socket")
 
 function operationAbreviation(operation)
-
     if operation == "QuickStart" then
         return "QS"
     else if operation == "SubmitScore" then
         return "SS"
     else if operation == "FetchCurrentGames" then
-            return "FG"
+        return "FG"
     else if operation == "FetchStatus" then
-            return "FS"
+        return "FS"
     else if operation == "TerminateGame" then
         return "TG"
     else if operation == "SendScore" then
-            return "SE"
+        return "SE"
     else if operation == "RequestReadGlobalScore" then
         return "RS"
     else if operation == "RequestReadYourOwnScore" then
@@ -46,4 +45,3 @@ function sendJSON(JSONObject, operation)
     --Closes the connection
     connection:close()
 end
-
