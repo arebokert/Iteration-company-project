@@ -1,6 +1,6 @@
 showmenu = {}
 Menu = require "model/mainmenu/menuclass"
-highScoreMenu = require "views/mainmenu/highScoreMenu"
+hsMenu = require "views.mainmenu.highScoreMenu"
 datapath = "views/mainmenu/data"
 
 function showmenu.loadMainMenu()
@@ -102,7 +102,7 @@ function showmenu.loadMenu(tag)
   
   if(tag == "highScore") then
   
-    highScoreMenu.loadMenu(subMenuContainer)
+    hsMenu.loadMenu(subMenuContainer)
   elseif(tag == "singlePlayer") then
   
   elseif(tag == "multiplayer") then
@@ -146,22 +146,27 @@ end
 
 function showmenu.registerKey(key, state)
  -- Should be lifted out!
-    if key == "left" then
-        activeMenu:prev()
-    elseif key == "right" then
-        activeMenu:next()
-    elseif key == "ok"  then
-        activeMenu:action()
-    elseif key == "up"  and mainMenu == activeMenu then
-        activeMenu:action()
-    elseif key == "down" and secondary == activeMenu then
-        secondary:print(secondaryMenuContainer, 20, secondaryMenuContainer:get_height()/2, 40)
-        activeMenu = mainMenu
-        mainMenu:setActive(1)
-    elseif key == "back" and mainMenu.active == 1 then
-        activeMenu = mainMenu
-    elseif key == "exit" then
-        sys.stop()
+    if activeView == "menu" then
+    ADLogger.trace("12323")
+      if key == "left" then
+          activeMenu:prev()
+      elseif key == "right" then
+          activeMenu:next()
+      elseif key == "ok"  then
+          activeMenu:action()
+      elseif key == "up"  and mainMenu == activeMenu then
+          activeMenu:action()
+      elseif key == "down" and secondary == activeMenu then
+          secondary:print(secondaryMenuContainer, 20, secondaryMenuContainer:get_height()/2, 40)
+          activeMenu = mainMenu
+          mainMenu:setActive(1)
+      elseif key == "back" and mainMenu.active == 1 then
+          activeMenu = mainMenu
+      elseif key == "exit" then
+          sys.stop()
+      end
+    elseif activeView == "highScore" then  
+      hsMenu.registerKey(key, state)
     end
 end
 

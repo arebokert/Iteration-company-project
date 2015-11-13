@@ -4,7 +4,7 @@ GameplanGraphics = {}
 
 function GameplanGraphics.createWall(block)
     local w = gfx.new_surface(block, block)
-    w:clear({r=0, g=0, b=200})
+    w:clear({r=0, g=0, b=150})
     return w
 end
 
@@ -18,7 +18,7 @@ end
 
 function GameplanGraphics.createYellowDot(psize)
     local dot = gfx.new_surface(psize, psize)
-    dot:clear({r=255, g=255, b=51})
+    dot:clear({r=222, g=228, b=51})
     return dot
 end
 
@@ -30,7 +30,7 @@ end
 
 
 function GameplanGraphics.createDoor(block) 
-  local door = gfx.new_surface(block, block)
+  local door = gfx.new_surface(block, math.ceil(block/4))
   door:clear({r=200,g=80,b=51})
   return door
 end

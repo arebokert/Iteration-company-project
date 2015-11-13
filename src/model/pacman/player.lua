@@ -1,13 +1,14 @@
 Player = {}
 
-function Player:movement()
+function Player:movement(gameplan)
   -- Set step of each movement 
   step = 5
   -- Set new position, based on direction
   oldxpos = self.x
   oldypos = self.y
   
-  local new_pos = {}
+  -- Had to do this global to use it in new function
+  new_pos = {}
   new_pos.x = self.x
   new_pos.y = self.y
   
@@ -24,17 +25,43 @@ function Player:movement()
   if self.direction == "down" then
       new_pos.y = self.y + step
   end 
-  
-    
-  return new_pos
-  --[[
-  elseif self.type ~= "pacman" then
-    self:Randomdirection()
-    self:Movement()   
+
+  if self.type == "ghost" then
+    self:changeGhostDir(gameplan,new_pos)
   end
-  --]]
+  return new_pos
 end
 
+
+-- This function checks which possible direction the ghost can move, and randomizes which way to go
+-- This enables the ghost to change direction when a new aisle appears
+-- @gameplan: the gameplan
+-- @new_pos: The pos that ghost is at
+function Player:changeGhostDir(gameplan,new_pos)
+
+    local posdir = {}
+    local dir = gameplan:getPossibleMovements(new_pos)
+    local count = 1
+    for k, v in pairs(dir) do
+      if v == true then
+        posdir[count] = k
+        count = count + 1
+      end
+    end  
+    local newdir = posdir[math.random(count-1)]
+    if newdir == "left" and self.direction ~= "right" then
+       self.direction = newdir
+    end
+    if newdir == "right" and self.direction ~= "left" then
+       self.direction = newdir
+    end
+    if newdir == "up" and self.direction ~= "down" then
+       self.direction = newdir
+    end
+    if newdir == "down" and self.direction ~= "up" then
+       self.direction = newdir
+    end
+end
 
 function Player:new (type)
   obj = {}   -- create object if user does not provide one
