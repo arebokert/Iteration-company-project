@@ -3,7 +3,6 @@ ADLogger = require("SDK.Utils.ADLogger")
 http = require("socket.http")
 ADLogger.trace("Applicatio Init")
 hasInternet=""
-
 root_path = ""
 if ADConfig.isSimulator then
     gfx = require "SDK.Simulator.gfx"
@@ -22,10 +21,9 @@ gamehandler = require "model.pacman.gamehandler"
 
 function onKey(key, state)
     ADLogger.trace("OnKey("..key..","..state..")")
-    
     if state == "down" or state == "repeat" then
         if activeView == "menu" then
-           showmenu.registerKey(key, state)
+           showmenu.mainMenuKeyEvents(key, state)
         elseif activeView == "pacman" then
             if gamehandler.pacmanOnKey(key) == false then
                 activeView = "menu"

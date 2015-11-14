@@ -1,6 +1,5 @@
 local highScoreMenu = {
   curren_game = 1, 
-  current_menu = "highScoreMenu",
   total_games = {
      "pacman",
      "2048"
@@ -10,7 +9,6 @@ local highScoreMenu = {
 require("model.highscore.highscorehandler")
 
 function highScoreMenu.loadMenu(Screen)
-  --activeView = "highScoreMenu"
   highScoreMenu.loadLocalScore(Screen)
   highScoreMenu.loadGlobalScore(Screen)
   highScoreMenu.loadStatus(Screen)
@@ -18,18 +16,25 @@ function highScoreMenu.loadMenu(Screen)
   return Screen
 end
 
-
 -- key register for different key press
 function highScoreMenu.registerKey(key, state)
+  if current_menu == "highScoreMenu" then
       if key == "left" then
-        highScoreMenu.curren_game = (highScoreMenu.curren_game -1 + table.getn(highScoreMenu.total_games)) % table.getn(highScoreMenu.total_games)
-      elseif key == "right" then
-        highScoreMenu.curren_game = (highScoreMenu.curren_game +1) % table.getn(highScoreMenu.total_games)
-      elseif key == "down" then
-        activeMenu = mainMenu
-        mainMenu:setActive(1)
-        activeView = "menu"
+      if highScoreMenu.curren_game ~= 1 then
+       highScoreMenu.curren_game = highScoreMenu.curren_game  -1 
+      else 
+       highScoreMenu.curren_game = table.getn(highScoreMenu.total_games)
       end
+      elseif key == "right" then
+        if highScoreMenu.curren_game ~= table.getn(highScoreMenu.total_games) then
+         highScoreMenu.curren_game = highScoreMenu.curren_game +1
+        else 
+         highScoreMenu.curren_game = 1
+        end
+      elseif key == "down" then
+        current_menu = "mainMenu"
+      end
+  end
 end
 
 function highScoreMenu.writeWord(word, color, size, position, Screen)
