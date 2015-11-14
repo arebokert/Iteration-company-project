@@ -1,5 +1,5 @@
 local highScoreMenu = {
-  curren_game = 1, 
+  current_game = 1, 
   total_games = {
      "pacman",
      "2048"
@@ -20,16 +20,16 @@ end
 function highScoreMenu.registerKey(key, state)
   if current_menu == "highScoreMenu" then
       if key == "left" then
-      if highScoreMenu.curren_game ~= 1 then
-       highScoreMenu.curren_game = highScoreMenu.curren_game  -1 
+      if highScoreMenu.current_game ~= 1 then
+       highScoreMenu.current_game = highScoreMenu.current_game  -1 
       else 
-       highScoreMenu.curren_game = table.getn(highScoreMenu.total_games)
+       highScoreMenu.current_game = table.getn(highScoreMenu.total_games)
       end
       elseif key == "right" then
-        if highScoreMenu.curren_game ~= table.getn(highScoreMenu.total_games) then
-         highScoreMenu.curren_game = highScoreMenu.curren_game +1
+        if highScoreMenu.current_game ~= table.getn(highScoreMenu.total_games) then
+         highScoreMenu.current_game = highScoreMenu.current_game +1
         else 
-         highScoreMenu.curren_game = 1
+         highScoreMenu.current_game = 1
         end
       elseif key == "down" then
         current_menu = "mainMenu"

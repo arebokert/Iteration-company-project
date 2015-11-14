@@ -15,22 +15,33 @@ function Boxes.init()
    Boxes.loadAllImg()
    Boxes.addRandomNumber()
    Boxes.addRandomNumber()
-   Boxes.showMove()  
+   Boxes.showScore() 
+   Boxes.showMove()
+    
+end
+
+function Boxes.showScore()
+  local score_font = sys.new_freetype({g=100,r=100,b=100}, 60, {x=900,y=50},"views/mainmenu/data/font/Gidole-Regular.otf")
+  score_font:draw_over_surface(screen,"Score:")
+  screen:clear({r=10,g=5,b=50}, {x=950,y = 120, w=100, h =100})
+  local score = sys.new_freetype({g=0,r=100,b=0}, 50, {x=950,y=120},"views/mainmenu/data/font/Gidole-Regular.otf")
+  score:draw_over_surface(screen,Boxes.current_score)
+  
 end
 
 function Boxes.loadAllImg()
-  Boxes.box_img[0] = gfx.loadpng("data/cell_img/empty.png")
-  Boxes.box_img[2] = gfx.loadpng("data/cell_img/2.png")
-  Boxes.box_img[4] = gfx.loadpng("data/cell_img/4.png")
-  Boxes.box_img[8] = gfx.loadpng("data/cell_img/8.png")
-  Boxes.box_img[16] = gfx.loadpng("data/cell_img/16.png")
-  Boxes.box_img[32] = gfx.loadpng("data/cell_img/32.png")
-  Boxes.box_img[64] = gfx.loadpng("data/cell_img/64.png")
-  Boxes.box_img[128] = gfx.loadpng("data/cell_img/128.png")
-  Boxes.box_img[256] = gfx.loadpng("data/cell_img/256.png")
-  Boxes.box_img[512] = gfx.loadpng("data/cell_img/512.png")
-  Boxes.box_img[1024] = gfx.loadpng("data/cell_img/1024.png")
-  Boxes.box_img[2048] = gfx.loadpng("data/cell_img/2048.png")
+  Boxes.box_img[0] = gfx.loadpng("views/2048/data/cell_img/empty.png")
+  Boxes.box_img[2] = gfx.loadpng("views/2048/data/cell_img/2.png")
+  Boxes.box_img[4] = gfx.loadpng("views/2048/data/cell_img/4.png")
+  Boxes.box_img[8] = gfx.loadpng("views/2048/data/cell_img/8.png")
+  Boxes.box_img[16] = gfx.loadpng("views/2048/data/cell_img/16.png")
+  Boxes.box_img[32] = gfx.loadpng("views/2048/data/cell_img/32.png")
+  Boxes.box_img[64] = gfx.loadpng("views/2048/data/cell_img/64.png")
+  Boxes.box_img[128] = gfx.loadpng("views/2048/data/cell_img/128.png")
+  Boxes.box_img[256] = gfx.loadpng("views/2048/data/cell_img/256.png")
+  Boxes.box_img[512] = gfx.loadpng("views/2048/data/cell_img/512.png")
+  Boxes.box_img[1024] = gfx.loadpng("views/2048/data/cell_img/1024.png")
+  Boxes.box_img[2048] = gfx.loadpng("views/2048/data/cell_img/2048.png")
 end
 
 function Boxes.showMove()
@@ -45,6 +56,7 @@ function Boxes.showMove()
       screen:copyfrom(box_img, nil,bg_pos,true)
     end
   end
+  Boxes.showScore() 
   gfx.update() 
 end
 
@@ -68,6 +80,10 @@ function Boxes.endGame()
   result = Boxes.tag["left"] + Boxes.tag['right'] + Boxes.tag['top'] + Boxes.tag['bottom']
   if(result == 4) then
     ADLogger.trace("Game Over")
+    local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=500,y=420},"views/mainmenu/data/font/Gidole-Regular.otf")
+    score:draw_over_surface(screen,"GAME OVER")
+    activeView = "menu"
+    current_menu = "singlePlayerMenu"
   end
 end
 
@@ -78,16 +94,19 @@ function Boxes.moveLeft()
       Boxes.box_table[1+i*4] = Boxes.box_table[1+i*4] *2
       Boxes.box_table[2+i*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
+      Boxes.current_score = Boxes.current_score +Boxes.box_table[1+i*4]
    end
    if(Boxes.box_table[2+i*4] ~= 0 and Boxes.box_table[2+i*4] == Boxes.box_table[3+i*4]) then
       Boxes.box_table[2+i*4] = Boxes.box_table[2+i*4] *2
       Boxes.box_table[3+i*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
+      Boxes.current_score = Boxes.current_score +Boxes.box_table[2+i*4]
    end
    if(Boxes.box_table[3+i*4] ~= 0 and Boxes.box_table[3+i*4] == Boxes.box_table[4+i*4]) then
       Boxes.box_table[3+i*4] = Boxes.box_table[3+i*4] *2
       Boxes.box_table[4+i*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
+      Boxes.current_score = Boxes.current_score +Boxes.box_table[3+i*4]
    end
     -- change palces, make a promise, no 0 is left of numbers
     count = 1 -- number of >= 0 
@@ -119,16 +138,19 @@ function Boxes.moveRight()
       Boxes.box_table[4+i*4] = Boxes.box_table[4+i*4] *2
       Boxes.box_table[3+i*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
+      Boxes.current_score = Boxes.current_score +Boxes.box_table[4+i*4]
    end
    if(Boxes.box_table[3+i*4] ~= 0 and Boxes.box_table[3+i*4] == Boxes.box_table[2+i*4]) then
       Boxes.box_table[3+i*4] = Boxes.box_table[3+i*4] *2
       Boxes.box_table[2+i*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
+      Boxes.current_score = Boxes.current_score +Boxes.box_table[3+i*4]
    end
    if(Boxes.box_table[2+i*4] ~= 0 and Boxes.box_table[2+i*4] == Boxes.box_table[1+i*4]) then
       Boxes.box_table[2+i*4] = Boxes.box_table[2+i*4] *2
       Boxes.box_table[1+i*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
+      Boxes.current_score = Boxes.current_score +Boxes.box_table[2+i*4]
    end
     -- change palces, make a promise, no 0 is left of numbers
    count = 4 -- number of >= 0 
@@ -160,16 +182,19 @@ function Boxes.moveTop()
       Boxes.box_table[i] = Boxes.box_table[i] *2
       Boxes.box_table[i+4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
+      Boxes.current_score = Boxes.current_score +Boxes.box_table[i]
    end
    if(Boxes.box_table[i+4]~= 0 and Boxes.box_table[i+4] == Boxes.box_table[i+2*4]) then
       Boxes.box_table[i+4] = Boxes.box_table[i+4] *2
       Boxes.box_table[i+2*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
+      Boxes.current_score = Boxes.current_score +Boxes.box_table[i+4]
    end
    if(Boxes.box_table[i+2*4] ~= 0 and Boxes.box_table[i+2*4] == Boxes.box_table[i+3*4]) then
       Boxes.box_table[i+2*4] = Boxes.box_table[i+2*4] *2
       Boxes.box_table[i+3*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
+      Boxes.current_score = Boxes.current_score +Boxes.box_table[i+2*4]
    end
     -- change palces, make a promise, no 0 is left of numbers
    count = 0 -- number of >= 0 
@@ -199,16 +224,19 @@ function Boxes.moveBottom()
         Boxes.box_table[i+3*4] = Boxes.box_table[i+3*4] *2
         Boxes.box_table[i+2*4] = 0
         Boxes.current_zero = Boxes.current_zero + 1
+        Boxes.current_score = Boxes.current_score + Boxes.box_table[i+3*4]
     end
     if(Boxes.box_table[i+2*4] ~= 0 and Boxes.box_table[i+2*4] == Boxes.box_table[i+4]) then
         Boxes.box_table[i+2*4] = Boxes.box_table[i+2*4] *2
         Boxes.box_table[i+4]= 0
         Boxes.current_zero = Boxes.current_zero + 1
+        Boxes.current_score = Boxes.current_score + Boxes.box_table[i+2*4]
     end
     if(Boxes.box_table[i+4] ~= 0 and Boxes.box_table[i+4] == Boxes.box_table[i]) then
         Boxes.box_table[i+4] = Boxes.box_table[i+4] *2
         Boxes.box_table[i] = 0
         Boxes.current_zero = Boxes.current_zero + 1
+        Boxes.current_score = Boxes.current_score + Boxes.box_table[i+4]
     end
     -- change palces, make a promise, no 0 is left of numbers
      count = 3 -- number of >= 0 

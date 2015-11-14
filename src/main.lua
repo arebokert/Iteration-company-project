@@ -18,6 +18,7 @@ end
 
 showmenu = require "views.mainmenu.showmenu"
 gamehandler = require "model.pacman.gamehandler"
+game2048 = require "model.2048.game"
 
 function onKey(key, state)
     ADLogger.trace("OnKey("..key..","..state..")")
@@ -27,9 +28,12 @@ function onKey(key, state)
         elseif activeView == "pacman" then
             if gamehandler.pacmanOnKey(key) == false then
                 activeView = "menu"
+                current_menu = "singlerPlayerMenu"
                 showmenu.loadMainMenu()
                 activeMenu = mainMenu
             end
+        elseif activeView == "2048" then
+          game2048.registerKey(key,state)
         end
     end
 end
