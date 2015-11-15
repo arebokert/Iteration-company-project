@@ -89,7 +89,7 @@ function showmenu.loadBackground()
   _G.subMenu = Menu:new()
   subMenuContainer = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
   
-  subMenuContainer:clear({r=7, g = 19, b=77, a=20}, {x =screen:get_width()/20, y = screen:get_height()/20, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
+  subMenuContainer:clear({r=0, g = 52, b=113, a=120}, {x =screen:get_width()/20, y = screen:get_height()/20, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
  
   return subMenuContainer
 end

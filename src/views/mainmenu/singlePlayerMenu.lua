@@ -107,8 +107,9 @@ function singlePlayerMenu.registerKey(key, state)
       ADLogger.trace(singlePlayerMenu.current_game)
       singlePlayerMenu.loadMenu(singlePlayerMenu.current_screen)
     elseif key == "down" then
-      --current_menu = "mainMenu"
-      
+      current_menu = "mainMenu"
+    elseif key == "exit" then
+      current_menu = "mainMenu"
     elseif key == "ok" then
       singlePlayerMenu.loadGame()
       ADLogger.trace(singlePlayerMenu.current_game)
