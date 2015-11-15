@@ -35,5 +35,37 @@ function GameplanGraphics.createDoor(block)
   return door
 end
 
+
+
+-- 
+-- Update direction of player picture depending on direction
+--
+-- @type: player 
+function GameplanGraphics.updatePlayerRotation(player)       
+  if player.type == "pacman" then
+    player.picture0 = 'views/pacman/data/'..player.type..player.direction..'0'..'.png'
+    player.picture1 = 'views/pacman/data/'..player.type..player.direction..'1'..'.png'
+  else
+    player.picture0 = 'views/pacman/data/'..player.ghostname..player.direction..'0'..'.png'
+    player.picture1 = 'views/pacman/data/'..player.ghostname..player.direction..'1'..'.png'
+   end
+end
+
+-- 
+-- Function that change between different pictures (animation) each time a player moves to new cell
+--
+-- @type: player 
+function GameplanGraphics.updatePlayerGraphic(player)
+    GameplanGraphics.updatePlayerRotation(player)
+    if player.moveanim == 0 then
+      player.bg = gfx.loadpng(player.picture0)
+      player.moveanim = 1
+    elseif player.moveanim == 1 then 
+      player.bg = gfx.loadpng(player.picture1)
+      player.moveanim = 0
+    end  
+end
+
+
 return GameplanGraphics
 
