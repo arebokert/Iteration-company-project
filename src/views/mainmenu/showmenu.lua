@@ -134,6 +134,7 @@ function showmenu.mainMenuKeyEvents(key, state)
     showmenu.registerKey(key,state)
     highScoreMenu.registerKey(key, state)
     singlePlayerMenu.registerKey(key,state)
+    multiMenu.registerKey(key, state)
 end
 
 return showmenu
