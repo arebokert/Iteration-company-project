@@ -200,6 +200,7 @@ function Gameplan:displayMap(container, containerPos)
             self.logicalMap[key][i] = c
         end
     end
+    printScore()
     yellowdotmatrix = yellowDotStatus(self.map)
     screen:copyfrom(container, nil, self.containerpos)
 
@@ -392,6 +393,9 @@ function Gameplan:refresh()
             end
         end
     end
+    
+    printScore()
+    
     -- checks if there is a collision between pacman and blinky. 
     -- Should preferably be implemented with a loop to compare all players when more are added.
     return not checkCollision(self.players[1],self.players[2])
