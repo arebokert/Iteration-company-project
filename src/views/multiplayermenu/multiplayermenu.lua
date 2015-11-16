@@ -1,13 +1,13 @@
-local multiplayermenu = {
-  current_screen = nil,
-  current_game = 1, 
-  total_games = {
-     "pacman",
-     "2048"
-  }
-}
+model = require "model.multiplayermenu.multiplayermenu"
+multiplayermenu = {title = "Multiplayer Menu"}
+playerMenu = nil
+local a = {}
 
 function multiplayermenu.loadMenu(Screen)
+  a = model:fetchPath()
+  ADLogger.trace(a[1]["path"])
+  playerMenu = Screen
+  playerMenu:clear({r=7, g = 19, b=77, a=20}, {x =screen:get_width()/20, y = screen:get_height()/20, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
   multiplayermenu.loadRecentResults(Screen)
   multiplayermenu.loadCurrentPlayers(Screen)
   multiplayermenu.loadGameMenu(Screen)
@@ -50,10 +50,18 @@ function multiplayermenu.loadCurrentPlayers(Screen, players)
 end
 
 function multiplayermenu.loadGameMenu(Screen)
+  local gameNumber = 1
   color = {r=20, g=10, b=0}
   margin = 5
-  multiplayermenu.drawBorder(Screen, ((Screen:get_width())/2)-225, screen:get_height()/20+10, 450, screen:get_height()/4, margin, color)
+  local bg = gfx.loadjpeg(a[gameNumber+1]["path"] .. 'background-small.jpg')
+  playerMenu:copyfrom(bg, nil, {x=((Screen:get_width())/2)+100, y= screen:get_height()/20+37})
+  bg:destroy()
+  local bg = gfx.loadjpeg(a[gameNumber]["path"] .. 'background.jpg')
+  playerMenu:copyfrom(bg, nil, {x=((Screen:get_width())/2)-150, y= screen:get_height()/20+20})
+  bg:destroy()
 end
+
+
 
 
 return multiplayermenu
