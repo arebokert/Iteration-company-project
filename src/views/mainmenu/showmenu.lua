@@ -3,7 +3,7 @@ showmenu = {}
 Menu = require "model.mainmenu.menuclass"
 highScoreMenu = require "views.mainmenu.highScoreMenu"
 singlePlayerMenu = require "views.mainmenu.singlePlayerMenu"
-multiplayermenu = require "views.multiplayermenu.multiplayermenu"
+multiPlayerMenu = require "views.multiplayermenu.multiplayermenu"
 datapath = "views/mainmenu/data"
 
 function showmenu.loadMainMenu()
@@ -43,7 +43,7 @@ function showmenu.loadMainMenu()
 
 	options[3] = {title = "Multiplayer",
         action = function()
-            current_menu = "multiMenu"
+            current_menu = "multiPlayerMenu"
             return "Return Option3"
         end,
         hover = function()
@@ -106,7 +106,7 @@ function showmenu.loadMenu(subMenuFlag)
   elseif(subMenuFlag == "singlePlayer") then
     singlePlayerMenu.loadMenu(subMenuContainer)
   elseif(subMenuFlag == "multiplayer") then
-    multiplayermenu.loadMenu(subMenuContainer)
+    multiPlayerMenu.loadMenu(subMenuContainer)
   elseif(subMenuFlag == "exit") then
     -- exitMenu.loadMenu(subMenuContainer)
   end
@@ -132,10 +132,15 @@ function showmenu.registerKey(key,state)
 end
 
 function showmenu.mainMenuKeyEvents(key, state)
+    if current_menu == "mainMenu" then
     showmenu.registerKey(key,state)
+    elseif current_menu == "highScoreMenu" then
     highScoreMenu.registerKey(key, state)
+    elseif current_menu == "singlePlayerMenu" then
     singlePlayerMenu.registerKey(key,state)
-    --multiMenu.registerKey(key, state)
+    elseif current_menu == "multiPlayerMenu" then
+    multiPlayerMenu.registerKey(key, state)
+    end
 end
 
 return showmenu

@@ -1,7 +1,7 @@
   --"name", "path", "start-function"
   
   gameHolder = {}
-  gameHolder[1] = {name = "pacman", path = "model/games/pacman/", start = assert(dostring("game2048.startGame()"))}
-  gameHolder[2] = {name = "2048", path = "model/games/2048/", start = assert(dostring("gamehandler.loadPacman()"))}
+  gameHolder[1] = {name = "pacman", path = "model/games/pacman/"}
+  gameHolder[2] = {name = "2048", path = "model/games/2048/"}
 
   return gameHolder

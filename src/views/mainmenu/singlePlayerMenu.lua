@@ -89,7 +89,7 @@ function singlePlayerMenu.loadGame()
 end
 
 function singlePlayerMenu.registerKey(key, state)
-  if current_menu == "singlerPlayerMenu" then
+  if current_menu == "singlePlayerMenu" then
     if key == "left" then
        if singlePlayerMenu.current_game ~= 1 then
        singlePlayerMenu.current_game = singlePlayerMenu.current_game  -1 
