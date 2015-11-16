@@ -38,7 +38,7 @@ function Gameplan:loadMap(map)
     end
     
     -- The map file
-    local filename = root_path_in_file .. 'model/pacman/' .. map
+    local filename = root_path .. 'model/pacman/' .. map
     local file = io.open(filename, "r")
     local tabellines = {}
     local i = 0
