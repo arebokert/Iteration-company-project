@@ -38,7 +38,7 @@ function Gameplan:loadMap(map)
     end
     
     -- The map file
-    local filename = root_path .. 'model/pacman/' .. map
+    local filename = root_path_in_file .. 'model/pacman/' .. map
     local file = io.open(filename, "r")
     local tabellines = {}
     local i = 0
@@ -79,8 +79,7 @@ end
 -- Set direction of Pacman. Obs! Hardcoded as player 1, needs to be adjusted. 
 --
 function Gameplan:setPacmanDirection(dir)
-    pacman_direction = dir
-    self.players[1].direction = dir
+    self.players[1].latentdirection = dir
 end
 
 
@@ -176,6 +175,7 @@ function Gameplan:displayMap(container, containerPos)
                 pacman.bg:premultiply()
                 container:copyfrom(pacman.bg, nil, pacman:getPos())
                 pacman.direction = "right"
+                pacman.latentdirection = "right"
                 self:addPlayer(pacman)
             elseif c == "B" then
                 -- BAD SOLUTION!!!
@@ -271,6 +271,10 @@ function Gameplan:xyToCell(x,y)
     return pos
 end
 
+
+-- This function checks whether a movement is possible
+-- @direction: Wanted direction
+-- @new_pos: Wanted position
 function Gameplan:possibleMovement(direction, new_pos)
     local target = {}
     target.x = new_pos.x
@@ -331,9 +335,29 @@ end
 
 function Gameplan:refresh()
 
-    for k,player in pairs(self.players) do
-        local new_pos = player:movement(self)
 
+    for k,player in pairs(self.players) do
+        
+        
+        
+        if player.type == "pacman" then
+            local old_dir = player.direction
+            player.direction = player.latentdirection
+            local check_pos = player:movement(self)
+    --        dump(player.latentdirection)
+    --        dump(player:getPos())
+    --        dump(new_pos)
+    --        dump(self:possibleMovement(player.latentdirection, new_pos))
+            if self:possibleMovement(player.latentdirection, check_pos) == true then
+              player.direction = player.latentdirection
+            else
+              player.direction = old_dir
+            end  
+            dump(player.direction)
+        end
+       
+        local new_pos = player:movement(self)
+  
         -- New cell is an aisle, OK!
         if self:possibleMovement(player.direction, new_pos) == true then
             local oldPos = player:getPos()
@@ -358,6 +382,9 @@ function Gameplan:refresh()
               updateDotStatus(self:xyToCell(new_pos.x,new_pos.y))
             end
         end
+        
+        
+        
         if self:possibleMovement(player.direction, new_pos) == false  then
             -- New cell is a wall, not ok!
             if player.type ~= "pacman" then
