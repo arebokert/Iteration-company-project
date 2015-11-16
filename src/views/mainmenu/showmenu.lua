@@ -3,6 +3,7 @@ showmenu = {}
 Menu = require "model.mainmenu.menuclass"
 highScoreMenu = require "views.mainmenu.highScoreMenu"
 singlePlayerMenu = require "views.mainmenu.singlePlayerMenu"
+multiplayermenu = require "views.multiplayermenu.multiplayermenu"
 datapath = "views/mainmenu/data"
 
 function showmenu.loadMainMenu()
@@ -42,14 +43,14 @@ function showmenu.loadMainMenu()
 
 	options[3] = {title = "Multiplayer",
         action = function()
-            --current_menu = "multiMenu"
+            current_menu = "multiMenu"
             return "Return Option3"
         end,
         hover = function()
             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
             screen:copyfrom(bg, nil)
             bg:destroy()
-            --showMenu.loadMenu("multiplayer")
+            showmenu.loadMenu("multiplayer")
             return true
         end,
         button = datapath .. '/multi-normal.png',
@@ -105,7 +106,7 @@ function showmenu.loadMenu(subMenuFlag)
   elseif(subMenuFlag == "singlePlayer") then
     singlePlayerMenu.loadMenu(subMenuContainer)
   elseif(subMenuFlag == "multiplayer") then
-    --multiplayerMenu.loadMenu(subMenuContainer)
+    multiplayermenu.loadMenu(subMenuContainer)
   elseif(subMenuFlag == "exit") then
     -- exitMenu.loadMenu(subMenuContainer)
   end
