@@ -1,4 +1,4 @@
-Boxes = require("model.2048.box")
+Boxes = require("model.games.2048.box")
 Game = {current = 0}
 
 function Game.registerKey(key, state)

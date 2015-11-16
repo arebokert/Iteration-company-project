@@ -3,10 +3,10 @@
 ---- Relative position starts at (0,0)
 ---- Cell grid position starts at (1,1)  
 
-require("model.pacman.dumper")
-require("model.pacman.collisionhandler")
-require("model.pacman.score")
-GameplanGraphics = require("model.pacman.gameplangraphics")
+require("model.games.pacman.dumper")
+require("model.games.pacman.collisionhandler")
+require("model.games.pacman.score")
+GameplanGraphics = require("model.games.pacman.gameplangraphics")
 
 -- Define a shortcut function for testing
 function dump(...)
@@ -38,7 +38,7 @@ function Gameplan:loadMap(map)
     end
     
     -- The map file
-    local filename = root_path .. 'model/pacman/' .. map
+    local filename = root_path .. 'model/games/pacman/' .. map
     local file = io.open(filename, "r")
     local tabellines = {}
     local i = 0

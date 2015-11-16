@@ -1,7 +1,7 @@
 Gamehandler = {}
 
-Gameplan = require "model.pacman.gameplan"
-require("model.pacman.player")
+Gameplan = require "model.games.pacman.gameplan"
+require("model.games.pacman.player")
 
 --
 -- Load a game of pacman 

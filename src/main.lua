@@ -17,8 +17,8 @@ else
 end
 
 showmenu = require "views.mainmenu.showmenu"
-gamehandler = require "model.pacman.gamehandler"
-game2048 = require "model.2048.game"
+gamehandler = require "model.games.pacman.gamehandler"
+game2048 = require "model.games.2048.game"
 
 function onKey(key, state)
     ADLogger.trace("OnKey("..key..","..state..")")
