@@ -1,5 +1,7 @@
+  --"name", "path", "start-function"
+  
   gameHolder = {}
-  gameHolder["pacman"] = "model/games/pacman/resources/"
-  gameHolder["2048"] = "model/games/2048/resources/"
+  gameHolder[1] = {name = "pacman", path = "model/games/pacman/resources/", start = gamehandler.loadPacman()}
+  gameHolder[2] = {"2048", "model/games/2048/resources/", start = game2048.startGame()}
 
   return gameHolder

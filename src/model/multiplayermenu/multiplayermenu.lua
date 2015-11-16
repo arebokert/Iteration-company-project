@@ -1,17 +1,17 @@
-multiMenu = {title = "Multiplayer Menu"}
+multiModel = {title = "Multiplayer Menu"}
 textpath = "src/model/"
 foldertable = {}
 
 --Constructor
 --@return obj - returns an instance of the multiplayermenu
-function multiMenu:new ()
+function multiModel:new ()
     obj = {}
     setmetatable(obj, self)
     self.__index = self
     return obj
 end
 
-function multiMenu:setOptions(options)
+function multiModel:setOptions(options)
     self.options = options
     self.size = #options
 end
@@ -20,7 +20,7 @@ end
 --table with manually added lines of game-names/directories.
 --@param resource - method created by asserting a textfile.
 --@param gametable - stores the table created from calling "resource()"
-function multiMenu:fetchPath()
+function multiModel:fetchPath()
     local resource = assert(loadfile(textpath.."games.txt"))
     foldertable = resource()
     
@@ -29,7 +29,7 @@ end
 
 --Experiment function that might or might not work on the box.
 --Attempts to count folder in a directory (using terminal commands).
-function multiMenu:countFolders(folder)
+function multiModel:countFolders(folder)
     for folderName in io.popen([[ls -a "model/games/" /b /ad]]):lines() do 
     foldertable[folderName] = "model/games/"..folderName.."/resources/" end
     
@@ -38,15 +38,22 @@ function multiMenu:countFolders(folder)
     --for folderName in io.popen([[dir "src/" /b /ad]]):lines() do print(folderName) end
 end
 
-function multiMenu:action()
+--Returning dummy information until a database/server-connection can be secured.
+--@param dummy - Contains strings for the multiplayerview.
+function getScores()
+    
+    return dummy
+end
+
+function multiModel:action()
     self.options[self.active].action()
 end
 
-function multiMenu:hover()
+function multiModel:hover()
     self.options[self.active].hover()
 end
 
-function multiMenu:next()
+function multiModel:next()
     local next = self.active + 1
 
     if (self.active + 1) > self.size then
@@ -57,7 +64,7 @@ function multiMenu:next()
     return next
 end
 
-function multiMenu:prev()
+function multiModel:prev()
   local prev = self.active - 1
 
     if self.active - 1 < 1 then
@@ -68,12 +75,21 @@ function multiMenu:prev()
     return prev
 end
 
-function multiMenu:action()
-    self.options[self.active].action()
+--Listener for keycommands, repeated in every menu-class.
+function multiModel:registerKey(key,state)
+  if current_menu == "multiModel" then
+    if key == "left" then
+        activeMenu:prev()
+    elseif key == "right" then
+        activeMenu:next()
+    elseif key == "ok" then
+        activeMenu:action()
+    elseif key == "down" then
+        current_menu = "mainMenu"
+    elseif key == "exit" then
+        sys.stop()
+    end
+  end
 end
 
-function multiMenu:hover()
-    self.options[self.active].hover()
-end
-
-return multiMenu
+return multiModel
