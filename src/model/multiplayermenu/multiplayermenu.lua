@@ -45,14 +45,16 @@ function getScores()
     return dummy
 end
 
-function multiModel:action()
-    self.options[self.active].action()
+function multiModel:start()
+    self.options[self.active].start()
 end
 
 function multiModel:hover()
     self.options[self.active].hover()
 end
 
+--Called upon hitting the "right"-key/button.
+--Sets a new 
 function multiModel:next()
     local next = self.active + 1
 
@@ -64,6 +66,8 @@ function multiModel:next()
     return next
 end
 
+--Called upon by hitting the "left"-key/button.
+--@param prev - called with a "left"-keystroke.
 function multiModel:prev()
   local prev = self.active - 1
 
@@ -76,6 +80,7 @@ function multiModel:prev()
 end
 
 --Listener for keycommands, repeated in every menu-class.
+--@param current_menu - this menu won't react unless it's set as 'active'
 function multiModel:registerKey(key,state)
   if current_menu == "multiModel" then
     if key == "left" then
@@ -86,8 +91,6 @@ function multiModel:registerKey(key,state)
         activeMenu:action()
     elseif key == "down" then
         current_menu = "mainMenu"
-    elseif key == "exit" then
-        sys.stop()
     end
   end
 end
