@@ -176,7 +176,7 @@ def get_user():
     """
 
 # MATCH HANDLING
-def get_latest_matches(game, mac, playerid, nomatches):
+def get_match_history(gamename, mac, playerid, number_of_matches):
     """ write_description_here
 
     Args:
@@ -187,3 +187,19 @@ def get_latest_matches(game, mac, playerid, nomatches):
     Raises:
         
     """
+
+
+def add_match(gamename, mac, playerid):
+def add_round_score(gamename, match, mac, playerid, score):
+def get_number_of_rounds(gamename, match):
+def get_match_score(gamename, match):
+def get_match_total_score(gamename, match):
+def set_winner(gamename, match, mac, playerid):
+def get_winner(gamename, match):
+
+
+# HIGHSCORE HANDLING
+
+def add_highscore(gamename, mac, playerid, score):
+def get_highscore(gamename, mac, playerid, number_of_scores):
+def get_global_highscore(gamename, number_of_scores):
