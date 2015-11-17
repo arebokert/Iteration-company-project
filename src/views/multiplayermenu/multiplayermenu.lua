@@ -4,7 +4,7 @@ local resulttable = nil
 local playerMenu = nil
 local activeGame = nil
 local a = {}
-local tempActive = nil
+local tempActive = 2
 
 function multiplayermenu.loadMenu(Screen)
   model = model:new()
