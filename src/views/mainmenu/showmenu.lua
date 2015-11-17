@@ -1,3 +1,8 @@
+--------------------------------------------------------------------
+--class: showmenu                                           --------
+--description: load the main menu of the application        --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
 showmenu = {}
 --print(package.path)
 Menu = require "model.mainmenu.menuclass"
@@ -5,8 +10,13 @@ highScoreMenu = require "views.mainmenu.highScoreMenu"
 singlePlayerMenu = require "views.mainmenu.singlePlayerMenu"
 datapath = "views/mainmenu/data"
 
+--------------------------------------------------------------------
+--function: loadMainMenu                                    --------
+--description: load the mainmenus of the whole page         --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
 function showmenu.loadMainMenu()
-    options = {}
+    local options = {}
     options[1] = {title = "Game",
         action = function()
             current_menu = "singlerPlayerMenu"  -- give the temperate active menu to singlerPlayerMenu
@@ -73,63 +83,81 @@ function showmenu.loadMainMenu()
     }
 
     _G.mainMenu = Menu:new()
-    _G.current_menu = "mainMenu"
     mainMenu:setOptions(options)
-
     mainMenuContainer = gfx.new_surface(screen:get_width(), screen:get_height()/3.0)
     mainMenuContainer:clear( {g=0, r=0, b=255, a=25} )
 
     mainMenu.containerPos = {x = 0, y=screen:get_height()-mainMenuContainer:get_height()}
     mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
+    _G.activeMenu = mainMenu
     mainMenu:setActive(1)
     gfx.update()
 end
 
+
+--------------------------------------------------------------------
+--function: loadBackground                                  --------
+--description: load background of four submenu              --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
 function showmenu.loadBackground()
-  _G.subMenu = Menu:new()
-  subMenuContainer = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
-  
-  subMenuContainer:clear({r=0, g = 52, b=113, a=120}, {x =screen:get_width()/20, y = screen:get_height()/20, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
- 
+  local subMenuContainer = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
+  --subMenuContainer:clear({r=0, g = 52, b=113, a=120}, {x =screen:get_width() * 0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
   return subMenuContainer
 end
 
 
--- mainly show the highscore page
+--------------------------------------------------------------------
+--function: loadMenu                                        --------
+--@param: subMenuFlag    the flag to identify which submenu --------
+--description: load four concrete content of four submenu   --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
 function showmenu.loadMenu(subMenuFlag)
   -- use subMenuContainer as an arguments to your screen, and then show it
-  subMenuContainer = showmenu.loadBackground()
-  
+--  local subMenuContainer = showmenu.loadBackground()
   if(subMenuFlag == "highScore") then
-    highScoreMenu.loadMenu(subMenuContainer)
+    highScoreMenu.loadMenu()
   elseif(subMenuFlag == "singlePlayer") then
-    singlePlayerMenu.loadMenu(subMenuContainer)
+    singlePlayerMenu.loadMenu()
   elseif(subMenuFlag == "multiplayer") then
     --multiplayerMenu.loadMenu(subMenuContainer)
   elseif(subMenuFlag == "exit") then
     -- exitMenu.loadMenu(subMenuContainer)
   end
-  subMenu:printSub(subMenuContainer)
-  gfx.update()
-  collectgarbage()
 end
 
+--------------------------------------------------------------------
+--function: registerKey                                     --------
+--@param: key    the key pressed(left,right,up,down,ok)     --------
+--@param: state  the state of keypress(up,down, repeat)     --------
+--description: key functions of mainmenu                    --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
 function showmenu.registerKey(key,state)
   if current_menu == "mainMenu" then
     if key == "left" then
-        activeMenu:prev()
+        mainMenu:prev()
     elseif key == "right" then
-        activeMenu:next()
+        mainMenu:next()
     elseif key == "ok"   then
-        activeMenu:action()
+        mainMenu:action()
     elseif key == "up"  then
-        activeMenu:action()
+        mainMenu:action()
     elseif key == "exit" then
         sys.stop()
     end
   end
 end
 
+
+--------------------------------------------------------------------
+--function: mainMenuKeyEvents                               --------
+--@param: key    the key pressed(left,right,up,down,ok)     --------
+--@param: state  the state of keypress(up,down, repeat)     --------
+--description: key functions of the whole menus             --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
 function showmenu.mainMenuKeyEvents(key, state)
     showmenu.registerKey(key,state)
     highScoreMenu.registerKey(key, state)

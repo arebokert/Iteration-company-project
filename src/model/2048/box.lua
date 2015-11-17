@@ -21,10 +21,10 @@ function Boxes.init()
 end
 
 function Boxes.showScore()
-  local score_font = sys.new_freetype({g=100,r=100,b=100}, 60, {x=900,y=50},"views/mainmenu/data/font/Gidole-Regular.otf")
+  local score_font = sys.new_freetype({g=100,r=100,b=100}, 60, {x=900,y=50},root_path .."views/mainmenu/data/font/Gidole-Regular.otf")
   score_font:draw_over_surface(screen,"Score:")
   screen:clear({r=10,g=5,b=50}, {x=950,y = 120, w=100, h =100})
-  local score = sys.new_freetype({g=0,r=100,b=0}, 50, {x=950,y=120},"views/mainmenu/data/font/Gidole-Regular.otf")
+  local score = sys.new_freetype({g=0,r=100,b=0}, 50, {x=950,y=120},root_path .. "views/mainmenu/data/font/Gidole-Regular.otf")
   score:draw_over_surface(screen,Boxes.current_score)
   
 end
@@ -80,7 +80,7 @@ function Boxes.endGame()
   result = Boxes.tag["left"] + Boxes.tag['right'] + Boxes.tag['top'] + Boxes.tag['bottom']
   if(result == 4) then
     ADLogger.trace("Game Over")
-    local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=500,y=420},"views/mainmenu/data/font/Gidole-Regular.otf")
+    local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=500,y=420},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
     score:draw_over_surface(screen,"GAME OVER")
     activeView = "menu"
     current_menu = "singlePlayerMenu"

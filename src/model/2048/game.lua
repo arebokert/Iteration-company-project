@@ -11,6 +11,10 @@ function Game.registerKey(key, state)
         Boxes.moveLeft()
       elseif key == "right" then
         Boxes.moveRight()
+      elseif key == "exit" then
+        activeView = "menu"
+        current_menu = "mainMenu"
+        showmenu.loadMainMenu()
       end
     end
 end
