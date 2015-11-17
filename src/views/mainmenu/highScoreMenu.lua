@@ -4,7 +4,6 @@
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 local highScoreMenu = {
-  current_screen = nil,     -- the screen of the current page, give data by loadMenu()
   current_game = 1,         -- the number is the index of the total_games
   total_games = {
      "pacman",
@@ -21,22 +20,23 @@ local highScoreMenu = {
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 function highScoreMenu.loadMenu()
-local highScoreMenu = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
-  highScoreMenu:clear({r=7, g = 19, b=77, a=20}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
+  local highScoreSurface = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
+  highScoreSurface:clear({r=7, g = 19, b=77, a=120}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
    local scores = {}
 --  if(highScoreMenu.current_game == 1) then
 --    scores = highScoreMenu.loadScores("pacman", nil)
 --  elseif highScoreMenu.current_game == 2 then
 --    scores = highScoreMenu.loadScores("2048",nil)
 --  end
-  highScoreMenu.loadLocalScore(highScoreMenu,scores)
-  highScoreMenu.loadGlobalScore(highScoreMenu,scores)
-  highScoreMenu.loadStatus(highScoreMenu)
-  highScoreMenu.loadGameMenu(highScoreMenu)
+  highScoreMenu.loadLocalScore(highScoreSurface)
+  highScoreMenu.loadGlobalScore(highScoreSurface)
+  highScoreMenu.loadStatus(highScoreSurface)
+  highScoreMenu.loadGameMenu(highScoreSurface)
   local subMenuRectangle = {x =screen:get_width() * 0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55}
-   screen:copyfrom(playerMenu, nil)
-   gfx.update()
-   collectgarbage()
+  screen:clear({r=7, g = 19, b=77}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
+  screen:copyfrom(highScoreSurface, nil)
+  gfx.update()
+  collectgarbage()
 end
 
 --------------------------------------------------------------------
@@ -47,22 +47,12 @@ end
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 function highScoreMenu.registerKey(key, state)
-  if current_menu == "highScoreMenu" then
       if key == "left" then
-<<<<<<< HEAD
         if highScoreMenu.current_game ~= 1 then
-         highScoreMenu.current_game = highScoreMenu.current_game  -1 
+          highScoreMenu.current_game = highScoreMenu.current_game  -1 
         else 
-         highScoreMenu.current_game = table.getn(highScoreMenu.total_games)
+          highScoreMenu.current_game = #highScoreMenu.total_games
         end
-        highScoreMenu.loadMenu(highScoreMenu.current_screen)
-=======
-      if highScoreMenu.current_game ~= 1 then
-       highScoreMenu.current_game = highScoreMenu.current_game  -1 
-      else 
-       highScoreMenu.current_game = #highScoreMenu.total_games
-      end
->>>>>>> f386c2e47fa0c4146004dc3eb62f382064e0c3dc
       elseif key == "right" then
         if highScoreMenu.current_game ~= #highScoreMenu.total_games then
          highScoreMenu.current_game = highScoreMenu.current_game +1
@@ -72,8 +62,9 @@ function highScoreMenu.registerKey(key, state)
         highScoreMenu.loadMenu(highScoreMenu.current_screen)
       elseif key == "down" then
         current_menu = "mainMenu"
+      elseif key =="exit" then
+        current_menu = "mainMenu"
       end
-  end
 end
 
 --------------------------------------------------------------------
@@ -88,11 +79,7 @@ end
 --------------------------------------------------------------------
 function highScoreMenu.writeWord(word, color, size, position, Screen)
   ADLogger.trace(root_path)
-<<<<<<< HEAD
   local font_path = root_path .."views/mainmenu/data/font/Gidole-Regular.otf"
-=======
-  font_path = root_path .. "views/mainmenu/data/font/Gidole-Regular.otf"
->>>>>>> f386c2e47fa0c4146004dc3eb62f382064e0c3dc
   ADLogger.trace(font_path)
   local word_freetype = sys.new_freetype(color, size, position,font_path)
   word_freetype:draw_over_surface(Screen,word)
@@ -105,7 +92,7 @@ end
 --description: load local score of games                    --------
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
-function highScoreMenu.loadLocalScore(Screen, scores)
+function highScoreMenu.loadLocalScore(Screen)
   local color = {r=255, g=255, b=255}
   local margin = 1
   Screen:clear({r=7, g=19, b=77, a=240},{x =screen:get_width()*0.075, y= screen:get_height()*0.094, w= screen:get_width()*0.23,h=screen:get_height()*0.48})
@@ -170,7 +157,11 @@ function highScoreMenu.loadGameMenu(Screen)
   local margin = 1
   Screen:clear({r=7, g=19, b=77, a=240},{x =screen:get_width()*0.38, y= screen:get_height()*0.11, w= screen:get_width()*0.25,h=screen:get_height()*0.10})
   highScoreMenu.drawBorder(Screen, screen:get_width()*0.38, screen:get_height()*0.11,screen:get_width()*0.25, screen:get_height()*0.10, margin, color)
-  highScoreMenu.writeWord("PACMAN",{r=255,g=255,b=255},36,{x = screen:get_width()*0.45, y = screen:get_height()*0.12},Screen)
+  if(highScoreMenu.current_game == 1) then
+    highScoreMenu.writeWord("PACMAN",{r=255,g=255,b=255},36,{x = screen:get_width()*0.45, y = screen:get_height()*0.12},Screen)
+  elseif(highScoreMenu.current_game == 2) then
+   highScoreMenu.writeWord("2048",{r=255,g=255,b=255},36,{x = screen:get_width()*0.45, y = screen:get_height()*0.12},Screen)
+  end
 end
 
 function highScoreMenu.loadScores(GameName, scoreType)

@@ -87,7 +87,7 @@ function showmenu.loadMainMenu()
     mainMenu:setOptions(options)
     mainMenuContainer = gfx.new_surface(screen:get_width(), screen:get_height()/3.0)
     mainMenuContainer:clear( {g=0, r=0, b=255, a=25} )
-
+    _G.current_menu = "mainMenu"
     mainMenu.containerPos = {x = 0, y=screen:get_height()-mainMenuContainer:get_height()}
     mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
     _G.activeMenu = mainMenu
@@ -116,7 +116,7 @@ end
 --------------------------------------------------------------------
 function showmenu.loadMenu(subMenuFlag)
   -- use subMenuContainer as an arguments to your screen, and then show it
---  local subMenuContainer = showmenu.loadBackground()
+ local subMenuContainer = showmenu.loadBackground()
   if(subMenuFlag == "highScore") then
     highScoreMenu.loadMenu()
   elseif(subMenuFlag == "singlePlayer") then
@@ -136,7 +136,6 @@ end
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 function showmenu.registerKey(key,state)
-  if current_menu == "mainMenu" then
     if key == "left" then
         mainMenu:prev()
     elseif key == "right" then
@@ -148,7 +147,6 @@ function showmenu.registerKey(key,state)
     elseif key == "exit" then
         sys.stop()
     end
-  end
 end
 
 
