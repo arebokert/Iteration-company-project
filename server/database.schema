@@ -1,0 +1,59 @@
+CREATE TABLE IF NOT EXISTS user_list (
+	mac VARCHAR(48),
+	user_id INTEGER,
+	primary key (mac, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS pacman_matches (
+	match_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	player_one_mac VARCHAR(48) not null references user_list(mac),
+	player_one_id INTEGER not null references user_list(user_id),
+	player_one_total_score INTEGER,
+	player_two_mac VARCHAR(48) references user_list(mac),
+	player_two_id INTEGER references user_list(userid),
+	player_two_total_score INTEGER,
+	winner VARCHAR(48) references user_list(mac)
+);
+
+CREATE TABLE IF NOT EXISTS pacman_games (
+	match_id INTEGER references pacman_matches(match_id),
+	game_number INTEGER not null
+	player_one_score INTEGER,
+	player_two_score INTEGER,
+	PRIMARY KEY (match_id, game_number)
+);
+
+CREATE TABLE IF NOT EXIST pacman_high_scores (
+	game_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	player_mac VARCHAR(48) not null references user_list(mac),
+	player_id INTEGER not null references user_list(user_id),
+	score INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS tfe_matches (
+	match_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	player_one_mac VARCHAR(48) not null references user_list(mac),
+	player_one_id INTEGER not null references user_list(user_id),
+	player_one_total_score INTEGER,
+	player_two_mac VARCHAR(48) references user_list(mac),
+	player_two_id INTEGER references user_list(userid),
+	player_two_total_score INTEGER,
+	winner VARCHAR(48) references user_list(mac)
+);
+
+CREATE TABLE IF NOT EXISTS tfe_games (
+	match_id INTEGER references tfe_matches(match_id),
+	game_number INTEGER not null
+	player_one_score INTEGER,
+	player_two_score INTEGER,
+	PRIMARY KEY (match_id, game_number)
+);
+
+CREATE TABLE IF NOT EXISTS tfe_high_scores (
+	game_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	player_mac VARCHAR(48) not null references user_list(mac),
+	player_id INTEGER not null references user_list(user_id),
+	score INTEGER
+);
+
+
