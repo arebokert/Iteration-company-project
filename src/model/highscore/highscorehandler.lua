@@ -51,6 +51,12 @@ function submitGlobalHighscore(playerName, score)
   NetworkHandler:sendJSON(newHighscore, "sendcode") -- Temporary send code
 end
 
+function HighscoreHandler:retrieveOwnGlobalHighscore()
+  local macAddress = "00-00-00-00-00-00-00-E0" -- Temporary hardcoded mac address
+  --TODO
+  --Implement extraction and return of json object to lua table.
+end
+
 -- Saves the array of highscores to the file, in JSON-format.
 -- @param gameName - The game which the highscores belong to.
 function HighscoreHandler:saveHighscore()
