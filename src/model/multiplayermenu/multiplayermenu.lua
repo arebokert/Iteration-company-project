@@ -47,9 +47,26 @@ end
 
 --Returning dummy information until a database/server-connection can be secured.
 --@param dummy - Contains strings for the multiplayerview.
-function getScores()
+function multiModel:fetchResults()
+    resultset = {}
     
-    return dummy
+    resultset[1] = {
+          score1 = "986 vs. 789", indicator1 = "w",
+          score2 = "567 vs. 443", indicator2 = "w",
+          score3 = "445 vs. 999", indicator3 = "l"
+      }
+    resultset[2] = {
+          score1 = "334 vs. 445", indicator1 = "l",
+          score2 = "887 vs. 765", indicator2 = "w",
+          score3 = "489 vs. 282", indicator3 = "w"
+      }
+    resultset[3] = {
+          score1 = "No history", indicator1 = "n",
+          score2 = "No history", indicator2 = "n",
+          score3 = "No history", indicator3 = "n"
+      }
+    
+    return resultset
 end
 
 return multiModel

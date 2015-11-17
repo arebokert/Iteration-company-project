@@ -3,5 +3,6 @@
   gameHolder = {}
   gameHolder[1] = {name = "pacman", path = "model/games/pacman/"}
   gameHolder[2] = {name = "2048", path = "model/games/2048/"}
-
+  gameHolder[3] = {name = "empty", path = "model/games/empty/"}
+  
   return gameHolder

@@ -10,7 +10,7 @@ function showmenu.loadMainMenu()
     options = {}
     options[1] = {title = "Game",
         action = function()
-            current_menu = "singlerPlayerMenu"  -- give the temperate active menu to singlerPlayerMenu
+            current_menu = "singlePlayerMenu"  -- give the temperate active menu to singlerPlayerMenu
             return "Return Option1"
         end,
         hover = function()
