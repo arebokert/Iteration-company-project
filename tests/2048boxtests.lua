@@ -27,8 +27,6 @@ end
 -- returns true if non of the functions crash
 -- @return: true
 function runBoxFunctions() -- runs the functions in Collisionhandler.lua
-  box1 = box.lua
-
   --Boxes.init()
   --Boxes.showScore()
   Boxes.loadAllImg()
