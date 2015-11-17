@@ -1,0 +1,1 @@
+gamehandler.loadPacman()
