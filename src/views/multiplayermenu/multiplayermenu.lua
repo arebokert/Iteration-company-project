@@ -4,6 +4,7 @@ local resulttable = nil
 local playerMenu = nil
 local activeGame = nil
 local a = {}
+local tempActive = nil
 
 function multiplayermenu.loadMenu(Screen)
   model = model:new()
@@ -119,6 +120,12 @@ function multiplayermenu.loadCurrentPlayers(players)
   multiplayermenu.writeWord(currentplayers,{r = 100, g = 0, b =100},35,{x=(((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)+playerMenu:get_width()/5)+25, y= ((playerMenu:get_height())/2)*1.02},playerMenu)
 end
 
+function multiplayermenu.start()
+    activeView = a[tempActive]["name"]
+    ADLogger.trace(tempActive)
+    dofile(a[tempActive]["start"])
+end
+
 function multiplayermenu.loadGameMenu()
   activeGame = 2
   color = {r=20, g=10, b=0}
@@ -146,7 +153,7 @@ function multiplayermenu:next()
     if activeGame==1 then
       prev = model:getSize()
     end
-    
+    tempActive = activeGame
     local bg = gfx.loadjpeg(a[prev]["path"] .. 'background-small.jpg')
     screen:copyfrom(bg, nil, {x=((playerMenu:get_width())/2)-350, y= playerMenu:get_height()/20+37})
     bg:destroy()
@@ -172,7 +179,7 @@ function multiplayermenu:prev()
     if (next>model:getSize()) then
       next = 1
     end
-    
+    tempActive = activeGame
     local bg = gfx.loadjpeg(a[prev]["path"] .. 'background-small.jpg')
     screen:copyfrom(bg, nil, {x=((playerMenu:get_width())/2)-350, y= playerMenu:get_height()/20+37})
     bg:destroy()
@@ -195,12 +202,11 @@ function multiplayermenu.registerKey(key,state)
     elseif key == "right" then
         multiplayermenu:next()
     elseif key == "ok" then
-        multiplayermenu:action()
+        multiplayermenu:start()
     elseif key == "down" then
         current_menu = "mainMenu"
     end
   end
 end
-
 
 return multiplayermenu

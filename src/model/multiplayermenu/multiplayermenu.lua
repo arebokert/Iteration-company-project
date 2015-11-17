@@ -23,7 +23,7 @@ function multiModel:getSize()
     return #self.options
 end
 
---"If all else fails"-method, reads a textfile and creates a function which returns a 
+--Reads a textfile and creates a function which returns a 
 --table with manually added lines of game-names/directories.
 --@param resource - method created by asserting a textfile.
 --@param gametable - stores the table created from calling "resource()"
@@ -36,6 +36,7 @@ end
 
 --Experiment function that might or might not work on the box.
 --Attempts to count folder in a directory (using terminal commands).
+--Note: Discarded.
 function multiModel:countFolders(folder)
     for folderName in io.popen([[ls -a "model/games/" /b /ad]]):lines() do 
     foldertable[folderName] = "model/games/"..folderName.."/resources/" end
