@@ -3,7 +3,6 @@ ADLogger = require("SDK.Utils.ADLogger")
 http = require("socket.http")
 ADLogger.trace("Applicatio Init")
 hasInternet=""
-
 root_path = ""
 if ADConfig.isSimulator then
     gfx = require "SDK.Simulator.gfx"
@@ -18,20 +17,23 @@ else
 end
 
 showmenu = require "views.mainmenu.showmenu"
-gamehandler = require "model.pacman.gamehandler"
+gamehandler = require "model.games.pacman.gamehandler"
+game2048 = require "model.games.2048.game"
 
 function onKey(key, state)
     ADLogger.trace("OnKey("..key..","..state..")")
-    
     if state == "down" or state == "repeat" then
         if activeView == "menu" then
-           showmenu.registerKey(key, state)
+           showmenu.mainMenuKeyEvents(key, state)
         elseif activeView == "pacman" then
             if gamehandler.pacmanOnKey(key) == false then
                 activeView = "menu"
+                current_menu = "singlerPlayerMenu"
                 showmenu.loadMainMenu()
                 activeMenu = mainMenu
             end
+        elseif activeView == "2048" then
+          game2048.registerKey(key,state)
         end
     end
 end
