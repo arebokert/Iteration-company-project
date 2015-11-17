@@ -4,7 +4,7 @@
 local scoreCount = 0
 
 
-
+-- This is a black box to cover the old score
 local w = gfx.new_surface(100, 30)
 w:clear({r=0, g=0, b=0})
 
@@ -16,19 +16,18 @@ w:clear({r=0, g=0, b=0})
 function countScore(type)
     if type == "yellowdot" then
       scoreCount = scoreCount + 10
-       ADLogger.trace("SCORE:")
-      ADLogger.trace(scoreCount)
     end
 end
 
-function printScore()
+--This function prints the score on the screen
+--@pos: The upper left corner where the score text is placed
+function printScore(pos)
 
-   font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
    size = 20
    color = {r = 255, g = 255, b =255}
    word = "Score: " .. scoreCount
-   screen:copyfrom(w,nil,{x=100, y=20})
-   score_text = sys.new_freetype(color, size, {x=100, y=20},font_path)
+   screen:copyfrom(w,nil,pos)
+   score_text = sys.new_freetype(color, size, pos, font_path)
    score_text:draw_over_surface(screen,word)
 
 end
@@ -37,7 +36,11 @@ end
 -- Return score
 --
 -- @return: scoreCount, current score.  
-
 function getScore()
     return scoreCount
 end
+
+-- Resets the score
+function resetScore()
+  scoreCount = 0
+end  

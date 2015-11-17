@@ -2,6 +2,8 @@ Gamehandler = {}
 
 Gameplan = require "model.games.pacman.gameplan"
 require("model.games.pacman.player")
+GameplanGraphics = require("model.games.pacman.gameplangraphics")
+require("model.games.pacman.score")
 
 --
 -- Load a game of pacman 
@@ -28,6 +30,9 @@ function Gamehandler.startPacman()
     return false
   end 
   
+  gameplan:resetLives()
+  resetScore()
+  
   -- Display the map on a container
   container_width = 1000
   container_height = 600
@@ -43,8 +48,15 @@ end
 function Gamehandler.refresh()
   if gameStatus == true then
     gameStatus = gameplan:refresh()
-  elseif gameStatus == false then
+    if gameStatus == false then
+      if gameplan:getLives() > 0 then
+        gameplan:reloadPacmanPos()
+        gameStatus = true
+      end
+    end
+  elseif gameStatus == false and gameplan:getLives() < 1 then
     gameTimer:stop()
+    GameplanGraphics.gameOver()
   end
 end
 
