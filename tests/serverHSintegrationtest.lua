@@ -20,18 +20,19 @@ ADLogger = require("SDK.Mocked.ADLogger")
     player = require "SDK.Mocked.player"
     freetype = require "SDK.Mocked.freetype"
     sys = require "SDK.Mocked.sys"
+    network = require "network.NetworkHandler"
 
 -- requireing the file which we're testing (it in turn should require the necessary models for integration testing) 
 require('model.highscore.highscorehandler')
 
 -- Adds a highscore to the server, and tries to retrieve it again. If they match, the test passes.
 function testOwnHighscore()
-hs = HighscoreHandler:new("p", 10, true) -- wanted to try submitGlobalHighscore, but it uses "self.gameName" so think I have to create a highscore object first.
-hs:newEntry("test", 5000)
-
--- TODO need to also have a function that collects the global highscore to test if it has been saved properly. 
--- assertEquals([retrieveHighScore], 5000)
-
+  hs = HighscoreHandler:new("p", 10, true) -- wanted to try submitGlobalHighscore, but it uses "self.gameName" so think I have to create a highscore object first.
+  hs:newEntry("test", 5000)
+  hstable = hs:retrieveOwnGlobalHighscore()
+  y = hstable[1]
+  x = y[1]
+  assertEquals(5000, x)
 end
 
 function testTopHighscore()

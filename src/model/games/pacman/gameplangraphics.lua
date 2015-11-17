@@ -8,6 +8,14 @@ function GameplanGraphics.createWall(block)
     return w
 end
 
+-- Gameover screen to be loaded when all lives is run out
+function GameplanGraphics.gameOver()
+    local gameOver = gfx.loadpng('views/pacman/data/gameover.png')
+    screen:copyfrom(gameOver, nil,{x=450, y=250})
+    printScore({x=620,y=400})
+    gfx.update()
+ -- gameOver:destroy() 
+end
 
 function GameplanGraphics.createAisle(block)
     local a = gfx.new_surface(block, block)
