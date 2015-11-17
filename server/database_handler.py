@@ -156,33 +156,42 @@ def remove_user(mac, playerid):
             using the same unit.
 
     Returns:
-        
+        Will return a boolean to describe if the user could be removed from
+        the database or not.
+
     Raises:
-        
+        Will NOT raise an error.
     """
 
-def get_user():
+def get_user(mac):
     """Get user information from database.
 
     Args:
         mac: MAC address of player. To differentiate between units.
-        playerid: User specific ID to seperate player from other players
-            using the same unit.
 
     Returns:
-        
+        A dict mapping database column to the corresponding table rows. For
+        example if there are two users linked to the specified MAC-address:
+        {'user_id': ('1', '2')}
     Raises:
-        
+        Will NOT raise an error.
     """
 
 # MATCH HANDLING
 def get_match_history(gamename, mac, playerid, number_of_matches):
-    """ write_description_here
+    """ Get history of the most recent matches for a player.
 
     Args:
+        gamename: Specific game that the action is related to.
+        mac: MAC-address for the player.
+        playerid: An integer that specifies id for player of a set-top-box.
+        number_of_matches: An integer that describes the number of matches
+            that is desired to be retreived, e.g. 10 or 3.
 
     Returns:
-
+        A dict mapping table column keys to table row data. The matches will
+        be returned in order of creation, with the oldest match being the
+        first.
 
     Raises:
         
@@ -190,16 +199,163 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
 
 
 def add_match(gamename, mac, playerid):
+    """ Create new match with first player or add a new player to a currently
+    empty player spot.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        mac: MAC-address for the player.
+        playerid: An integer that specifies id for player of a set-top-box.
+
+    Returns:
+
+
+    Raises:
+        
+    """
+
 def add_round_score(gamename, match, mac, playerid, score):
+    """ Add game score to a round.
+    The specified player will have their score added to the match.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        match: Integer that is describes the ID of a match.
+        mac: MAC-address for the player.
+        playerid: An integer that specifies id for player of a set-top-box.
+        score: The score to be stored in integer form.
+
+    Returns:
+
+
+    Raises:
+        
+    """
+
+
 def get_number_of_rounds(gamename, match):
+    """ Get the number of played and completed rounds of a match.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        match: Integer that is describes the ID of a match.
+
+    Returns:
+
+
+    Raises:
+        
+    """
+
 def get_match_score(gamename, match):
+    """ Get the scores of all games of a match.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        match: Integer that is describes the ID of a match.
+
+    Returns:
+
+
+    Raises:
+        
+    """
+
 def get_match_total_score(gamename, match):
+    """ Get the sum of scores for each player in a match.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        match: Integer that is describes the ID of a match.
+
+    Returns:
+
+
+    Raises:
+        
+    """
+
 def set_winner(gamename, match, mac, playerid):
+    """ Set the winner of a specified match.
+
+    This function does not actually calculate if the selection of winner is
+    correct or not.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        match: Integer that is describes the ID of a match.
+        mac: MAC-address for the player.
+        playerid: An integer that specifies id for player of a set-top-box.
+
+    Returns:
+
+
+    Raises:
+        
+    """
+
 def get_winner(gamename, match):
+    """ Get the winner of a specified match.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        match: Integer that is describes the ID of a match.
+
+    Returns:
+
+
+    Raises:
+        
+    """
 
 
 # HIGHSCORE HANDLING
 
 def add_highscore(gamename, mac, playerid, score):
+    """ Add highscore for specified player.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        mac: MAC-address for the player.
+        playerid: An integer that specifies id for player of a set-top-box.
+        score: Score to be saved.
+
+    Returns:
+
+
+    Raises:
+        
+    """
+
 def get_highscore(gamename, mac, playerid, number_of_scores):
+    """ Get highscore related to specific player.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        mac: MAC-address for the player.
+        playerid: An integer that specifies id for player of a set-top-box.
+        number_of_scores: An integer that describes the number of scores that
+            is desired, e.g. 10 or 3.
+
+    Returns:
+
+
+    Raises:
+        
+    """
+
 def get_global_highscore(gamename, number_of_scores):
+    """ Get the top number of scores for specific game. Not depedent 
+    on player.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        number_of_scores: An integer that describes the number of scores that
+            is desired, e.g. 10 or 3.
+
+    Returns:
+
+
+    Raises:
+        
+    """
