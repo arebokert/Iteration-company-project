@@ -3,10 +3,13 @@
 ---- Relative position starts at (0,0)
 ---- Cell grid position starts at (1,1)  
 
-require("model.pacman.dumper")
-require("model.pacman.collisionhandler")
-require("model.pacman.score")
-GameplanGraphics = require("model.pacman.gameplangraphics")
+require("model.games.pacman.dumper")
+require("model.games.pacman.collisionhandler")
+require("model.games.pacman.score")
+GameplanGraphics = require("model.games.pacman.gameplangraphics")
+font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
+lives = 2
+
 
 -- Define a shortcut function for testing
 function dump(...)
@@ -38,7 +41,7 @@ function Gameplan:loadMap(map)
     end
     
     -- The map file
-    local filename = root_path .. 'model/pacman/' .. map
+    local filename = root_path .. 'model/games/pacman/' .. map
     local file = io.open(filename, "r")
     local tabellines = {}
     local i = 0
@@ -79,8 +82,7 @@ end
 -- Set direction of Pacman. Obs! Hardcoded as player 1, needs to be adjusted. 
 --
 function Gameplan:setPacmanDirection(dir)
-    pacman_direction = dir
-    self.players[1].direction = dir
+    self.players[1].latentdirection = dir
 end
 
 
@@ -162,6 +164,7 @@ function Gameplan:displayMap(container, containerPos)
                 pacman = Player:new("pacman")   -- Initiate object
                 -- Start position for pacman
                 pacman:setPos(pos.x, pos.y)
+                pacman.startPos = {x = pos.x, y = pos.y}
                 pacman.bg = gfx.new_surface(self.block,self.block)
                 --pacman.bg:clear({r=255,g=255,b=51})
                 
@@ -176,6 +179,7 @@ function Gameplan:displayMap(container, containerPos)
                 pacman.bg:premultiply()
                 container:copyfrom(pacman.bg, nil, pacman:getPos())
                 pacman.direction = "right"
+                pacman.latentdirection = "right"
                 self:addPlayer(pacman)
             elseif c == "B" then
                 -- BAD SOLUTION!!!
@@ -200,6 +204,8 @@ function Gameplan:displayMap(container, containerPos)
             self.logicalMap[key][i] = c
         end
     end
+    printScore({x=100, y=20})
+    updateLives()
     yellowdotmatrix = yellowDotStatus(self.map)
     screen:copyfrom(container, nil, self.containerpos)
 
@@ -207,6 +213,44 @@ function Gameplan:displayMap(container, containerPos)
     gfx.update()
 end
 
+-- Updates number of lives
+function updateLives()
+  
+  lives = lives - 1
+  local xlivestext = "x " .. lives
+  local w = gfx.new_surface(100, 30)
+  w:clear({r=0, g=0, b=0})
+  screen:copyfrom(w,nil,{x=70, y=680})
+  screen:copyfrom(pacman.bg, nil, {x=70, y=680})
+  screen:copyfrom(w,nil,{x=100, y=680})
+  lives_text = sys.new_freetype({r=255,g=255,b=255},20, {x=100, y=680},font_path)
+  lives_text:draw_over_surface(screen,xlivestext)
+  gfx.update()
+  
+end
+
+-- Returns the number of lives left
+--@return: Number of lives left
+function Gameplan:getLives()
+  return lives
+end  
+
+-- Sets the number of lives left
+-- 4 since one life is deducted first time the no. of lives are printed
+function Gameplan:resetLives()
+  lives = 4
+end  
+
+-- This function resets Pacman to his origin position
+function Gameplan:reloadPacmanPos()
+  local startpos = pacman.startPos
+  local pacmanpos = self:relativeToAbsolutePosition(pacman.x, pacman.y)
+  dump("POSITION")
+  dump(pacmanpos)
+  screen:copyfrom(bg["0"], nil, pacmanpos)
+  gfx.update()
+  pacman:setPos(startpos.x,startpos.y)
+end
 
 -- 
 -- Repaint the gameplan when something is updated.
@@ -271,6 +315,10 @@ function Gameplan:xyToCell(x,y)
     return pos
 end
 
+
+-- This function checks whether a movement is possible
+-- @direction: Wanted direction
+-- @new_pos: Wanted position
 function Gameplan:possibleMovement(direction, new_pos)
     local target = {}
     target.x = new_pos.x
@@ -331,9 +379,24 @@ end
 
 function Gameplan:refresh()
 
-    for k,player in pairs(self.players) do
-        local new_pos = player:movement(self)
 
+    for k,player in pairs(self.players) do
+        
+        -- Checks whether the latent key press is a possible movement
+        if player.type == "pacman" then
+            local old_dir = player.direction
+            player.direction = player.latentdirection
+            local check_pos = player:movement(self)
+            if self:possibleMovement(player.latentdirection, check_pos) == true then
+              player.direction = player.latentdirection
+            else
+              player.direction = old_dir
+            end  
+            dump(player.direction)
+        end
+       
+        local new_pos = player:movement(self)
+  
         -- New cell is an aisle, OK!
         if self:possibleMovement(player.direction, new_pos) == true then
             local oldPos = player:getPos()
@@ -358,6 +421,9 @@ function Gameplan:refresh()
               updateDotStatus(self:xyToCell(new_pos.x,new_pos.y))
             end
         end
+        
+        
+        
         if self:possibleMovement(player.direction, new_pos) == false  then
             -- New cell is a wall, not ok!
             if player.type ~= "pacman" then
@@ -365,10 +431,18 @@ function Gameplan:refresh()
             end
         end
     end
+    
+    printScore({x=100, y=20})
+    
+    if checkCollision(self.players[1],self.players[2]) == true then
+      updateLives()
+    end
+    
     -- checks if there is a collision between pacman and blinky. 
     -- Should preferably be implemented with a loop to compare all players when more are added.
     return not checkCollision(self.players[1],self.players[2])
 end
+
 
 function Gameplan:dumpPlayerPos()
     -- dump(self.players)

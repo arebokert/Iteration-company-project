@@ -62,11 +62,24 @@ function singlePlayerMenu.drawBorder(playerMenu, startX, startY, width, height, 
 end
 
 
+<<<<<<< HEAD
 function singlePlayerMenu.writeWord(word, color, size, position)
  -- local font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
   --local word_freetype = sys.new_freetype(color, size, position,font_path)
   local word_freetype = sys.new_freetype({g=100,r=100,b=100}, 60, {x=900,y=50},root_path .."views/mainmenu/data/font/Gidole-Regular.otf")
   word_freetype:draw_over_surface(screen,word)
+=======
+function singlePlayerMenu.writeWord(word, color, size, position, screen)
+  ADLogger.trace(root_path)
+  font_path = root_path .. "views/mainmenu/data/font/Gidole-Regular.otf"
+  ADLogger.trace(font_path)
+  size = size or 50
+  color = color or {r = 100, g = 0, b =100}
+  word = word or  "hello world" 
+  ADLogger.trace(size)
+  start_btn = sys.new_freetype(color, size, position,font_path)
+  start_btn:draw_over_surface(screen,word)
+>>>>>>> f386c2e47fa0c4146004dc3eb62f382064e0c3dc
 end
 
 --controller:loadGame()
@@ -83,16 +96,24 @@ function singlePlayerMenu.loadGame()
 end
 
 function singlePlayerMenu.registerKey(key, state)
-  if current_menu == "singlerPlayerMenu" then
+  if current_menu == "singlePlayerMenu" then
     if key == "left" then
        if singlePlayerMenu.current_game ~= 1 then
        singlePlayerMenu.current_game = singlePlayerMenu.current_game  -1 
       else 
+<<<<<<< HEAD
        singlePlayerMenu.current_game = 3
+=======
+       singlePlayerMenu.current_game = #singlePlayerMenu.total_games
+>>>>>>> f386c2e47fa0c4146004dc3eb62f382064e0c3dc
       end
       singlePlayerMenu.loadMenu()
     elseif key == "right" then
+<<<<<<< HEAD
       if singlePlayerMenu.current_game ~= 3 then
+=======
+      if singlePlayerMenu.current_game ~= #singlePlayerMenu.total_games then
+>>>>>>> f386c2e47fa0c4146004dc3eb62f382064e0c3dc
          singlePlayerMenu.current_game = singlePlayerMenu.current_game +1
         else 
          singlePlayerMenu.current_game = 1

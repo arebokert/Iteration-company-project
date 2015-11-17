@@ -49,14 +49,22 @@ end
 function highScoreMenu.registerKey(key, state)
   if current_menu == "highScoreMenu" then
       if key == "left" then
+<<<<<<< HEAD
         if highScoreMenu.current_game ~= 1 then
          highScoreMenu.current_game = highScoreMenu.current_game  -1 
         else 
          highScoreMenu.current_game = table.getn(highScoreMenu.total_games)
         end
         highScoreMenu.loadMenu(highScoreMenu.current_screen)
+=======
+      if highScoreMenu.current_game ~= 1 then
+       highScoreMenu.current_game = highScoreMenu.current_game  -1 
+      else 
+       highScoreMenu.current_game = #highScoreMenu.total_games
+      end
+>>>>>>> f386c2e47fa0c4146004dc3eb62f382064e0c3dc
       elseif key == "right" then
-        if highScoreMenu.current_game ~= table.getn(highScoreMenu.total_games) then
+        if highScoreMenu.current_game ~= #highScoreMenu.total_games then
          highScoreMenu.current_game = highScoreMenu.current_game +1
         else 
          highScoreMenu.current_game = 1
@@ -80,7 +88,11 @@ end
 --------------------------------------------------------------------
 function highScoreMenu.writeWord(word, color, size, position, Screen)
   ADLogger.trace(root_path)
+<<<<<<< HEAD
   local font_path = root_path .."views/mainmenu/data/font/Gidole-Regular.otf"
+=======
+  font_path = root_path .. "views/mainmenu/data/font/Gidole-Regular.otf"
+>>>>>>> f386c2e47fa0c4146004dc3eb62f382064e0c3dc
   ADLogger.trace(font_path)
   local word_freetype = sys.new_freetype(color, size, position,font_path)
   word_freetype:draw_over_surface(Screen,word)

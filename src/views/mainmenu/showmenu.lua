@@ -8,6 +8,7 @@ showmenu = {}
 Menu = require "model.mainmenu.menuclass"
 highScoreMenu = require "views.mainmenu.highScoreMenu"
 singlePlayerMenu = require "views.mainmenu.singlePlayerMenu"
+multiPlayerMenu = require "views.multiplayermenu.multiplayermenu"
 datapath = "views/mainmenu/data"
 
 --------------------------------------------------------------------
@@ -19,7 +20,7 @@ function showmenu.loadMainMenu()
     local options = {}
     options[1] = {title = "Game",
         action = function()
-            current_menu = "singlerPlayerMenu"  -- give the temperate active menu to singlerPlayerMenu
+            current_menu = "singlePlayerMenu"  -- give the temperate active menu to singlerPlayerMenu
             return "Return Option1"
         end,
         hover = function()
@@ -52,14 +53,14 @@ function showmenu.loadMainMenu()
 
 	options[3] = {title = "Multiplayer",
         action = function()
-            --current_menu = "multiplayerMenu"
+            current_menu = "multiPlayerMenu"
             return "Return Option3"
         end,
         hover = function()
             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
             screen:copyfrom(bg, nil)
             bg:destroy()
-            --showMenu.loadMenu("multiplayer")
+            showmenu.loadMenu("multiplayer")
             return true
         end,
         button = datapath .. '/multi-normal.png',
@@ -121,7 +122,7 @@ function showmenu.loadMenu(subMenuFlag)
   elseif(subMenuFlag == "singlePlayer") then
     singlePlayerMenu.loadMenu()
   elseif(subMenuFlag == "multiplayer") then
-    --multiplayerMenu.loadMenu(subMenuContainer)
+    multiPlayerMenu.loadMenu(subMenuContainer)
   elseif(subMenuFlag == "exit") then
     -- exitMenu.loadMenu(subMenuContainer)
   end
@@ -159,9 +160,15 @@ end
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 function showmenu.mainMenuKeyEvents(key, state)
+    if current_menu == "mainMenu" then
     showmenu.registerKey(key,state)
+    elseif current_menu == "highScoreMenu" then
     highScoreMenu.registerKey(key, state)
+    elseif current_menu == "singlePlayerMenu" then
     singlePlayerMenu.registerKey(key,state)
+    elseif current_menu == "multiPlayerMenu" then
+    multiPlayerMenu.registerKey(key, state)
+    end
 end
 
 return showmenu

@@ -1,4 +1,6 @@
-Page = require("page")
+game2048.startGame()
+
+--[[Page = require("page")
 Game = require("game")
 Boxes = require("box")
 
@@ -46,4 +48,4 @@ end
 -- entrance of the game
 function onStart()
   Page.showMainPage()
-end
+end]]
