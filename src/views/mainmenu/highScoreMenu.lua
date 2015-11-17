@@ -25,10 +25,10 @@ function highScoreMenu.registerKey(key, state)
       if highScoreMenu.current_game ~= 1 then
        highScoreMenu.current_game = highScoreMenu.current_game  -1 
       else 
-       highScoreMenu.current_game = table.getn(highScoreMenu.total_games)
+       highScoreMenu.current_game = #highScoreMenu.total_games
       end
       elseif key == "right" then
-        if highScoreMenu.current_game ~= table.getn(highScoreMenu.total_games) then
+        if highScoreMenu.current_game ~= #highScoreMenu.total_games then
          highScoreMenu.current_game = highScoreMenu.current_game +1
         else 
          highScoreMenu.current_game = 1
@@ -41,7 +41,7 @@ end
 
 function highScoreMenu.writeWord(word, color, size, position, Screen)
   ADLogger.trace(root_path)
-  font_path = "views/mainmenu/data/font/Gidole-Regular.otf"
+  font_path = root_path .. "views/mainmenu/data/font/Gidole-Regular.otf"
   ADLogger.trace(font_path)
   size = size or 50
   color = color or {r = 100, g = 0, b =100}

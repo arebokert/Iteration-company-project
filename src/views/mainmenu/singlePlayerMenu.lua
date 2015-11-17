@@ -65,7 +65,7 @@ end
 
 function singlePlayerMenu.writeWord(word, color, size, position, screen)
   ADLogger.trace(root_path)
-  font_path = "views/mainmenu/data/font/Gidole-Regular.otf"
+  font_path = root_path .. "views/mainmenu/data/font/Gidole-Regular.otf"
   ADLogger.trace(font_path)
   size = size or 50
   color = color or {r = 100, g = 0, b =100}
@@ -94,12 +94,12 @@ function singlePlayerMenu.registerKey(key, state)
        if singlePlayerMenu.current_game ~= 1 then
        singlePlayerMenu.current_game = singlePlayerMenu.current_game  -1 
       else 
-       singlePlayerMenu.current_game = table.getn(singlePlayerMenu.total_games)
+       singlePlayerMenu.current_game = #singlePlayerMenu.total_games
       end
       ADLogger.trace(singlePlayerMenu.current_game)
       singlePlayerMenu.loadMenu(singlePlayerMenu.current_screen)
     elseif key == "right" then
-      if singlePlayerMenu.current_game ~= table.getn(singlePlayerMenu.total_games) then
+      if singlePlayerMenu.current_game ~= #singlePlayerMenu.total_games then
          singlePlayerMenu.current_game = singlePlayerMenu.current_game +1
         else 
          singlePlayerMenu.current_game = 1

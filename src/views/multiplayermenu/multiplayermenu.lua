@@ -19,7 +19,7 @@ end
 
 function multiplayermenu.writeWord(word, color, size, position, Screen)
   ADLogger.trace(root_path)
-  font_path = datapath .. "/font/Gidole-Regular.otf"
+  font_path = root_path .. datapath .. "/font/Gidole-Regular.otf"
   ADLogger.trace(font_path)
   size = size or 50
   color = color or {r = 100, g = 0, b =100}
