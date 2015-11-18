@@ -78,12 +78,17 @@ end
 
 function Boxes.endGame() 
   result = Boxes.tag["left"] + Boxes.tag['right'] + Boxes.tag['top'] + Boxes.tag['bottom']
+  ADLogger.trace(Boxes.tag["left"])
+ADLogger.trace(Boxes.tag["right"])
+ADLogger.trace(Boxes.tag["top"])
+ADLogger.trace(Boxes.tag["bottom"])
   if(result == 4) then
     ADLogger.trace("Game Over")
+    screen:clear({r=50,g=20,b=30})
     local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=500,y=420},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
     score:draw_over_surface(screen,"GAME OVER")
-    activeView = "menu"
-    current_menu = "singlePlayerMenu"
+    gfx.update()
+    current_menu = "2048_game_over"
   end
 end
 
@@ -213,7 +218,7 @@ function Boxes.moveTop()
     Boxes.addRandomNumber()
     Boxes.showMove()
   else
-   Boxes.tag["bottom"] = 1
+   Boxes.tag["top"] = 1
    Boxes.endGame()
   end
 end
