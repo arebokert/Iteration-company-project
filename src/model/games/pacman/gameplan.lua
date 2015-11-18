@@ -2,12 +2,12 @@
 ---- Absolute position starts at (1,1)
 ---- Relative position starts at (0,0)
 ---- Cell grid position starts at (1,1)  
-
+font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 require("model.games.pacman.dumper")
 require("model.games.pacman.collisionhandler")
 require("model.games.pacman.score")
 GameplanGraphics = require("model.games.pacman.gameplangraphics")
-font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
+
 lives = 2
 
 
