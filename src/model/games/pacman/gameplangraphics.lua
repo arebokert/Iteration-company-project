@@ -1,7 +1,7 @@
 -- The GameplanGraphics class. 
 GameplanGraphics = {}
 
-
+-- A block for walls. Colors and size
 function GameplanGraphics.createWall(block)
     local w = gfx.new_surface(block, block)
     w:clear({r=0, g=0, b=150})
@@ -12,31 +12,34 @@ end
 function GameplanGraphics.gameOver()
     local gameOver = gfx.loadpng('views/pacman/data/gameover.png')
     screen:copyfrom(gameOver, nil,{x=450, y=250})
-    printScore({x=620,y=400})
+    Score.printScore({x=620,y=400})
     gfx.update()
  -- gameOver:destroy() 
 end
 
+
+-- A block for aisles. Colors and size
 function GameplanGraphics.createAisle(block)
     local a = gfx.new_surface(block, block)
     a:clear({r=0, g=0, b=0})
     return a
 end
 
-
+-- A surface for yellow dots. Color and size
 function GameplanGraphics.createYellowDot(psize)
     local dot = gfx.new_surface(psize, psize)
     dot:clear({r=222, g=228, b=51})
     return dot
 end
 
-
+-- A function that calculates what the distance from the left border of the cell to where the yellow dot is suppsoed to
+-- be painted
 function GameplanGraphics.yellowDotOffset(block, dotSize)
   local offset = math.ceil((block - dotSize)/2)
   return offset
 end
 
-
+-- A surface for the door. Color and size
 function GameplanGraphics.createDoor(block) 
   local door = gfx.new_surface(block, math.ceil(block/4))
   door:clear({r=200,g=80,b=51})
@@ -76,4 +79,3 @@ end
 
 
 return GameplanGraphics
-
