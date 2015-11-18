@@ -43,7 +43,6 @@ function onStart()
 
     -- Set which state that's possible. Global variable
     _G.activeView = "menu"
-
     ADLogger.trace("onStart")
     if ADConfig.isSimulator then
         if arg[#arg] == "-debug" then require("mobdebug").start() end
