@@ -2,7 +2,10 @@
 -- Score = {}
 
 local scoreCount = 0
-
+local size = 20
+local color = {r = 255, g = 255, b =255 }
+local pos = {x=100,y=20}
+local score_text = sys.new_freetype(color, size, pos, font_path)
 
 -- This is a black box to cover the old score
 local w = gfx.new_surface(100, 30)
@@ -23,13 +26,9 @@ end
 --@pos: The upper left corner where the score text is placed
 function printScore(pos)
 
-   size = 20
-   color = {r = 255, g = 255, b =255}
    word = "Score: " .. scoreCount
    screen:copyfrom(w,nil,pos)
-   score_text = sys.new_freetype(color, size, pos, font_path)
    score_text:draw_over_surface(screen,word)
-
 end
 
 -- 
