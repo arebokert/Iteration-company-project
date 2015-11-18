@@ -59,7 +59,6 @@ def connect_db():
 
     Returns:
 
-
     Raises:
         
     """
@@ -81,7 +80,6 @@ def get_db():
 
     Returns:
 
-
     Raises:
         
     """
@@ -98,7 +96,6 @@ def get_db_cursor():
 
     Returns:
 
-
     Raises:
         
     """
@@ -111,7 +108,6 @@ def persist_db():
     Args:
 
     Returns:
-
 
     Raises:
         
