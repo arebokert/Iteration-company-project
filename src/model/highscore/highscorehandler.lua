@@ -62,7 +62,7 @@ end
 function HighscoreHandler:saveHighscore()
 
   -- The filename should be gamename + Highscore, e.g. "pacmanHighscore"
-  local fileName = self.gameName.."Highscore"
+  local fileName = "model/highscore/"..self.gameName.."Highscore"
   local f = io.open(fileName, "w")
   
   -- Encodes into JSON and writes to file
@@ -78,7 +78,7 @@ end
 function loadHighscore(gameName)
   
   -- Filename is e.g. "pacmanHighscore"
-  local fileName = gameName.."Highscore"
+  local fileName = "model/highscore/"..gameName.."Highscore"
   
   -- If the file does not exists, nothing happens.
   local f = io.open(fileName, "r")
