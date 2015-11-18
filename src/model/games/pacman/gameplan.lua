@@ -2,12 +2,13 @@
 ---- Absolute position starts at (1,1)
 ---- Relative position starts at (0,0)
 ---- Cell grid position starts at (1,1)  
-
+font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 require("model.games.pacman.dumper")
 require("model.games.pacman.collisionhandler")
-require("model.games.pacman.score")
+Score = require("model.games.pacman.score")
 GameplanGraphics = require("model.games.pacman.gameplangraphics")
-font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
+
+-- 4 because first time the lives are printed, one life is deducted
 lives = 2
 
 
@@ -101,7 +102,7 @@ end
 -- 
 -- @param: blockSize. The size of each block (squares)
 -- @param: dotSize. The size of dot
-function loadBackgroundObjects(blockSize, dotSize) 
+function Gameplan:loadBackgroundObjects(blockSize, dotSize) 
   -- The background object
   local background = {}
   -- 1 <=> wall
@@ -135,7 +136,7 @@ function Gameplan:displayMap(container, containerPos)
     local dotoffset = GameplanGraphics.yellowDotOffset(self.block, self.dotSize)
     
     -- Global variable, pretty bad code
-    bg = loadBackgroundObjects(self.block, self.dotSize)
+    bg = self:loadBackgroundObjects(self.block, self.dotSize)
     
     -- The logical map: A grid of the map 
     self.logicalMap = {}
@@ -185,6 +186,7 @@ function Gameplan:displayMap(container, containerPos)
                 -- BAD SOLUTION!!!
                 blinky = Player:new("ghost")
                 blinky:setPos(pos.x, pos.y)
+                blinky.startPos = {x = pos.x, y = pos.y}
                 blinky.bg = gfx.new_surface(self.block,self.block)
                 -- blinky.bg:clear({r=0,g=255,b=51})
   
@@ -204,9 +206,9 @@ function Gameplan:displayMap(container, containerPos)
             self.logicalMap[key][i] = c
         end
     end
-    printScore({x=100, y=20})
-    updateLives()
-    yellowdotmatrix = yellowDotStatus(self.map)
+    Score.printScore({x=100, y=20})
+    self:updateLives()
+    yellowdotmatrix = self:yellowDotStatus(self.map)
     screen:copyfrom(container, nil, self.containerpos)
 
     -- Update GFX
@@ -214,14 +216,15 @@ function Gameplan:displayMap(container, containerPos)
 end
 
 -- Updates number of lives
-function updateLives()
+function Gameplan:updateLives()
   
   lives = lives - 1
   local xlivestext = "x " .. lives
   local w = gfx.new_surface(100, 30)
   w:clear({r=0, g=0, b=0})
   screen:copyfrom(w,nil,{x=70, y=680})
-  screen:copyfrom(pacman.bg, nil, {x=70, y=680})
+  local life = gfx.loadpng('views/pacman/data/pacmanright0.png')
+  screen:copyfrom(life, nil, {x=70, y=680})
   screen:copyfrom(w,nil,{x=100, y=680})
   lives_text = sys.new_freetype({r=255,g=255,b=255},20, {x=100, y=680},font_path)
   lives_text:draw_over_surface(screen,xlivestext)
@@ -238,18 +241,22 @@ end
 -- Sets the number of lives left
 -- 4 since one life is deducted first time the no. of lives are printed
 function Gameplan:resetLives()
-  lives = 4
+  lives = 2
 end  
 
 -- This function resets Pacman to his origin position
-function Gameplan:reloadPacmanPos()
-  local startpos = pacman.startPos
-  local pacmanpos = self:relativeToAbsolutePosition(pacman.x, pacman.y)
-  dump("POSITION")
-  dump(pacmanpos)
-  screen:copyfrom(bg["0"], nil, pacmanpos)
-  gfx.update()
-  pacman:setPos(startpos.x,startpos.y)
+function Gameplan:reloadPlayerPos()
+
+  for k,player in pairs(self.players) do
+
+    local startpos = player.startPos
+    local currentpos = self:relativeToAbsolutePosition(player.x, player.y)
+    screen:copyfrom(bg["0"], nil, currentpos)
+    gfx.update()
+    player:setPos(startpos.x,startpos.y)
+  
+  end
+  
 end
 
 -- 
@@ -275,7 +282,7 @@ function Gameplan:repaint(player, oldPos)
       elseif player.direction == "up" then
           cell = self:xyToCell(oldPos.x, oldPos.y + self.block -1)
       end
-      if checkDotStatus(cell) == true then
+      if self:checkDotStatus(cell) == true then
         self:printYellowDot(cell)
       end  
   end
@@ -285,7 +292,10 @@ function Gameplan:repaint(player, oldPos)
   gfx.update()
 end
 
-
+-- Converts a relative position to an absolute position in the map
+-- @param x: relative x position
+-- @param y: relative y position
+-- @return pos: absolute position in table
 function Gameplan:relativeToAbsolutePosition(x, y)
     local pos = {}
     pos.x = x + self.containerpos.x
@@ -293,12 +303,16 @@ function Gameplan:relativeToAbsolutePosition(x, y)
     return pos
 end
 
-
+-- Checks what a cell in the map contains
+-- @param: cell: The cell wanted to check
+-- @return: the content of the cell
 function Gameplan:checkMap(cell)
     return self.logicalMap[cell.y][cell.x]
 end
 
-
+-- Converts a cell position to reltive XY position
+-- @param: cell: The cell wanted to convert
+-- @return: the relative XY position
 function Gameplan:cellToXY(cell)
     local x = (cell.x-1) * self.block
     local y = (cell.y-1) * self.block
@@ -306,7 +320,10 @@ function Gameplan:cellToXY(cell)
     return pos
 end
 
-
+-- Converts an XY position to cell position
+-- @param: x: Relative x position to be converted
+-- @param: y: Relative y position to be converted
+-- @return: The cell
 function Gameplan:xyToCell(x,y)
     -- RELATIVE COORDINATES
     local xcell = math.ceil( (x+1)/self.block )
@@ -351,6 +368,10 @@ function Gameplan:possibleMovement(direction, new_pos)
     end
 end
 
+
+-- Gets all the directions, and if it's possible to move that way
+-- @param: position: Relative position
+-- @return: Table with all directions containing true/false if possible to move
 function Gameplan:getPossibleMovements(position)
     local directions = {left = false, right = false, up = false, down = false}
     local pos = {}
@@ -376,7 +397,8 @@ function Gameplan:getPossibleMovements(position)
     return directions
 end
 
-
+-- Refreshes the gameplan one fram
+-- @return: A boolean value. True if collision with opponent. False if no collision
 function Gameplan:refresh()
 
 
@@ -392,7 +414,6 @@ function Gameplan:refresh()
             else
               player.direction = old_dir
             end  
-            dump(player.direction)
         end
        
         local new_pos = player:movement(self)
@@ -415,10 +436,10 @@ function Gameplan:refresh()
             
             -- If player is pacman update score and remove yellowdot from yellowdot matrix
             if player.type == "pacman" then
-              if checkDotStatus(self:xyToCell(pos.x, pos.y)) == true then 
-                countScore("yellowdot")
+              if self:checkDotStatus(self:xyToCell(pos.x, pos.y)) == true then 
+                Score.countScore("yellowdot")
               end 
-              updateDotStatus(self:xyToCell(new_pos.x,new_pos.y))
+              self:updateDotStatus(self:xyToCell(new_pos.x,new_pos.y))
             end
         end
         
@@ -432,18 +453,21 @@ function Gameplan:refresh()
         end
     end
     
-    printScore({x=100, y=20})
+    Score.printScore({x=100, y=20})
+    
+    
     
     if checkCollision(self.players[1],self.players[2]) == true then
-      updateLives()
+      self:updateLives()
     end
+    
     
     -- checks if there is a collision between pacman and blinky. 
     -- Should preferably be implemented with a loop to compare all players when more are added.
     return not checkCollision(self.players[1],self.players[2])
 end
 
-
+-- Dumps the positions of the players in the terminal
 function Gameplan:dumpPlayerPos()
     -- dump(self.players)
     for k,player in pairs(self.players) do
@@ -462,7 +486,7 @@ end
 -- Creates a matrix that describes if a cell has a yellow dot or not 
 --  True means that it has a yellow dot
 -- Should be run when map is instantiated
-function yellowDotStatus(map)
+function Gameplan:yellowDotStatus(map)
     dotmatrix = {}
     for key, value in pairs(map) do
         dotmatrix[key] = {}
@@ -480,13 +504,14 @@ end
 
 
 -- Updates cells to not have a yellow dot
-function updateDotStatus(pos)
+function Gameplan:updateDotStatus(pos)
     yellowdotmatrix[pos.y][pos.x] = "false"
 end
 
 
 -- Checks if a cell has a yellow dot
-function checkDotStatus(pos)
+-- @return: the status of a dot position. True/False value
+function Gameplan:checkDotStatus(pos)
     return yellowdotmatrix[pos.y][pos.x]
 end
 
