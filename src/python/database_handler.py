@@ -228,6 +228,21 @@ def add_round_score(gamename, match, mac, playerid, score):
         
     """
 
+#TODO implement correctly. Choose correct SQL statements and make a comparison 
+#to select if the score shall be added to player one or two in database
+
+c = get_db()
+    try:
+        c.execute("INSERT INTO round (gamename"
+            ", game_number"
+            ", player_one_score"
+            ", player_two_score)"
+            " VALUES (?,?,?,?,?)"
+            , (gamename, match, mac, playerid, score,))
+    except:
+        get_db().rollback()
+        raise
+    return True
 
 def get_number_of_rounds(gamename, match):
     """ Get the number of played and completed rounds of a match.
@@ -322,6 +337,20 @@ def add_highscore(gamename, mac, playerid, score):
     Raises:
         
     """
+
+    c = get_db()
+    try:
+        c.execute("INSERT INTO high_scores (gamename"
+            ", player_mac"
+            ", player_id"
+            ", score)"
+            " VALUES (?,?,?,?)"
+            , (gamename, mac, playerid, score,))
+    except:
+        get_db().rollback()
+        raise
+    return True
+
 
 def get_highscore(gamename, mac, playerid, number_of_scores):
     """ Get highscore related to specific player.
