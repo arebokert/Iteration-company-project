@@ -1,8 +1,11 @@
 import json
+import database_handler
+
+database_handler.init_db()
 
 # import databasehandler # Make correct 
 
-def addHighscore(jsonObj):
+def add_Highscore(jsonObj):
 # Correct code, uncomment when databasehandler works:
 # https://docs.python.org/2/library/json.html 
 
