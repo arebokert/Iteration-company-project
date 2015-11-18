@@ -1,5 +1,0 @@
-  gameHolder = {}
-  gameHolder["pacman"] = "model/games/pacman/resources/"
-  gameHolder["2048"] = "model/games/2048/resources/"
-
-  return gameHolder

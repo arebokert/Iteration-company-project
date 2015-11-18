@@ -1,0 +1,1 @@
+insert into pacMatchTable (P1Mac, P1ID, P1G1Score, P1G2Score, P1G3Score, P1TotalScore, P2Mac, P2ID, P2G1Score, P2G2Score, P2G3Score, P2TotalScore, Winner) values ('123abc', 'Eric', '10', '15', '20', '45', '456def', 'Azur', '5', '15', '20', '40', 'E');

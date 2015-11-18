@@ -13,12 +13,12 @@ if ADConfig.isSimulator then
     sys = require "SDK.Simulator.sys"
     root_path = ""
 else
-    root_path = sys.root_path()
+    root_path = sys.root_path() .. "/"
 end
 
 showmenu = require "views.mainmenu.showmenu"
-gamehandler = require "model.pacman.gamehandler"
-game2048 = require "model.2048.game"
+gamehandler = require "model.games.pacman.gamehandler"
+game2048 = require "model.games.2048.game"
 
 function onKey(key, state)
     ADLogger.trace("OnKey("..key..","..state..")")
@@ -43,7 +43,6 @@ function onStart()
 
     -- Set which state that's possible. Global variable
     _G.activeView = "menu"
-
     ADLogger.trace("onStart")
     if ADConfig.isSimulator then
         if arg[#arg] == "-debug" then require("mobdebug").start() end

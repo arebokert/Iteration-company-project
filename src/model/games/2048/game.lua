@@ -1,4 +1,4 @@
-Boxes = require("model.2048.box")
+Boxes = require("model.games.2048.box")
 Game = {current = 0}
 
 function Game.registerKey(key, state)
@@ -11,7 +11,19 @@ function Game.registerKey(key, state)
         Boxes.moveLeft()
       elseif key == "right" then
         Boxes.moveRight()
+      elseif key == "exit" then
+        activeView = "menu"
+        current_menu = "mainMenu"
+        showmenu.loadMainMenu()
       end
+    end
+    if current_menu =="2048_game_over" then
+       if state == "down" then
+          if key == "exit" then
+	     current_menu = "mainmenu"
+             activeView = "menu"
+          end
+       end
     end
 end
 

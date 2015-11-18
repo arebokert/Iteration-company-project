@@ -51,12 +51,18 @@ function submitGlobalHighscore(playerName, score)
   NetworkHandler:sendJSON(newHighscore, "sendcode") -- Temporary send code
 end
 
+function HighscoreHandler:retrieveOwnGlobalHighscore()
+  local macAddress = "00-00-00-00-00-00-00-E0" -- Temporary hardcoded mac address
+  --TODO
+  --Implement extraction and return of json object to lua table.
+end
+
 -- Saves the array of highscores to the file, in JSON-format.
 -- @param gameName - The game which the highscores belong to.
 function HighscoreHandler:saveHighscore()
 
   -- The filename should be gamename + Highscore, e.g. "pacmanHighscore"
-  local fileName = self.gameName.."Highscore"
+  local fileName = "model/highscore/"..self.gameName.."Highscore"
   local f = io.open(fileName, "w")
   
   -- Encodes into JSON and writes to file
@@ -72,7 +78,7 @@ end
 function loadHighscore(gameName)
   
   -- Filename is e.g. "pacmanHighscore"
-  local fileName = gameName.."Highscore"
+  local fileName = "model/highscore/"..gameName.."Highscore"
   
   -- If the file does not exists, nothing happens.
   local f = io.open(fileName, "r")

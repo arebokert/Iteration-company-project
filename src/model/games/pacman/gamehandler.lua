@@ -1,7 +1,9 @@
 Gamehandler = {}
 
-Gameplan = require "model.pacman.gameplan"
-require("model.pacman.player")
+Gameplan = require "model.games.pacman.gameplan"
+require("model.games.pacman.player")
+GameplanGraphics = require("model.games.pacman.gameplangraphics")
+Score = require("model.games.pacman.score")
 
 --
 -- Load a game of pacman 
@@ -16,7 +18,8 @@ function Gamehandler.loadPacman()
   Gamehandler.startPacman()
 end
 
-
+-- This function is a help function for the loadPacman
+-- Generates all needed objects, and calls the needed functions fto be able to play the game
 function Gamehandler.startPacman()
   -- Initiate gameplan 
   gameplan = Gameplan:new()
@@ -27,6 +30,9 @@ function Gamehandler.startPacman()
     -- Return false if the map is not found. 
     return false
   end 
+  
+  gameplan:resetLives()
+  Score.resetScore()
   
   -- Display the map on a container
   container_width = 1000
@@ -39,16 +45,27 @@ function Gamehandler.startPacman()
   gameStatus = true
 end
 
-
+-- This function refreshes the game by one "frame"
+-- Gets a boolean from thhe gameplan-refresh 
+--      - True: No collision
+--      - False: Collision - deduct one life and check if game over
 function Gamehandler.refresh()
   if gameStatus == true then
     gameStatus = gameplan:refresh()
-  elseif gameStatus == false then
+    if gameStatus == false then
+      
+      if gameplan:getLives() > 0 then
+        gameplan:reloadPlayerPos()
+        gameStatus = true
+      end
+    end
+  elseif gameStatus == false and gameplan:getLives() < 1 then
     gameTimer:stop()
+    GameplanGraphics.gameOver()
   end
 end
 
-
+-- The onKey-function for the pacman game
 function Gamehandler.pacmanOnKey(key)
   --For testing
   if key == "0" then
@@ -85,11 +102,7 @@ function Gamehandler.pacmanOnKey(key)
     screen:clear({r=100,g=0,b=0})
     return false
   end
---[[
-  if key == "ok" then
-    gameplan:dumpPlayerPos()
-  end
-]]--
+
   return true
 end
 
@@ -97,7 +110,3 @@ callback = function(timer)
     Gamehandler.refresh()
 end
 return Gamehandler
-
-
-
-
