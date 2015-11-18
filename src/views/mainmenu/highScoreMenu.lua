@@ -11,7 +11,7 @@ local highScoreMenu = {
   }
 }
 
---require("model.highscore.highscorehandler")
+require("model.highscore.highscorehandler")
 
 --------------------------------------------------------------------
 --function: loadMenu                                        --------
@@ -23,13 +23,13 @@ function highScoreMenu.loadMenu()
   local highScoreSurface = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
   highScoreSurface:clear({r=7, g = 19, b=77, a=120}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
    local scores = {}
---  if(highScoreMenu.current_game == 1) then
---    scores = highScoreMenu.loadScores("pacman", nil)
---  elseif highScoreMenu.current_game == 2 then
---    scores = highScoreMenu.loadScores("2048",nil)
---  end
-  highScoreMenu.loadLocalScore(highScoreSurface)
-  highScoreMenu.loadGlobalScore(highScoreSurface)
+  if(highScoreMenu.current_game == 1) then
+    scores = highScoreMenu.loadScores("pacman", nil)
+ elseif highScoreMenu.current_game == 2 then
+    scores = highScoreMenu.loadScores("2048",nil)
+ end
+  highScoreMenu.loadLocalScore(highScoreSurface,scores)
+  highScoreMenu.loadGlobalScore(highScoreSurface,scores)
   highScoreMenu.loadStatus(highScoreSurface)
   highScoreMenu.loadGameMenu(highScoreSurface)
   local subMenuRectangle = {x =screen:get_width() * 0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55}
@@ -92,17 +92,17 @@ end
 --description: load local score of games                    --------
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
-function highScoreMenu.loadLocalScore(Screen)
+function highScoreMenu.loadLocalScore(Screen,scores)
   local color = {r=255, g=255, b=255}
   local margin = 1
   Screen:clear({r=7, g=19, b=77, a=240},{x =screen:get_width()*0.075, y= screen:get_height()*0.094, w= screen:get_width()*0.23,h=screen:get_height()*0.48})
   highScoreMenu.drawBorder(Screen,screen:get_width()*0.075,screen:get_height()*0.094, screen:get_width()*0.23,screen:get_height()*0.48, margin, color)
   highScoreMenu.writeWord("Local HighScore",{r=255,g=255,b=255},24,{x =screen:get_width()*0.09, y= screen:get_height()*0.12},Screen)
   highScoreMenu.writeWord("PlayerName" .. " : " .. "Score",{r=255,g=255,b=255},20,{x = screen:get_width()*0.09, y= screen:get_height()*0.2},Screen)
---  for k,v in pairs(scores) do
---    ADLogger.trace(k .. ". " .. v.playerName .. " " .. v.score)
---    highScoreMenu.writeWord(v.playerName .. " : " .. v.score,{r=255,g=255,b=255},20,{x= screen:get_width()*0.09, y= screen:get_height()*0.24 + k *30},Screen)
---  end
+  for k,v in pairs(scores) do
+    ADLogger.trace(k .. ". " .. v.playerName .. " " .. v.score)
+    highScoreMenu.writeWord(v.playerName .. " : " .. v.score,{r=255,g=255,b=255},20,{x= screen:get_width()*0.09, y= screen:get_height()*0.24 + k *30},Screen)
+  end
   
 end
 
@@ -125,17 +125,17 @@ function highScoreMenu.drawBorder(Screen, startX, startY, width, height, margin,
   Screen:clear(color, {x = startX+width, y = startY, w = margin, h = height+margin})
 end
 
-function highScoreMenu.loadGlobalScore(Screen)
+function highScoreMenu.loadGlobalScore(Screen,scores)
   local color = {r=255, g=255, b=255}
   local margin = 1
   Screen:clear({r=7, g=19, b=77, a=240},{x =screen:get_width()*0.7, y= screen:get_height()*0.094, w= screen:get_width()*0.23,h=screen:get_height()*0.48})
   highScoreMenu.drawBorder(Screen, screen:get_width()*0.7,screen:get_height()*0.094, screen:get_width()*0.23,screen:get_height()*0.48, margin, color)
   highScoreMenu.writeWord("Global HighScore",{r=255,g=255,b=255},24,{x = screen:get_width()*0.715, y = screen:get_height()*0.12},Screen)
   highScoreMenu.writeWord("PlayerName" .. " : " .. "Score",{r=255,g=255,b=255},20,{x = screen:get_width()*0.715, y= screen:get_height()*0.2},Screen)
---  for k,v in pairs(scores) do
---    ADLogger.trace(k .. ". " .. v.playerName .. " " .. v.score)
---    highScoreMenu.writeWord(v.playerName .. " : " .. v.score,{r=255,g=255,b=255},20,{x= screen:get_width()*0.715, y= screen:get_height()*0.24 + k *30},Screen)
---  end
+  for k,v in pairs(scores) do
+    ADLogger.trace(k .. ". " .. v.playerName .. " " .. v.score)
+    highScoreMenu.writeWord(v.playerName .. " : " .. v.score,{r=255,g=255,b=255},20,{x= screen:get_width()*0.715, y= screen:get_height()*0.24 + k *30},Screen)
+  end
 end
 
 function highScoreMenu.loadStatus(Screen)
@@ -170,10 +170,11 @@ function highScoreMenu.loadScores(GameName, scoreType)
   elseif(scoreType == "local") then
   
   end
+  ADLogger.trace(GameName)
   local highScores = HighscoreHandler:new(GameName, 5)   -- 1 means global
---  for k,v in pairs(PacmanHighscore.highscoreTable) do
---    ADLogger.trace(k .. ". " .. v.playerName .. " " .. v.score)
---  end
+  for k,v in pairs(highScores.highscoreTable) do
+    ADLogger.trace(k .. ". " .. v.playerName .. " " .. v.score)
+  end
   return highScores.highscoreTable
 end
 
