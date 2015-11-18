@@ -9,7 +9,7 @@ Score = require("model.games.pacman.score")
 GameplanGraphics = require("model.games.pacman.gameplangraphics")
 
 -- 4 because first time the lives are printed, one life is deducted
-lives = 2
+lives = 4
 
 
 -- Define a shortcut function for testing
@@ -17,6 +17,11 @@ function dump(...)
     print(DataDumper(...), "\n---")
 end
 
+-- Sleep function
+function wait(seconds)
+  local start = os.time()
+  repeat until os.time() > start + seconds
+end
 
 -- The Gameplan class. 
 Gameplan = {}
@@ -210,7 +215,6 @@ function Gameplan:displayMap(container, containerPos)
     self:updateLives()
     yellowdotmatrix = self:yellowDotStatus(self.map)
     screen:copyfrom(container, nil, self.containerpos)
-
     -- Update GFX
     gfx.update()
 end
@@ -241,22 +245,39 @@ end
 -- Sets the number of lives left
 -- 4 since one life is deducted first time the no. of lives are printed
 function Gameplan:resetLives()
-  lives = 2
+  lives = 4
 end  
 
--- This function resets Pacman to his origin position
+-- This function resets all players to their origin position
 function Gameplan:reloadPlayerPos()
-
+  -- Below commented code is supposed to make an animation of all the players
+  -- It should make them all twinkle three times
+  -- However, I did not get the code to work, since the wait function seems
+  -- to execute all the gfx.updates after it has waited all times.. This needs to be corrected
+ --[[ 
+  for i=1,3 do
+    for k,player in pairs(self.players) do
+      local currentpos = self:relativeToAbsolutePosition(player.x, player.y)
+      screen:copyfrom(bg["0"], nil, currentpos) 
+    end
+    gfx.update()
+    wait(0.5)
+    for k,player in pairs(self.players) do
+      local currentpos = self:relativeToAbsolutePosition(player.x, player.y)
+      screen:copyfrom(player.bg, nil, currentpos)
+    end
+  gfx.update()  
+  wait(0.5)
+  end
+  --]]
+  wait(1)
   for k,player in pairs(self.players) do
-
     local startpos = player.startPos
     local currentpos = self:relativeToAbsolutePosition(player.x, player.y)
     screen:copyfrom(bg["0"], nil, currentpos)
     gfx.update()
     player:setPos(startpos.x,startpos.y)
-  
   end
-  
 end
 
 -- 
@@ -397,6 +418,7 @@ function Gameplan:getPossibleMovements(position)
     return directions
 end
 
+
 -- Refreshes the gameplan one fram
 -- @return: A boolean value. True if collision with opponent. False if no collision
 function Gameplan:refresh()
@@ -455,16 +477,29 @@ function Gameplan:refresh()
     
     Score.printScore({x=100, y=20})
     
-    
-    
-    if checkCollision(self.players[1],self.players[2]) == true then
+    local collision = self:checkPacmanCollision()
+    if collision == true then
       self:updateLives()
     end
+    return not collision
     
-    
-    -- checks if there is a collision between pacman and blinky. 
-    -- Should preferably be implemented with a loop to compare all players when more are added.
-    return not checkCollision(self.players[1],self.players[2])
+end
+
+
+-- This functions loops all the players and checks if there's a collision with pacman
+-- @return: True: If there's a collision with pacman, else False.
+function Gameplan:checkPacmanCollision()
+    for k,player in pairs(self.players) do
+      if player.type == "pacman" then
+        for j,opponent in pairs(self.players) do
+          if opponent.type == "ghost" then
+            collision = checkCollision(player,opponent)
+            if collision == true then return true end
+          end
+        end
+      end
+    end
+    return false
 end
 
 -- Dumps the positions of the players in the terminal
@@ -481,7 +516,6 @@ function Gameplan:dumpPlayerPos()
         ADLogger.trace("END PLAYER")
     end
 end
-
 
 -- Creates a matrix that describes if a cell has a yellow dot or not 
 --  True means that it has a yellow dot
@@ -502,18 +536,15 @@ function Gameplan:yellowDotStatus(map)
     return dotmatrix
 end
 
-
 -- Updates cells to not have a yellow dot
 function Gameplan:updateDotStatus(pos)
     yellowdotmatrix[pos.y][pos.x] = "false"
 end
-
 
 -- Checks if a cell has a yellow dot
 -- @return: the status of a dot position. True/False value
 function Gameplan:checkDotStatus(pos)
     return yellowdotmatrix[pos.y][pos.x]
 end
-
 
 return Gameplan
