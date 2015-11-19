@@ -1,8 +1,8 @@
   --"name", "path", "start-file"
   
   gameHolder = {}
-  gameHolder[1] = {name = "pacman", path = root_path.."model/games/pacman/", start = root_path.."model/games/pacman/start.lua"}
-  gameHolder[2] = {name = "2048", path = root_path.."model/games/2048/", start = root_path.."model/games/2048/start.lua"}
-  gameHolder[3] = {name = "empty", path = root_path.."model/games/empty/", start = root_path.."model/games/empty/start.lua"}
+  gameHolder[1] = {name = "pacman", path = "model/games/pacman/", start = root_path.."model/games/pacman/start.lua"}
+  gameHolder[2] = {name = "2048", path = "model/games/2048/", start = root_path.."model/games/2048/start.lua"}
+  gameHolder[3] = {name = "empty", path = "model/games/empty/", start = root_path.."model/games/empty/start.lua"}
   
   return gameHolder
