@@ -11,7 +11,7 @@ def add_Highscore(jsonObj):
 
 #Retrieves table of highscores for specified user from the database, converts it to json and returns it to the calling function. 
 def get_highscore(jsonObj):
-	retrieved = database_handler.get_highscore(jsonObj['gameName'], jsonObj['macAddress'], jsonObj['playerID'], 10) # change the number of scores
+	retrieved = database_handler.get_highscore_by_box(jsonObj['gameName'], jsonObj['macAddress'], 10) # change the number of scores
 	return json.loads(retrieved)
 #alt return json.dumps(retrieved)
 
