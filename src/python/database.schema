@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS user_list (
 	primary key (mac, user_id)
 );
 
-CREATE TABLE OF NOT EXISTS games (
+CREATE TABLE IF NOT EXISTS games (
 	gamename TEXT PRIMARY KEY
 
 );
