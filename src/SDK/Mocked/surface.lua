@@ -5,6 +5,8 @@ function surface:__init()
 end
 
 function surface:__init(width, height)
+  width = width
+ height = height
 end
 
 function surface:loadImage(path)
@@ -14,6 +16,7 @@ function surface:writeOver(text, fontColor, drawingStartPoint)
 end
 
 function surface:clear(color, rectangle)
+
 end
 
 function surface:draw()

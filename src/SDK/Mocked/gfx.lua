@@ -3,6 +3,7 @@ local class = require( "SDK.Lib.classy" )
 local gfx = class( "SDK.Mocked.gfx")
 
 function gfx.new_surface(width, height)
+  return surface(width, height)
 --  return image_data, supposed to return this. Hopefully we won't need the return data, but if so check the original function
 end
 

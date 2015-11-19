@@ -1,37 +1,43 @@
+--------------------------------------------------------------------
+--class: showmenu                                           --------
+--description: load the main menu of the application        --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
 showmenu = {}
-Menu = require "model/mainmenu/menuclass"
-highScoreMenu = require "views/mainmenu/highScoreMenu"
+--print(package.path)
+Menu = require "model.mainmenu.menuclass"
+--highScoreMenu = require "views.mainmenu.highScoreMenu"
+singlePlayerMenu = require "views.mainmenu.singlePlayerMenu"
+multiPlayerMenu = require "views.multiplayermenu.multiplayermenu"
 datapath = "views/mainmenu/data"
 
+--------------------------------------------------------------------
+--function: loadMainMenu                                    --------
+--description: load the mainmenus of the whole page         --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
 function showmenu.loadMainMenu()
-    options = {}
+    local options = {}
     options[1] = {title = "Game",
         action = function()
-            activeMenu = secondary
-            secondary:setActive(1)
+            current_menu = "singlePlayerMenu"  -- give the temperate active menu to singlerPlayerMenu
             return "Return Option1"
         end,
         hover = function()
             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
             screen:copyfrom(bg, nil)
             bg:destroy()
-            showmenu.loadSecondaryMenu()
+            showmenu.loadMenu("singlePlayer")
             collectgarbage()
             return true
         end,
         button = datapath .. '/games-normal.png',
-        button_marked =datapath .. '/games-selected.png',
-        leave = function()
-            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
-            screen:copyfrom(bg, nil)
-            bg:destroy()
-            gfx.update()
-            return true
-        end}
-
+        button_marked = datapath .. '/games-selected.png'
+    }
     options[2] = {title = "HighScore",
         action = function()
-            return "Return Option2"
+          current_menu = "highScoreMenu"
+          return "Return Option2"
         end,
         hover = function()
             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
@@ -42,35 +48,29 @@ function showmenu.loadMainMenu()
             return true
         end,
         button =datapath..'/highscore-normal.png',
-        button_marked = datapath .. '/highscore-selected.png',
-        leave = function()
-            local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
-            screen:copyfrom(bg, nil)
-            bg:destroy()
-            gfx.update()
-            return true
-        end }
+        button_marked = datapath .. '/highscore-selected.png'
+    }
 
 	options[3] = {title = "Multiplayer",
         action = function()
-            sys.stop()
+            current_menu = "multiPlayerMenu"
             return "Return Option3"
         end,
         hover = function()
             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
             screen:copyfrom(bg, nil)
             bg:destroy()
+            showmenu.loadMenu("multiplayer")
             return true
         end,
         button = datapath .. '/multi-normal.png',
-        button_marked = datapath .. '/multi-selected.png',
-        leave = function()
-            return true
-        end}
+        button_marked = datapath .. '/multi-selected.png'
+    }
 	
     options[4] = {title = "Exit",
         action = function()
             sys.stop()
+            --showmenu.loadMenu("exit")
             return "Return Option4"
         end,
         hover = function()
@@ -80,122 +80,97 @@ function showmenu.loadMainMenu()
             return true
         end,
         button = datapath .. '/exit-normal.png',
-        button_marked = datapath .. '/exit-selected.png',
-        leave = function()
-            return true
-        end}
+        button_marked = datapath .. '/exit-selected.png'
+    }
 
     _G.mainMenu = Menu:new()
     mainMenu:setOptions(options)
-
     mainMenuContainer = gfx.new_surface(screen:get_width(), screen:get_height()/3.0)
     mainMenuContainer:clear( {g=0, r=0, b=255, a=25} )
-
+    _G.current_menu = "mainMenu"
     mainMenu.containerPos = {x = 0, y=screen:get_height()-mainMenuContainer:get_height()}
     mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
+    _G.activeMenu = mainMenu
     mainMenu:setActive(1)
     gfx.update()
 end
 
--- mainly show the highscore page
-function showmenu.loadMenu(tag)
-  _G.subMenu = Menu:new()
-  subMenuContainer = gfx.new_surface(screen:get_width(), 2.0*screen:get_height()/3.0)
-  
-  subMenuContainer:clear({g=0, r=0, b=255, a=20} )
-  --showmenu.writeWord("start", nil, 20, nil, subMenuContainer)
 
-  --subMenu.containerPos = {x = 0, y = 0}
-  --subMenu:printSub(subMenuContainer)
-  ADLogger.trace("23231232")
-  if(tag == "highScore") then
-    highScoreMenu.loadMenu(subMenuContainer)
-  elseif(tag == "singlePlayer") then
-  
+--------------------------------------------------------------------
+--function: loadBackground                                  --------
+--description: load background of four submenu              --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
+function showmenu.loadBackground()
+  local subMenuContainer = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
+  --subMenuContainer:clear({r=0, g = 52, b=113, a=120}, {x =screen:get_width() * 0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
+  return subMenuContainer
+end
+
+
+--------------------------------------------------------------------
+--function: loadMenu                                        --------
+--@param: subMenuFlag    the flag to identify which submenu --------
+--description: load four concrete content of four submenu   --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
+function showmenu.loadMenu(subMenuFlag)
+  -- use subMenuContainer as an arguments to your screen, and then show it
+ local subMenuContainer = showmenu.loadBackground()
+
+  --if(subMenuFlag == "highScore") then
+    --highScoreMenu.loadMenu()
+  if(subMenuFlag == "highScore") then
+    --highScoreMenu.loadMenu()
+  elseif(subMenuFlag == "singlePlayer") then
+    singlePlayerMenu.loadMenu()
+  elseif(subMenuFlag == "multiplayer") then
+    multiPlayerMenu.loadMenu()
+  elseif(subMenuFlag == "exit") then
+    -- exitMenu.loadMenu(subMenuContainer)
   end
-  subMenu:printSub(subMenuContainer)
-  gfx.update()
-  collectgarbage()
 end
 
-function showmenu.loadSecondaryMenu()
-    o = {}
-    o[1] = {title = "Game",
-        action = function()
-            --action
-            activeView = "pacman"
-            gamehandler.loadPacman()
-
-            return "Start pacman"
-        end,
-        hover = function()
-            return true
-        end,
-        button = datapath .. '/startgame.png',
-        button_marked = datapath .. '/startgame-marked.png',
-        leave = function()
-            return true
-        end}
-        --[[
-    o[2] = {title = "HighScore",
-        action = function()
-            -- action
-            return "Return HighScore"
-        end,
-        hover = function()
-           return true
-        end,
-        button = datapath .. '/highscore.png',
-        button_marked = datapath .. '/startgame-marked.png',
-        hover = function()
-            return true
-        end,
-        leave = function()
-            return true
-        end}
-    o[3] = {title = "Settings",
-        action = function()
-            -- action
-            return "Return Option2"
-        end,
-        hover = function()
-            return true
-        end,
-        button = datapath .. '/startgame.png',
-        button_marked = datapath .. '/startgame-marked.png',
-        leave = function()
-            return true
-        end}
-        --]]
-    _G.secondary = Menu:new()
-    secondary:setOptions(o)
-
-    secondaryMenuContainer = gfx.new_surface(880, 300)
-    secondary.containerPos = {x = 200, y=120}
-    secondaryMenuContainer:clear({g=0, r=0, b=255, a=20} )
-
-    secondary:print(secondaryMenuContainer, 20, secondaryMenuContainer:get_height()/2, 40)
-    gfx.update()
-end
-
-function showmenu.registerKey(key, state)
- -- Should be lifted out!
+--------------------------------------------------------------------
+--function: registerKey                                     --------
+--@param: key    the key pressed(left,right,up,down,ok)     --------
+--@param: state  the state of keypress(up,down, repeat)     --------
+--description: key functions of mainmenu                    --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
+function showmenu.registerKey(key,state)
     if key == "left" then
-        activeMenu:prev()
+        mainMenu:prev()
     elseif key == "right" then
-        activeMenu:next()
-    elseif key == "ok"  then
-        activeMenu:action()
-    elseif key == "up"  and mainMenu == activeMenu then
-        activeMenu:action()
-    elseif key == "down" and secondary == activeMenu then
-        secondary:print(secondaryMenuContainer, 20, secondaryMenuContainer:get_height()/2, 40)
-        activeMenu = mainMenu
-        mainMenu:setActive(1)
-    elseif key == "back" and mainMenu.active == 1 then
-        activeMenu = mainMenu
+        mainMenu:next()
+    elseif key == "ok"   then
+        mainMenu:action()
+    elseif key == "up"  then
+        mainMenu:action()
     elseif key == "exit" then
         sys.stop()
+    end
+end
+
+
+--------------------------------------------------------------------
+--function: mainMenuKeyEvents                               --------
+--@param: key    the key pressed(left,right,up,down,ok)     --------
+--@param: state  the state of keypress(up,down, repeat)     --------
+--description: key functions of the whole menus             --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
+function showmenu.mainMenuKeyEvents(key, state)
+    if current_menu == "mainMenu" then
+    showmenu.registerKey(key,state)
+
+    --elseif current_menu == "highScoreMenu" then
+    elseif current_menu == "highScoreMenu" then
+    --highScoreMenu.registerKey(key, state)
+    elseif current_menu == "singlePlayerMenu" then
+    singlePlayerMenu.registerKey(key,state)
+    elseif current_menu == "multiPlayerMenu" then
+    multiPlayerMenu.registerKey(key, state)
     end
 end
 
