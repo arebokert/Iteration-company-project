@@ -459,9 +459,9 @@ function Gameplan:refresh()
             -- If player is pacman update score and remove yellowdot from yellowdot matrix
             if player.type == "pacman" then
               if self:checkDotStatus(self:xyToCell(pos.x, pos.y)) == true then 
-                Score.countScore("yellowdot")
-              end 
-              self:updateDotStatus(self:xyToCell(new_pos.x,new_pos.y))
+                Score.countScore("yellowdot") 
+                self:updateDotStatus(self:xyToCell(new_pos.x,new_pos.y))
+              end       
             end
         end
         
@@ -522,12 +522,14 @@ end
 -- Should be run when map is instantiated
 function Gameplan:yellowDotStatus(map)
     dotmatrix = {}
+    noDotsRemaining = 0
     for key, value in pairs(map) do
         dotmatrix[key] = {}
         for i = 1, #value do
             local c = value:sub(i,i)
             if c == "0" then
                 dotmatrix[key][i] = true
+                noDotsRemaining = noDotsRemaining + 1
             else
                 dotmatrix[key][i] = false
             end
@@ -538,7 +540,8 @@ end
 
 -- Updates cells to not have a yellow dot
 function Gameplan:updateDotStatus(pos)
-    yellowdotmatrix[pos.y][pos.x] = "false"
+    noDotsRemaining = noDotsRemaining - 1
+    yellowdotmatrix[pos.y][pos.x] = "false" 
 end
 
 -- Checks if a cell has a yellow dot

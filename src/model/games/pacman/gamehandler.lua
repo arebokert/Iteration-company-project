@@ -52,8 +52,9 @@ end
 function Gamehandler.refresh()
   if gameStatus == true then
     gameStatus = gameplan:refresh()
-    if gameStatus == false then
-      
+    Gamehandler.endGame()
+    
+    if gameStatus == false then      
       if gameplan:getLives() > 0 then
         gameplan:reloadPlayerPos()
         gameStatus = true
@@ -61,8 +62,19 @@ function Gamehandler.refresh()
     end
   elseif gameStatus == false and gameplan:getLives() < 1 then
     gameTimer:stop()
-    GameplanGraphics.gameOver()
+    GameplanGraphics.gameOver('views/pacman/data/gameover.png')
   end
+end
+
+-- This function end game if no yelowdots remaining
+-- RESET FUNCTION NEEDS TO BE ADDED
+--     
+function Gamehandler.endGame()
+    if noDotsRemaining == 0 then  
+      gameTimer:stop()
+      GameplanGraphics.gameOver('views/pacman/data/victory.png')
+      -- reset function!!!!!!!!
+    end 
 end
 
 -- The onKey-function for the pacman game
