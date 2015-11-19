@@ -230,6 +230,73 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
                 #TODO(bjowi227): Fix the return values.
     return dict_factory(cursor, cfo);
 
+def insert_player_one(gamename, mac, playerid):
+    """ create new row in matches and add player one 
+
+    Args:
+        gamename: Specific game that the action is related to.
+        mac: MAC-address for the player.
+        playerid: An integer that specifies id for player of a set-top-box.
+
+    Returns: id of the match as an integer
+
+
+    Raises:
+        
+    """
+
+    c = get_db()
+    try:
+        c.execute(
+            "INSERT INTO matches (gamename"
+            ", player_one_mac"
+            ", player_one_id"
+            " VALUES (?,?,?)"
+            , (gamename, mac, playerid,))
+    except:
+        get_db().rollback()
+        raise
+
+    cursor = get_db_cursor()
+    try:    
+        cursor.execute("SELECT match_id"
+                       " FROM matches"
+                       " WHERE player_two_mac = null")
+        
+        cfo = cursor.fetchone()
+
+    return cfo.match_id
+
+def insert_player_two(gamename, mac, playerid, match_id,):
+
+   """ insert player two into an exisitng match 
+
+    Args:
+        gamename: Specific game that the action is related to.
+        mac: MAC-address for the player.
+        playerid: An integer that specifies id for player of a set-top-box.
+        match_id: An integer that specifies id for the match that the player shall be inserted in
+
+    Returns: id of the match as an integer
+
+
+    Raises:
+        
+    """
+
+  c = get_db()
+    try:
+        c.execute(
+            "UPDATE matches "
+            "SET player_two_id = ?"
+            "WHERE match_id = ?"
+            , (playerid, match_id,))
+    except:
+        get_db().rollback()
+        raise
+
+    return match_id
+
 def add_match(gamename, mac, playerid):
     """ Create new match with first player or add a new player to a currently
     empty player spot.
@@ -245,6 +312,21 @@ def add_match(gamename, mac, playerid):
     Raises:
         
     """
+    # Check for empty rows in matches
+
+    cursor = get_db_cursor()
+    try:    
+        cursor.execute("SELECT match_id"
+                       " FROM matches"
+                       " WHERE player_two_mac = null")
+        
+        cfo = cursor.fetchone()
+    #TODO(bjowi): Fix error handling.
+    if cfo is none:
+        return insert_player_one(gamename, mac, playerid)
+    else:
+        return insert_player_two(gamename, mac, playerid, cfo.match_id)
+
 
 def add_round_score(gamename, match, mac, playerid, score):
     """ Add game score to a round.
@@ -340,6 +422,19 @@ def set_winner(gamename, match, mac, playerid):
     Raises:
         
     """
+    c = get_db()
+    try:
+        c.execute(
+            "UPDATE matches "
+            "SET winner = ?"
+            "WHERE match_id = ?"
+            , (playerid, match,))
+    except:
+        get_db().rollback()
+        raise
+
+    return match_id
+
 
 def get_winner(gamename, match):
     """ Get the winner of a specified match.
@@ -355,6 +450,18 @@ def get_winner(gamename, match):
         
     """
 
+    #TODO (bjowi): Check that this is implementet correctly
+    #especially the usage of "winner" and the "?"
+
+    cursor = get_db_cursor()
+    try:    
+        cursor.execute("SELECT winner"
+                       " FROM matches"
+                       " WHERE match_id = ?")
+        , (match_id,))
+        cfo = cursor.fetchone()
+
+        return cfo.winner
 
 # HIGHSCORE HANDLING
 
