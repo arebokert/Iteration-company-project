@@ -41,9 +41,9 @@ end
 -- Load the pacman map. 
 --
 function Gameplan:loadMap(map)
-    -- If map is not specified, default is "map1.txt"
+    -- If map is not specified, default is "map2.txt"
     if map == nil then
-      map = 'map1.txt'
+      map = 'map2.txt'
     end
     
     -- The map file
