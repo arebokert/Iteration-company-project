@@ -1,40 +1,42 @@
 import socket
 import sys
 import json
-import Highscorehandler
-import multiplayer_handler  #MAKE CORRECT
+#import Highscorehandler
+#import multiplayer_handler  #MAKE CORRECT
 
 def sendScore(jsonObj):
-    j = json.loads(jsonObj)
-    hiscore_handler.function(j)  #MAKE CORRECT
+    data = json.loads(jsonObj)
+    #hiscore_handler.function(data["macAddress"], data["score"], data["playerName"], data["gameName"])  #MAKE CORRECT
+    return 'SE'
 
 def requestGlobalScore(jsonObj):
-    j = json.loads(jsonObj)
-    hiscore_handler.function(j) #MAKE CORRECT
+    data = json.loads(jsonObj)
+    #return hiscore_handler.function(data["gameName"], data["playerName"], data["macAddress"]) #MAKE CORRECT
 
 def requestOwnScore(jsonObj):
-    j = json.loads(jsonObj)
-    hiscore_handler.function(j) #MAKE CORRECT
+    data = json.loads(jsonObj)
+    #return hiscore_handler.function(data["macAddress"], data["gameName"]) #MAKE CORRECT
 
 def quickStart(jsonObj):
-    j = json.loads(jsonObj)
-    hiscore_handler.function(j) #MAKE CORRECT
+    data = json.loads(jsonObj)
+    # return hiscore_handler.function(data["macAddress"], data["playerName"], data["gameName"]) #MAKE CORRECT
 
 def submitScore(jsonObj):
-    j = json.loads(jsonObj)
-    hiscore_handler.function(j) #MAKE CORRECT
+    data = json.loads(jsonObj)
+    #return hiscore_handler.function(data["macAddress"], data["playerName"], data["matchID"], data["score"], data["gameName"]) #MAKE CORRECT
 
 def fetchGames(jsonObj):
-    j = json.loads(jsonObj)
-    hiscore_handler.function(j) #MAKE CORRECT
+    data = json.loads(jsonObj)
+    #return hiscore_handler.function(data[""]) #MAKE CORRECT
 
 def fetchStatus(jsonObj):
-    j = json.loads(jsonObj)
-    hiscore_handler.function(j) #MAKE CORRECT
+    data = json.loads(jsonObj)
+    #return hiscore_handler.function(data["macAddress"], data["playerName"], data["matchID"], data["gameName"]) #MAKE CORRECT
 
 def terminateGame(jsonObj):
-    j = json.loads(jsonObj)
-    hiscore_handler.function(j) #MAKE CORRECT
+    data = json.loads(jsonObj)
+    #return hiscore_handler.function(data["macAddress"], data["matchID"], data["gameName"]) #MAKE CORRECT
+
 
 
 while True:
@@ -61,21 +63,21 @@ while True:
     # FF   F = function (Format of incoming string)
 
     if data[:2] == 'SE':
-        sendScore(data[2:])
+        conn.send(sendScore(data[2:]))
     elif data[:2] == 'RS':
-        requestGlobalScore(data[2:])
+        conn.send(requestGlobalScore(data[2:]))
     elif data[:2] == 'RO':
-        requestOwnScore(data[2:])
+        conn.send(requestOwnScore(data[2:]))
     elif data[:2] == 'QS':
-        quickStart(data[2:])
+        conn.send(quickStart(data[2:]))
     elif data[:2] == 'SS':
-        submitScore(data[2:])
+        conn.send(submitScore(data[2:]))
     elif data[:2] == 'FG':
-        fetchGames(data[2:])
+        conn.send(fetchGames(data[2:]))
     elif data[:2] == 'FS':
-        fetchStatus(data[2:])
+        conn.send(fetchStatus(data[2:]))
     elif data[:2] == 'TG':
-        terminateGame(data[2:])
+        conn.send(terminateGame(data[2:]))
     else:
        print 'Incorrect operation.'
 
