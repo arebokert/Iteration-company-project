@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS matches (
 
 CREATE TABLE IF NOT EXISTS round (
 	match_id INTEGER references pacman_matches(match_id),
-	gamename TEXT not null references games(gamename),	
 	game_number INTEGER not null,
 	player_one_score INTEGER,
 	player_two_score INTEGER,
@@ -34,7 +33,7 @@ CREATE TABLE IF NOT EXIST high_scores (
 	gamename TEXT not null references games(gamename),
 	player_mac VARCHAR(48) not null references user_list(mac),
 	player_id INTEGER not null references user_list(user_id),
-	score INTEGER
+	score INTEGER not null
 );
 
 

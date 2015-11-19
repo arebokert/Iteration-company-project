@@ -191,6 +191,15 @@ def get_user(mac):
                 ,'user_id': None}
     return dict_factory(cursor, cfo);
 
+def user_exists(mac, playerid):
+    #TODO(bjowi): Implement function
+    return false
+
+def game_exists(gamename):
+    #TODO(bjowi): Implement function
+    return false
+
+
 # MATCH HANDLING
 def get_match_history(gamename, mac, playerid, number_of_matches):
     """ Get history of the most recent matches for a player.
@@ -212,7 +221,7 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
     if isinstance( number_of_matches, int ):
         nom = number_of_matches
     else:
-        nom = 10
+        nom = 3
     cursor = get_db_cursor()
     try:    
         cursor.execute("SELECT match_id"
@@ -368,11 +377,20 @@ def add_highscore(gamename, mac, playerid, score):
         score: Score to be saved.
 
     Returns:
-
+        An integer value depending on the score;
+        -1: Error
+        1: Nothing out of the ordinary
+        2: Top 10 local
+        3: Top 10 global
 
     Raises:
         
     """
+
+    if not game_exists(gamename):
+        add_game(gamename)
+    if not player_exists(mac, playerid):
+        add_user(mac, playerid)
 
     c = get_db()
     try:
@@ -384,11 +402,12 @@ def add_highscore(gamename, mac, playerid, score):
             , (gamename, mac, playerid, score,))
     except:
         get_db().rollback()
-        raise
-    return True
+        return -1
+    #TODO: Add calculation if score was global or local top 10.
+    return 1
 
 
-def get_highscore(gamename, mac, playerid, number_of_scores):
+def get_highscore_by_player(gamename, mac, playerid, number_of_results):
     """ Get highscore related to specific player.
 
     Args:
@@ -399,11 +418,82 @@ def get_highscore(gamename, mac, playerid, number_of_scores):
             is desired, e.g. 10 or 3.
 
     Returns:
-
+        A dictionary with the top N results for the player. Each dictionary row
+        contains the score and the player_id linked to this score.
 
     Raises:
         
     """
+    if isinstance( number_of_results, int ):
+        nor = number_of_results
+    else:
+        nor = 10
+
+    cursor = get_db_cursor()
+    try:
+        cursor.execute("SELECT player_id"
+                       ", score"
+                       " FROM high_scores"
+                       " WHERE gamename = ?"
+                       " AND player_mac = ?"
+                       " AND player_id = ?"
+                       " ORDER BY score DESC"
+                       " LIMIT ?"
+                       , (gamename, mac, playerid, nor,))
+        cfa = cursor.fetchall()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfa is None:
+        return {'player_id': None
+                , 'score': None}
+    result = []
+    for row in cfa:
+        result.append(dict_factory(cursor, row))
+    return result
+
+def get_highscore_by_box(gamename, mac, number_of_scores):
+    """ Get all highscores for players of a specific set-top-box.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        mac: MAC-address for the player.
+        number_of_scores: An integer that describes the number of scores that
+            is desired, e.g. 10 or 3.
+
+    Returns:
+        A dictionary with the top N results for the box. Each dictionary row
+        contains the score and the player_id linked to this score.
+
+    Raises:
+        
+    """
+    if isinstance( number_of_results, int ):
+        nor = number_of_results
+    else:
+        nor = 10
+
+    cursor = get_db_cursor()
+    try:
+        cursor.execute("SELECT player_id"
+                       ", score"
+                       " FROM high_scores"
+                       " WHERE gamename = ?"
+                       " AND player_mac = ?"
+                       " ORDER BY score DESC"
+                       " LIMIT ?"
+                       , (gamename, mac, nor,))
+        cfa = cursor.fetchall()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfa is None:
+        return {'player_id': None
+                , 'score': None}
+    result = []
+    for row in cfa:
+        result.append(dict_factory(cursor, row))
+    return result  
 
 def get_global_highscore(gamename, number_of_scores):
     """ Get the top number of scores for specific game. Not depedent 
