@@ -16,8 +16,7 @@ else
 
     root_path = sys.root_path().."/"
 
-    root_path = sys.root_path() .. "/"
-
+   -- root_path = sys.root_path() .. "/"
 end
 
 showmenu = require "views.mainmenu.showmenu"
@@ -54,7 +53,7 @@ function onStart()
 	if ADConfig.isSimulator then
         if arg[#arg] == "-debug" then require("mobdebug").start() end
     end
-	--[[if http.request( "http://www.google.com" ) == nil then
+ --[[ if http.request( "http://www.google.com" ) == nil then
 		hasInternet=false
 	else
 		hasInternet=true
