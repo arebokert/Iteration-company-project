@@ -6,17 +6,26 @@ local activeGame = nil
 local a = {}
 local tempActive = 2
 
+local text_size = 35
+local text_coords = {0,0}
+local font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
+local text_color = {r = 255, g = 255, b =255}
+local start_btn = sys.new_freetype(text_color, text_size, text_coords, font_path)
+
 --loads the view for the multiplayer menu
---@param Screen - the surface on which to print the menu
-function multiplayermenu.loadMenu(Screen)
+--@param model - instantiates the model for the multiplayermenu
+function multiplayermenu.loadMenu()
   model = model:new()
   a= model:fetchPath()
-  playerMenu = Screen
+  playerMenu = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
   playerMenu:clear({r=7, g = 19, b=77, a=20}, {x =screen:get_width()/20, y = screen:get_height()/20, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
   multiplayermenu.loadGameMenu()
   multiplayermenu.loadRecentResults(model:fetchResults())
   multiplayermenu.loadCurrentPlayers(0)
-  return Screen
+
+  --screen:clear({r=7, g = 19, b=77, a = 20}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
+  screen:copyfrom(playerMenu, nil)
+  gfx.update()
 end
 
 --prints a word on a selected surface
@@ -25,16 +34,17 @@ end
 --@param size - the size of the text
 --@param position - the position of the text
 --@param Screen - the surface on which to print the menu
-function multiplayermenu.writeWord(word, color, size, position, Screen)
+function multiplayermenu.writeWord(word, color, size, position)
   ADLogger.trace(root_path)
-  font_path = root_path .. datapath .. "/font/Gidole-Regular.otf"
+  --font_path = root_path .. datapath .. "/font/Gidole-Regular.otf"
   ADLogger.trace(font_path)
-  size = size or 50
-  color = color or {r = 100, g = 0, b =100}
+  text_coords = position
+  text_size = size or 50
+  text_color = color or {r = 100, g = 0, b =100}
   word = word or  "hello world" 
   ADLogger.trace(size)
-  start_btn = sys.new_freetype(color, size, position,font_path)
-  start_btn:draw_over_surface(Screen,word)
+  --start_btn = sys.new_freetype(color, size, position,font_path)
+  start_btn:draw_over_surface(playerMenu,word)
 end
 
 --loads the most recent results
@@ -73,9 +83,9 @@ function multiplayermenu.loadRecentResults(recentRes)
     screen:clear(losecol, {x = ((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5, y = ((playerMenu:get_height())/2)*1.6, w = ((playerMenu:get_width())/10)*3, h = 50})
   end
   
-  multiplayermenu.writeWord(score1,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= (playerMenu:get_height())/2+8},screen)
-  multiplayermenu.writeWord(score2,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.3+8},screen)
-  multiplayermenu.writeWord(score3,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.6+8},screen)
+  multiplayermenu.writeWord(score1,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= (playerMenu:get_height())/2+8})
+  multiplayermenu.writeWord(score2,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.3+8})
+  multiplayermenu.writeWord(score3,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.6+8})
 end
 
 --reloads the most recent results
@@ -112,9 +122,9 @@ function multiplayermenu.reloadRecent()
     screen:clear(losecol, {x = ((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5, y = ((playerMenu:get_height())/2)*1.6, w = ((playerMenu:get_width())/10)*3, h = 50})
   end
   
-  multiplayermenu.writeWord(score1,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= (playerMenu:get_height())/2+8},screen)
-  multiplayermenu.writeWord(score2,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.3+8},screen)
-  multiplayermenu.writeWord(score3,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.6+8},screen)
+  multiplayermenu.writeWord(score1,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= (playerMenu:get_height())/2+8})
+  multiplayermenu.writeWord(score2,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.3+8})
+  multiplayermenu.writeWord(score3,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.6+8})
   gfx:update()
 end
 
@@ -126,20 +136,20 @@ end
 --@param height - the height of the border (box)
 --@param margin - the margin (thickness) of the line
 --@param color - the color of the line
-function multiplayermenu.drawBorder(Screen, startX, startY, width, height, margin, color)
-  Screen:clear(color, {x = startX, y = startY, w = width, h = margin})
-  Screen:clear(color, {x = startX, y = startY, w = margin, h = height})
-  Screen:clear(color, {x = startX, y = startY+height, w = width+margin, h = margin})
-  Screen:clear(color, {x = startX+width, y = startY, w = margin, h = height+margin})
+function multiplayermenu.drawBorder(startX, startY, width, height, margin, color)
+  playerMenu:clear(color, {x = startX, y = startY, w = width, h = margin})
+  playerMenu:clear(color, {x = startX, y = startY, w = margin, h = height})
+  playerMenu:clear(color, {x = startX, y = startY+height, w = width+margin, h = margin})
+  playerMenu:clear(color, {x = startX+width, y = startY, w = margin, h = height+margin})
 end
 
 --loads the current players
 --@param players - the number of players online
 function multiplayermenu.loadCurrentPlayers(players)
-  color = {r=20, g=10, b=0}
+  local color = {r=20, g=10, b=0}
   margin = 5
   currentplayers = players or 0
-  multiplayermenu.drawBorder(playerMenu, ((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)+playerMenu:get_width()/5, (playerMenu:get_height())/2, playerMenu:get_width()/10*3, 50, margin, color)
+  --multiplayermenu.drawBorder(playerMenu, ((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)+playerMenu:get_width()/5, (playerMenu:get_height())/2, playerMenu:get_width()/10*3, 50, margin, color)
   multiplayermenu.writeWord(currentplayers,{r = 100, g = 0, b =100},35,{x=(((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)+playerMenu:get_width()/5)+25, y= ((playerMenu:get_height())/2)*1.02},playerMenu)
 end
 
@@ -220,6 +230,9 @@ function multiplayermenu:prev()
     collectgarbage()
     multiplayermenu.reloadRecent()
     activeGame=prev
+end
+
+function multiplayermenu.setTextParameters()
 end
 
 --Listener for keycommands, repeated in every menu-class.

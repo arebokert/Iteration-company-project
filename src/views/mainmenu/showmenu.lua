@@ -117,12 +117,15 @@ end
 function showmenu.loadMenu(subMenuFlag)
   -- use subMenuContainer as an arguments to your screen, and then show it
  local subMenuContainer = showmenu.loadBackground()
+
+  --if(subMenuFlag == "highScore") then
+    --highScoreMenu.loadMenu()
   if(subMenuFlag == "highScore") then
     --highScoreMenu.loadMenu()
   elseif(subMenuFlag == "singlePlayer") then
     singlePlayerMenu.loadMenu()
   elseif(subMenuFlag == "multiplayer") then
-    multiPlayerMenu.loadMenu(subMenuContainer)
+    multiPlayerMenu.loadMenu()
   elseif(subMenuFlag == "exit") then
     -- exitMenu.loadMenu(subMenuContainer)
   end
@@ -160,6 +163,8 @@ end
 function showmenu.mainMenuKeyEvents(key, state)
     if current_menu == "mainMenu" then
     showmenu.registerKey(key,state)
+
+    --elseif current_menu == "highScoreMenu" then
     elseif current_menu == "highScoreMenu" then
     --highScoreMenu.registerKey(key, state)
     elseif current_menu == "singlePlayerMenu" then

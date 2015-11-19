@@ -26,38 +26,43 @@ end
 
 -- Draws the viewer at the size and position decided when constructed. ATM only split-screen mode is available.
 function HighscoreViewer:draw()
+  fontPath = "/font/Gidole-Regular.otf"  
   -- Background
   screen:fill({r = 0, g = 20, b = 44}, {x = self.posX, y = self.posY, width = self.width, height = self.height})
-  -- Inside border
-  screen:fill({r = 255, g = 255, b = 255}, {x = self.posX + 25, y = self.posY + 50, width = self.width - 50, height = self.height - 75})
-  screen:fill({r = 0, g = 20, b = 44}, {x = self.posX + 30, y = self.posY + 55, width = self.width - 60, height = self.height - 85})
-  
-  
-  
-  fontPath = "/font/Gidole-Regular.otf"
   -- Text color
   color = {r = 255, g = 255, b = 255}
-  -- Margins is added to the position of the text.
-  position = {x = self.posX + 35, y = self.posY + 60}
-  if numberOfHigscores == 3 then -- If fullscreen
-    -- TODO: Implement the full-screen mode!
-    --[[size = self.height - 10
 
-    score_text = sys.new_freetype(color, size, position, font_path)
-    score_text:draw_over_surface(screen, word)
+  if #self.highscoreHandler.highscoreTable == 3 then -- If fullscreen
+    marginX = self.width / 15
+    marginY = self.height / 4
+    -- Margins is added to the position of the text.
+    position = {x = self.posX + marginX, y = self.posY + marginY}
+    -- Set the text-size
+    size = self.height / 2
+    
+    score_text = sys.new_freetype(color, size, position, fontPath)
+    score_text:draw_over_surface(screen, "High score:")
     
     for k,v in pairs(self.highscoreHandler.highscoreTable) do
       
-      position = {x = position.x + (screen:get_width() / 4), y = position.y}
-      word = v.playerName.." "..v.score
-      score_text = sys.new_freetype(color, size, position, font_path)
+      position = {x = position.x + (self.width / 4) - (marginX / 3), y = position.y}
+      word = v.playerName.." : "..v.score
+      score_text = sys.new_freetype(color, size, position, fontPath)
       score_text:draw_over_surface(screen, word)
       
-    end]]
+    end
   else -- If split-screen
+    -- Set the margin
+    margin = 30
+    
+    -- Inside border
+    screen:fill({r = 255, g = 255, b = 255}, {x = self.posX + margin, y = self.posY + 2*margin, width = self.width - 2*margin, height = self.height - 3*margin})
+    screen:fill({r = 0, g = 20, b = 44}, {x = self.posX + margin + 2, y = self.posY + 2*margin + 2, width = self.width - 2*margin - 4, height = self.height - 3*margin - 4})
+    -- Margins is added to the position of the text.
+    position = {x = self.posX + margin + 5, y = self.posY + 2*margin + 5}
     -- Set the text-size according to the number of rows.
-    size = ((self.height - 85) / #self.highscoreHandler.highscoreTable) - 1  
-    highscoreText = sys.new_freetype(color, 30, {x = self.posX + 25, y = self.posY + 10}, fontPath)
+    size = ((self.height - 3*margin - 4) / #self.highscoreHandler.highscoreTable) - 1  
+    highscoreText = sys.new_freetype(color, (size + (margin / 8)), {x = self.posX + margin, y = self.posY + (margin / 2)}, fontPath)
     highscoreText:draw_over_surface(screen, "High score")
     
     for k,v in pairs(self.highscoreHandler.highscoreTable) do

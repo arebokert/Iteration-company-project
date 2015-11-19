@@ -1,5 +1,5 @@
 multiModel = {title = "Multiplayer Menu"}
-textpath = "model/games/"
+textpath = root_path.."model/games/"
 
 --Constructor
 --@return obj - returns an instance of the multiplayermenu

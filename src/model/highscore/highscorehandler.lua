@@ -8,14 +8,14 @@ HighscoreHandler.__index = HighscoreHandler
 
 -- Constructor for the handler object.
 -- @param gameName - The name of the game.
--- @param global - A bool to fetch global highscores.
 -- @param numberOfHighscores - The number of highscores to be fetched. Standard is 10.
+-- @param global - A bool to fetch global highscores.
 function HighscoreHandler:new(gameName, numberOfHighscores, global)
   numberOfHighscores = numberOfHighscores or 10
   local self = setmetatable({}, self)
   self.gameName = gameName
   if global then
-    -- TODO: Add global highscore fetch.
+    self.highscoreTable = retrieveGlobalHighscore(gameName, numberOfHighscores)
   else
     self.fullHighscoreTable = loadHighscore(gameName)
     if #fullHighscoreTable < numberOfHighscores then numberOfHighscores = #fullHighscoreTable end
@@ -38,7 +38,7 @@ end
 -- Creates and inserts a new highscore-object in to the global highscore list
 -- @param playerName - The playername associated with the score.
 -- @param score - The score.
-function submitGlobalHighscore(playerName, score)
+function HighscoreHandler:submitGlobalHighscore(playerName, score)
   local macAddress = "00-00-00-00-00-00-00-E0" -- Temporary hardcoded mac address
   
   local newHighscore = JSON:encode({
@@ -49,12 +49,14 @@ function submitGlobalHighscore(playerName, score)
   })
   
   NetworkHandler:sendJSON(newHighscore, "sendcode") -- Temporary send code
+  
 end
 
-function HighscoreHandler:retrieveOwnGlobalHighscore()
+function retrieveOwnGlobalHighscore(gameName, numberOfHighscores)
   local macAddress = "00-00-00-00-00-00-00-E0" -- Temporary hardcoded mac address
-  --TODO
-  --Implement extraction and return of json object to lua table.
+  
+  -- TODO: Implement extraction and return of json object to lua table.
+
 end
 
 -- Saves the array of highscores to the file, in JSON-format.
