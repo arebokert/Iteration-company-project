@@ -4,7 +4,7 @@ GameplanGraphics = {}
 -- A block for walls. Colors and size
 function GameplanGraphics.createWall(block)
     local w = gfx.new_surface(block, block)
-    w:clear({r=0, g=0, b=150})
+    w:clear({r=118, g=18, b=36})
     return w
 end
 

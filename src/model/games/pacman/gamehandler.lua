@@ -25,7 +25,7 @@ function Gamehandler.startPacman()
   gameplan = Gameplan:new()
   
   -- Choose map to load 
-  local map = 'map1.txt'  
+  local map = 'map2.txt'  
   if gameplan:loadMap(map) == false then
     -- Return false if the map is not found. 
     return false
@@ -35,10 +35,10 @@ function Gamehandler.startPacman()
   Score.resetScore()
   
   -- Display the map on a container
-  container_width = 1000
-  container_height = 600
+  container_width = 600
+  container_height = 400
   container = gfx.new_surface(container_width, container_height)
-  containerPos = {x = 140, y = 60}
+  containerPos = {x = 300, y = 150}
   gameplan:displayMap(container, containerPos)
   
   -- Gamestatus ? 
