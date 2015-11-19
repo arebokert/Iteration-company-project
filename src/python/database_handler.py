@@ -158,6 +158,7 @@ def remove_user(mac, playerid):
     Raises:
         Will NOT raise an error.
     """
+    #TODO: Implement this function.
 
 def get_user(mac):
     """Get user information from database.
@@ -168,10 +169,27 @@ def get_user(mac):
     Returns:
         A dict mapping database column to the corresponding table rows. For
         example if there are two users linked to the specified MAC-address:
-        {'user_id': ('1', '2')}
+        {'user_id': ('1', '2')}. 
+        If no user could be found a dictionary with
+        empty values will be returned.
     Raises:
         Will NOT raise an error.
     """
+
+    cursor = get_db_cursor()
+    try:
+        cursor.execute("SELECT mac"
+                       ", user_id"
+                       " FROM user_list"
+                       " WHERE mac = ?", (mac,))
+        cfo = cursor.fetchone()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfo is None:
+        return {'mac':None
+                ,'user_id': None}
+    return dict_factory(cursor, cfo);
 
 # MATCH HANDLING
 def get_match_history(gamename, mac, playerid, number_of_matches):
@@ -185,14 +203,32 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
             that is desired to be retreived, e.g. 10 or 3.
 
     Returns:
-        A dict mapping table column keys to table row data. The matches will
-        be returned in order of creation, with the oldest match being the
-        first.
+        A dict containing the top X match_id.
 
     Raises:
         
     """
 
+    if isinstance( number_of_matches, int ):
+        nom = number_of_matches
+    else:
+        nom = 10
+    cursor = get_db_cursor()
+    try:    
+        cursor.execute("SELECT match_id"
+                       ", winner"
+                       " FROM matches"
+                       " WHERE gamename = ?", (mac,))
+        #TODO(bjowi227): Fix the database query.
+        cfo = cursor.fetchone()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfo is None:
+        return {'mac':None
+                ,'user_id': None}
+                #TODO(bjowi227): Fix the return values.
+    return dict_factory(cursor, cfo);
 
 def add_match(gamename, mac, playerid):
     """ Create new match with first player or add a new player to a currently
