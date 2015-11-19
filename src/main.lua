@@ -13,11 +13,11 @@ if ADConfig.isSimulator then
     sys = require "SDK.Simulator.sys"
     root_path = ""
 else
-<<<<<<< HEAD
+
     root_path = sys.root_path().."/"
-=======
+
     root_path = sys.root_path() .. "/"
->>>>>>> abc55551dab34cff5aade0bef795141e9e6b70cc
+
 end
 
 showmenu = require "views.mainmenu.showmenu"
