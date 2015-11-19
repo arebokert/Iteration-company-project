@@ -15,8 +15,9 @@ function HighscoreHandler:new(gameName, numberOfHighscores, global)
   local self = setmetatable({}, self)
   self.gameName = gameName
   if global then
-    self.highscoreTable = retrieveGlobalHighscore(gameName, numberOfHighscores)
+    self.highscoreTable = getGlobalHighscore(gameName, numberOfHighscores)
   else
+    --self.highscoreTable = getOwnGlobalHighscore(gameName, numberOfHighscores)
     self.fullHighscoreTable = loadHighscore(gameName)
     if #fullHighscoreTable < numberOfHighscores then numberOfHighscores = #fullHighscoreTable end
     self.highscoreTable = {unpack(fullHighscoreTable, 1, numberOfHighscores)}
@@ -24,39 +25,49 @@ function HighscoreHandler:new(gameName, numberOfHighscores, global)
   return self
 end
 
--- Creates and inserts a new highscore-object to the highscoreTable of the playerName that has been typed in.
--- @param playerName - The playername associated with the score.
+-- Creates and inserts a new highscore-object to the highscoreTable of the playerID that has been typed in.
+-- @param playerID - The playerID associated with the score.
 -- @param score - The score.
-function HighscoreHandler:newEntry(playerName, score)
+function HighscoreHandler:newEntry(playerID, score)
   
-  local a = Highscore:new(playerName, score)
+  local a = Highscore:new(playerID, score)
   insert(a, self)
-  submitGlobalHighscore(playerName, score)
+  submitGlobalHighscore(playerID, score)
 
 end
 
 -- Creates and inserts a new highscore-object in to the global highscore list
--- @param playerName - The playername associated with the score.
+-- @param playerID - The playerID associated with the score.
 -- @param score - The score.
-function HighscoreHandler:submitGlobalHighscore(playerName, score)
+-- @return JSON - Returns server respons in a JSON object
+function Highscorehandler:submitGlobalHighscore(gameName, playerID, score)
   local macAddress = "00-00-00-00-00-00-00-E0" -- Temporary hardcoded mac address
   
-  local newHighscore = JSON:encode({
+  local request = JSON:encode({
     macAddress = macAddress,
-    gameName = self.gameName,
-    playerName = playerName,
+    gameName = gameName,
+    playerID = playerID,
     score = score
   })
   
-  NetworkHandler:sendJSON(newHighscore, "sendcode") -- Temporary send code
+  return sendJSON(request, "SendScore") -- Temporary send code
   
 end
 
-function retrieveOwnGlobalHighscore(gameName, numberOfHighscores)
+-- Gets global highscore from the server
+-- @param gameName - The name of the game.
+-- @param numberOfHighscores - The number of highscores to be fetched. Standard is 10.
+-- @return Returns global highscore in a JSON object 
+function Highscorehandler:getGlobalHighscore(gameName, numberOfHighscores)
   local macAddress = "00-00-00-00-00-00-00-E0" -- Temporary hardcoded mac address
   
-  -- TODO: Implement extraction and return of json object to lua table.
-
+  local request = JSON:encode({
+    gameName = gameName,
+    numberOfHighscores = numberOfHighscores
+  })
+  
+  return sendJSON(request, 'RequestReadGlobalScore')
+  
 end
 
 -- Saves the array of highscores to the file, in JSON-format.
@@ -74,23 +85,30 @@ function HighscoreHandler:saveHighscore()
   
 end
 
--- Loads a highscore-table from file, if it does not exist it returns an empty (new) table.
+-- Loads a highscore-table globally from the server, if there are no
+-- highscores for the current box, it returns an empty (new) table.
 -- @param  gameName - The name of the game which highscore should be loaded.
--- @return fullHighscoreTable - The table of highscores from file.
+-- @return fullHighscoreTable - The table of highscores from the server.
 function loadHighscore(gameName)
+  local macAddress = "00-00-00-00-00-00-00-E0" -- Temporary hardcoded mac address
   
   -- Filename is e.g. "pacmanHighscore"
-  local fileName = "model/highscore/"..gameName.."Highscore"
+  --local fileName = "model/highscore/"..gameName.."Highscore"
   
   -- If the file does not exists, nothing happens.
-  local f = io.open(fileName, "r")
-  if f ~= nil then
-    rawJsonString = f:read()
-    f:close()
-  end
+  --local f = io.open(fileName, "r")
+  --if f ~= nil then
+  --  rawJsonString = f:read()
+  --  f:close()
+  --end
 
   -- If the file is not loaded, creates an empty table, otherwise it decodes the JSON-data to a table.
-  if rawJsonString == nil then fullHighscoreTable = {} else
+  local request = JSON:encode({
+    gameName = gameName,
+    macAddress = macAddress,
+  })
+  rawJsonString = sendJSON(request, 'RequestReadYourOwnScore')
+  if rawJsonString == 'Nothing received.' then fullHighscoreTable = {} else
     fullHighscoreTable = JSON:decode(rawJsonString)
   end
   

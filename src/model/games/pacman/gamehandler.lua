@@ -25,7 +25,7 @@ function Gamehandler.startPacman()
   gameplan = Gameplan:new()
   
   -- Choose map to load 
-  local map = 'map1.txt'  
+  local map = 'map2.txt'  
   if gameplan:loadMap(map) == false then
     -- Return false if the map is not found. 
     return false
@@ -35,10 +35,10 @@ function Gamehandler.startPacman()
   Score.resetScore()
   
   -- Display the map on a container
-  container_width = 1000
-  container_height = 600
+  container_width = 600
+  container_height = 400
   container = gfx.new_surface(container_width, container_height)
-  containerPos = {x = 140, y = 60}
+  containerPos = {x = 300, y = 150}
   gameplan:displayMap(container, containerPos)
   
   -- Gamestatus ? 
@@ -52,8 +52,9 @@ end
 function Gamehandler.refresh()
   if gameStatus == true then
     gameStatus = gameplan:refresh()
-    if gameStatus == false then
-      
+    Gamehandler.endGame()
+    
+    if gameStatus == false then      
       if gameplan:getLives() > 0 then
         gameplan:reloadPlayerPos()
         gameStatus = true
@@ -61,8 +62,19 @@ function Gamehandler.refresh()
     end
   elseif gameStatus == false and gameplan:getLives() < 1 then
     gameTimer:stop()
-    GameplanGraphics.gameOver()
+    GameplanGraphics.gameOver('views/pacman/data/gameover.png')
   end
+end
+
+-- This function end game if no yelowdots remaining
+-- RESET FUNCTION NEEDS TO BE ADDED
+--     
+function Gamehandler.endGame()
+    if noDotsRemaining == 0 then  
+      gameTimer:stop()
+      GameplanGraphics.gameOver('views/pacman/data/victory.png')
+      -- reset function!!!!!!!!
+    end 
 end
 
 -- The onKey-function for the pacman game
