@@ -12,9 +12,13 @@ function Game.registerKey(key, state)
       elseif key == "right" then
         Boxes.moveRight()
       elseif key == "exit" then
+        --activeView = "menu"
+        --current_menu = "mainMenu"
+        --showmenu.loadMainMenu()
         activeView = "menu"
-        current_menu = "mainMenu"
+        current_menu = "singlerPlayerMenu"
         showmenu.loadMainMenu()
+        activeMenu = mainMenu
       end
     end
     if current_menu =="2048_game_over" then

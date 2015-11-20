@@ -70,7 +70,7 @@ function highScoreMenu.loadMenu()
   highScoreMenu.loadStatus()
   highScoreMenu.loadGameMenu()
   screen:copyfrom(highScoreSurface, nil)
-  highScoreSurface:destroy()
+  --highScoreSurface:destroy()
   gfx.update()
   collectgarbage()
 end
@@ -180,7 +180,7 @@ function highScoreMenu.loadStatus()
   local margin = 1
   highScoreSurface:clear({r=7, g=19, b=77, a=240},{x =screen:get_width()*0.335, y= screen:get_height()*0.272, w= screen:get_width()*0.33,h=screen:get_height()*0.3})
   highScoreMenu.drawBorder(screen:get_width()*0.335, screen:get_height()*0.272,screen:get_width()*0.33, screen:get_height()*0.3, margin, color)
-  highScoreMenu.writeWord("Status",{r=255,g=255,b=255},24,{x = screen:get_width()*0.375, y = screen:get_height()*0.30},highScoreSurface)
+  highScoreMenu.writeWord("Status",{r=255,g=255,b=255},24,{x = screen:get_width()*0.375, y = screen:get_height()*0.30})
 end
 
 function highScoreMenu.loadGameMenu()
@@ -195,9 +195,9 @@ function highScoreMenu.loadGameMenu()
   highScoreSurface:clear({r=7, g=19, b=77, a=240},{x =screen:get_width()*0.38, y= screen:get_height()*0.11, w= screen:get_width()*0.25,h=screen:get_height()*0.10})
   highScoreMenu.drawBorder(screen:get_width()*0.38, screen:get_height()*0.11,screen:get_width()*0.25, screen:get_height()*0.10, margin, color)
   if(highScoreMenu.current_game == 1) then
-    highScoreMenu.writeWord("PACMAN",{r=255,g=255,b=255},36,{x = screen:get_width()*0.45, y = screen:get_height()*0.12},highScoreSurface)
+    highScoreMenu.writeWord("PACMAN",{r=255,g=255,b=255},36,{x = screen:get_width()*0.45, y = screen:get_height()*0.12})
   elseif(highScoreMenu.current_game == 2) then
-   highScoreMenu.writeWord("2048",{r=255,g=255,b=255},36,{x = screen:get_width()*0.45, y = screen:get_height()*0.12},highScoreSurface)
+   highScoreMenu.writeWord("2048",{r=255,g=255,b=255},36,{x = screen:get_width()*0.45, y = screen:get_height()*0.12})
   end
 end
 
