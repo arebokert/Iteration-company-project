@@ -120,9 +120,9 @@ function showmenu.loadMenu(subMenuFlag)
 
   --if(subMenuFlag == "highScore") then
     --highScoreMenu.loadMenu()
-  --if(subMenuFlag == "highScore") then
-    --highScoreMenu.loadMenu()
-  if(subMenuFlag == "singlePlayer") then
+  if(subMenuFlag == "highScore") then
+    highScoreMenu.loadMenu()
+  elseif(subMenuFlag == "singlePlayer") then
     singlePlayerMenu.loadMenu()
   elseif(subMenuFlag == "multiplayer") then
     multiPlayerMenu.loadMenu()
@@ -165,8 +165,8 @@ function showmenu.mainMenuKeyEvents(key, state)
     showmenu.registerKey(key,state)
 
     --elseif current_menu == "highScoreMenu" then
-    --elseif current_menu == "highScoreMenu" then
-    --highScoreMenu.registerKey(key, state)
+    elseif current_menu == "highScoreMenu" then
+    highScoreMenu.registerKey(key, state)
     elseif current_menu == "singlePlayerMenu" then
     singlePlayerMenu.registerKey(key,state)
     elseif current_menu == "multiPlayerMenu" then
