@@ -1,7 +1,7 @@
 model = require "model.multiplayermenu.multiplayermenu"
 multiplayermenu = {title = "Multiplayer Menu"}
 local resulttable = nil
-local playerMenu = nil
+--local playerMenu = nil
 local activeGame = nil
 local a = {}
 local tempActive = 2
@@ -12,15 +12,15 @@ local font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 --@param model - instantiates the model for the multiplayermenu
 function multiplayermenu.loadMenu()
   model = model:new()
-  a= model:fetchPath()
-  playerMenu = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
-  playerMenu:clear({r=7, g = 19, b=77, a=20}, {x =screen:get_width()/20, y = screen:get_height()/20, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
+  a = model:fetchPath()
+  multiMenu = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
+  multiMenu:clear({r=7, g = 19, b=77, a=20}, {x =screen:get_width()/20, y = screen:get_height()/20, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
   multiplayermenu.loadGameMenu()
   multiplayermenu.loadRecentResults(model:fetchResults())
   multiplayermenu.loadCurrentPlayers(0)
   gfx.update()
   --screen:clear({r=7, g = 19, b=77, a = 20}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
-  screen:copyfrom(playerMenu, nil)
+  screen:copyfrom(multiMenu, nil)
   gfx.update()
 end
 
@@ -49,9 +49,9 @@ function multiplayermenu.loadRecentResults(recentRes)
   local losecol = {r=155, g=0, b=0}
   local nocol = {r=160, g=160, b=160}
   
-  local btnfirst = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= (playerMenu:get_height())/2+8}, font_path)
-  local btnsec = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.3+8}, font_path)
-  local btnthird = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.6+8}, font_path)
+  --local btnfirst = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= (playerMenu:get_height())/2+8}, font_path)
+  --local btnsec = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.3+8}, font_path)
+  --local btnthird = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.6+8}, font_path)
   
   --unpack the array
   local score1 = resulttable[activeGame]["score1"]
@@ -89,9 +89,9 @@ function multiplayermenu.loadRecentResults(recentRes)
   --multiplayermenu.writeWord(score2, btnsec)
   --multiplayermenu.writeWord(score3, btnthird)
   
-  btnfirst:draw_over_surface(screen,score1)
-  btnsec:draw_over_surface(screen,score2)
-  btnthird:draw_over_surface(screen,score3)
+  --btnfirst:draw_over_surface(screen,score1)
+  --btnsec:draw_over_surface(screen,score2)
+  --btnthird:draw_over_surface(screen,score3)
 end
 
 --reloads the most recent results
@@ -137,9 +137,9 @@ function multiplayermenu.reloadRecent()
   --multiplayermenu.writeWord(score2,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.3+8})
   --multiplayermenu.writeWord(score3,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.6+8})
   
-  btnett:draw_over_surface(screen,score1)
-  btntva:draw_over_surface(screen,score2)
-  btntre:draw_over_surface(screen,score3)
+  --btnett:draw_over_surface(screen,score1)
+  --btntva:draw_over_surface(screen,score2)
+  --btntre:draw_over_surface(screen,score3)
   
   gfx:update()
 end
@@ -153,10 +153,10 @@ end
 --@param margin - the margin (thickness) of the line
 --@param color - the color of the line
 function multiplayermenu.drawBorder(startX, startY, width, height, margin, color)
-  playerMenu:clear(color, {x = startX, y = startY, w = width, h = margin})
-  playerMenu:clear(color, {x = startX, y = startY, w = margin, h = height})
-  playerMenu:clear(color, {x = startX, y = startY+height, w = width+margin, h = margin})
-  playerMenu:clear(color, {x = startX+width, y = startY, w = margin, h = height+margin})
+  multiMenu:clear(color, {x = startX, y = startY, w = width, h = margin})
+  multiMenu:clear(color, {x = startX, y = startY, w = margin, h = height})
+  multiMenu:clear(color, {x = startX, y = startY+height, w = width+margin, h = margin})
+  multiMenu:clear(color, {x = startX+width, y = startY, w = margin, h = height+margin})
 end
 
 --loads the current players
@@ -264,6 +264,7 @@ function multiplayermenu.registerKey(key,state)
     elseif key == "ok" then
         multiplayermenu:start()
     elseif key == "down" then
+        playerMenu:destroy()
         current_menu = "mainMenu"
     end
   end

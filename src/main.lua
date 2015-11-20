@@ -25,6 +25,21 @@ game2048 = require "model.games.2048.game"
 
 function onKey(key, state)
     ADLogger.trace("OnKey("..key..","..state..")")
+    
+      -- This statement is used when switching to the picture of the TV screen
+    if key=="3" and state == "down" then 
+      screen:clear()   
+      local bg = gfx.loadpng(datapath .. '/TV-PH-full.png')
+      screen:copyfrom(bg, nil)
+      bg:destroy()
+      tvmode = true
+      gfx.update()
+      collectgarbage()
+      if activeView == "pacman" then
+        gamehandler.pacmanOnKey("pause")
+      end
+    end
+    
     if state == "down" or state == "repeat" then
         if activeView == "menu" then
            showmenu.mainMenuKeyEvents(key, state)
@@ -37,6 +52,18 @@ function onKey(key, state)
             end
         elseif activeView == "2048" then
           game2048.registerKey(key,state)
+        end
+        
+         --This statement is used when going back to either menu or pacman
+        if tvmode == true and key=="4" then
+          if activeView == "menu" then
+            ADLogger.trace(activeView)
+            current_menu = "singlerPlayerMenu"
+            showmenu.loadMainMenu()
+            activeMenu = mainMenu
+          elseif activeView == "pacman" then
+            Gamehandler.loadPacman()
+          end
         end
     end
 end

@@ -6,7 +6,7 @@
 showmenu = {}
 --print(package.path)
 Menu = require "model.mainmenu.menuclass"
---highScoreMenu = require "views.mainmenu.highScoreMenu"
+highScoreMenu = require "views.mainmenu.highScoreMenu"
 singlePlayerMenu = require "views.mainmenu.singlePlayerMenu"
 multiPlayerMenu = require "views.multiplayermenu.multiplayermenu"
 datapath = "views/mainmenu/data"
@@ -120,9 +120,9 @@ function showmenu.loadMenu(subMenuFlag)
 
   --if(subMenuFlag == "highScore") then
     --highScoreMenu.loadMenu()
-  if(subMenuFlag == "highScore") then
+  --if(subMenuFlag == "highScore") then
     --highScoreMenu.loadMenu()
-  elseif(subMenuFlag == "singlePlayer") then
+  if(subMenuFlag == "singlePlayer") then
     singlePlayerMenu.loadMenu()
   elseif(subMenuFlag == "multiplayer") then
     multiPlayerMenu.loadMenu()
@@ -165,7 +165,7 @@ function showmenu.mainMenuKeyEvents(key, state)
     showmenu.registerKey(key,state)
 
     --elseif current_menu == "highScoreMenu" then
-    elseif current_menu == "highScoreMenu" then
+    --elseif current_menu == "highScoreMenu" then
     --highScoreMenu.registerKey(key, state)
     elseif current_menu == "singlePlayerMenu" then
     singlePlayerMenu.registerKey(key,state)

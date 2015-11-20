@@ -8,7 +8,7 @@ local singlePlayerMenu = {
 }
 
 function singlePlayerMenu.loadMenu()
-  local playerMenu = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
+  playerMenu = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
   playerMenu:clear({r=7, g = 19, b=77, a=120}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
   local color = {r=20, g=10, b=0}
   local margin = 5
