@@ -49,9 +49,9 @@ function multiplayermenu.loadRecentResults(recentRes)
   local losecol = {r=155, g=0, b=0}
   local nocol = {r=160, g=160, b=160}
   
-  --local btnfirst = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= (playerMenu:get_height())/2+8}, font_path)
-  --local btnsec = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.3+8}, font_path)
-  --local btnthird = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.6+8}, font_path)
+  local btnfirst = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= (playerMenu:get_height())/2+8}, font_path)
+  local btnsec = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.3+8}, font_path)
+  local btnthird = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.6+8}, font_path)
   
   --unpack the array
   local score1 = resulttable[activeGame]["score1"]
@@ -89,9 +89,9 @@ function multiplayermenu.loadRecentResults(recentRes)
   --multiplayermenu.writeWord(score2, btnsec)
   --multiplayermenu.writeWord(score3, btnthird)
   
-  --btnfirst:draw_over_surface(screen,score1)
-  --btnsec:draw_over_surface(screen,score2)
-  --btnthird:draw_over_surface(screen,score3)
+  btnfirst:draw_over_surface(screen,score1)
+  btnsec:draw_over_surface(screen,score2)
+  btnthird:draw_over_surface(screen,score3)
 end
 
 --reloads the most recent results
@@ -137,9 +137,9 @@ function multiplayermenu.reloadRecent()
   --multiplayermenu.writeWord(score2,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.3+8})
   --multiplayermenu.writeWord(score3,{r = 255, g = 255, b =255},35,{x=((playerMenu:get_width()/2)-(playerMenu:get_width()/10*3)/2)-playerMenu:get_width()/5+50, y= ((playerMenu:get_height())/2)*1.6+8})
   
-  --btnett:draw_over_surface(screen,score1)
-  --btntva:draw_over_surface(screen,score2)
-  --btntre:draw_over_surface(screen,score3)
+  btnett:draw_over_surface(screen,score1)
+  btntva:draw_over_surface(screen,score2)
+  btntre:draw_over_surface(screen,score3)
   
   gfx:update()
 end
