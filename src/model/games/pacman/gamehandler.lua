@@ -94,7 +94,11 @@ function Gamehandler.pacmanOnKey(key)
   end
 ]]--
   if key == "ok" then
-    gameTimer = sys.new_timer(100, "callback") -- starts a timer that calls function callback
+    if not gameTimer then
+      gameTimer = sys.new_timer(100, "callback") -- starts a timer that calls function callback
+    else
+      gameTimer:start()
+    end  
   end
 
   if key == "pause" then
