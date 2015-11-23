@@ -35,10 +35,40 @@ function runMultiplayerMenuFunctions()
   multiModel:setOptions("")
   value = multiModel:getOptions()
   value = multiModel:getSize()
-  --value = multiModel:fetchPath()
-  --value = multiModel:countFolders(folder)
+  -- value = multiModel:fetchPath() -- cannot fint root_path varible
   value = multiModel:fetchResults()
   return true
+end
+
+-- sets self.options and self.size with multiModel:setOptions(options)
+-- tests that multiModel:setOptions(options) is returning the correct size
+function testGetSize()
+  multiModel:setOptions("")
+  result = 0
+  assertEquals(multiModel:getSize(),result)
+  
+  result = 10
+  assertNotEquals(multiModel:getSize(),result)
+  
+  multiModel:setOptions("pacman")
+  result = 6
+  assertEquals(multiModel:getSize(),result)
+end
+
+-- sets self.options and self.size with multiModel:setOptions(options)
+-- tests that multiModel:getOptions() returns the correct sting
+function testGetOptions()
+  multiModel:setOptions("")
+  result = ""
+  assertEquals(multiModel:getOptions(),result)
+  
+  multiModel:setOptions("pacman")
+  result = ""
+  assertNotEquals(multiModel:getOptions(),result)
+  
+  multiModel:setOptions("pacman")
+  result = "pacman"
+  assertEquals(multiModel:getOptions(),result)
 end
 
 -- fetches results from multiplayer
