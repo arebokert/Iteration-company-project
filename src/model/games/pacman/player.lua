@@ -32,7 +32,6 @@ function Player:movement(gameplan)
   return new_pos
 end
 
-
 -- This function checks which possible direction the ghost can move, and randomizes which way to go
 -- This enables the ghost to change direction when a new aisle appears
 -- @gameplan: the gameplan

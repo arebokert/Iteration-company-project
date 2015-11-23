@@ -164,6 +164,9 @@ function Gameplan:displayMap(container, containerPos)
                 --self:paintdoor({x=i, y=key})
                 container:copyfrom(bg["0"], nil, pos)
                 container:copyfrom(bg["D"], nil, pos)
+            elseif c == "H" then   
+            -- House position - no yellow dot 
+                container:copyfrom(bg["0"], nil, pos)
             elseif c == "S" then
                 -- STARTPOSITION
                 pacman = Player:new("pacman")   -- Initiate object
@@ -227,6 +230,7 @@ function Gameplan:updateLives()
   w:clear({r=0, g=0, b=0})
   screen:copyfrom(w,nil,{x=70, y=680})
   local life = gfx.loadpng('views/pacman/data/pacmanright0.png')
+  life:premultiply()
   screen:copyfrom(life, nil, {x=70, y=680})
   screen:copyfrom(w,nil,{x=100, y=680})
   lives_text = sys.new_freetype({r=255,g=255,b=255},20, {x=100, y=680},font_path)
@@ -244,8 +248,41 @@ end
 -- Sets the number of lives left
 -- 4 since one life is deducted first time the no. of lives are printed
 function Gameplan:resetLives()
-  lives = 2
+  lives = 4
 end  
+
+function deadAnimation() 
+    if animationcount > 8 then
+      deadAnimationTimer:stop()
+      gameStatus = true
+      gameTimer:start()
+      for k,player in pairs(gameplan.players) do
+        local startpos = player.startPos
+        local currentpos = gameplan:relativeToAbsolutePosition(player.x, player.y)
+        screen:copyfrom(bg["0"], nil, currentpos)
+        gfx.update()
+        player:setPos(startpos.x,startpos.y)
+        if player.type == "pacman" then
+          player.latentdirection = "right"
+      end
+    end
+    end
+    if animationmode == 0 then
+      for k,player in pairs(gameplan.players) do
+        local currentpos = gameplan:relativeToAbsolutePosition(player.x, player.y)
+        screen:copyfrom(bg["0"], nil, currentpos) 
+      end
+      animationmode = 1
+    elseif animationmode == 1 then
+      for k,player in pairs(gameplan.players) do
+        local currentpos = gameplan:relativeToAbsolutePosition(player.x, player.y)
+        screen:copyfrom(player.bg, nil, currentpos)
+      end
+      animationmode = 0
+    end
+    gfx.update()
+    animationcount = animationcount + 1
+end
 
 -- This function resets all players to their origin position
 function Gameplan:reloadPlayerPos()
@@ -269,17 +306,20 @@ function Gameplan:reloadPlayerPos()
   wait(0.5)
   end
   --]]
-  wait(1)
-  for k,player in pairs(self.players) do
-    local startpos = player.startPos
-    local currentpos = self:relativeToAbsolutePosition(player.x, player.y)
-    screen:copyfrom(bg["0"], nil, currentpos)
-    gfx.update()
-    player:setPos(startpos.x,startpos.y)
-    if player.type == "pacman" then
-      player.latentdirection = "right"
-    end
+  if not deadAnimationTimer then
+    animationcount = 0
+    animationmode = 0
+    gameStatus = false
+    gameTimer:stop()
+    deadAnimationTimer = sys.new_timer(200, "deadAnimation")
+  else
+    animationcount = 0
+    animationmode = 0
+    gameStatus = false
+    gameTimer:stop()
+    deadAnimationTimer:start()
   end
+  
 end
 
 -- 
