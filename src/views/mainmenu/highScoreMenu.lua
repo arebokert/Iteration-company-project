@@ -23,6 +23,8 @@ local highScore_local_text_5 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen
 local highScore_local_text_6 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.09, y= screen:get_height()*0.24 + 4 *30}, font_path)
 local highScore_local_text_7 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.09, y= screen:get_height()*0.24 + 5 *30}, font_path)
 
+local highScoreSurface
+
 local highScore_local_text = {
   highScore_local_text_3,
   highScore_local_text_4,
@@ -47,8 +49,6 @@ local highScore_global_text = {
   highScore_global_text_7
 }
 
---if falid, commit this line
-
 
 --------------------------------------------------------------------
 --function: loadMenu                                        --------
@@ -58,8 +58,8 @@ local highScore_global_text = {
 --------------------------------------------------------------------
 function highScoreMenu.loadMenu()
   highScoreSurface = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
-  highScoreSurface:clear({r=7, g = 19, b=77, a=120}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
-   local scores = {}
+  highScoreSurface:clear({r=7, g = 19, b=77}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
+  local scores = {}
   if(highScoreMenu.current_game == 1) then
     scores = highScoreMenu.loadScores("pacman", nil)
  elseif highScoreMenu.current_game == 2 then
@@ -70,9 +70,13 @@ function highScoreMenu.loadMenu()
   highScoreMenu.loadStatus()
   highScoreMenu.loadGameMenu()
   screen:copyfrom(highScoreSurface, nil)
-  --highScoreSurface:destroy()
   gfx.update()
-  collectgarbage()
+  --for testing, prints bytes of memory used for each transaction
+  --ADLogger.trace(collectgarbage("count")*1024)
+  --collectgarbage()
+  collectgarbage("stop")
+  --ADLogger.trace(collectgarbage("count")*1024)
+  --collectgarbage()
 end
 
 --------------------------------------------------------------------
@@ -137,8 +141,7 @@ function highScoreMenu.loadLocalScore(scores)
   for k,v in pairs(scores) do
     ADLogger.trace(k .. ". " .. v.playerName .. " " .. v.score)
     highScore_local_text[k]:draw_over_surface(highScoreSurface,v.playerName .. " : " .. v.score)
-  end
-  
+  end 
 end
 --------------------------------------------------------------------
 --function: drawBorder                                       --------

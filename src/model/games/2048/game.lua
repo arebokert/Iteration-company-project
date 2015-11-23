@@ -16,9 +16,15 @@ function Game.registerKey(key, state)
         --current_menu = "mainMenu"
         --showmenu.loadMainMenu()
         activeView = "menu"
-        current_menu = "singlerPlayerMenu"
-        showmenu.loadMainMenu()
-        activeMenu = mainMenu
+        current_menu = "singlePlayerMenu"
+        if showmenu == nil then
+          local sm = require "views.mainmenu.showmenu"
+          activeMenu = mainMenu
+          sm.loadMainMenu()
+        else
+          activeMenu = mainMenu
+          showmenu.loadMainMenu()
+        end
       end
     end
     if current_menu =="2048_game_over" then
@@ -54,7 +60,7 @@ function Game.showGamePage()
 end
 
 function Game.startGame()
- Game.showGamePage()
+  Game.showGamePage()
   Boxes.init()
 end
 

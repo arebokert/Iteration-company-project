@@ -1,4 +1,16 @@
-local singlePlayerMenu = {
+if showmenu == nil then
+  local showmenu = require "views.mainmenu.showmenu"
+end
+
+if gamehandler == nil then
+  local gamehandler = require "model.games.pacman.gamehandler"
+end
+
+if game2048 == nil then
+  local game2048 = require "model.games.2048.game"
+end
+
+singlePlayerMenu = {
   current_game = 1,
   total_games = {
   "flappy-bird",   
@@ -7,9 +19,13 @@ local singlePlayerMenu = {
   }
 }
 
+local playerMenu = nil
+
 function singlePlayerMenu.loadMenu()
+  collectgarbage()
   playerMenu = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
-  playerMenu:clear({r=7, g = 19, b=77, a=120}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
+  --a = 120
+  playerMenu:clear({r=7, g = 19, b=77}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
   local color = {r=20, g=10, b=0}
   local margin = 5
   if singlePlayerMenu.current_game == 1 then 
@@ -49,10 +65,15 @@ function singlePlayerMenu.loadMenu()
     singlePlayerMenu.drawBorder(playerMenu, 750, 100, 318, 168, margin, color)
     --singlePlayerMenu.writeWord("GAME INFO",{r=100,g=0,b=0},40,{x=500, y= 330},playerMenu)
    end
-   screen:clear({r=7, g = 19, b=77}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
+   --screen:clear({r=7, g = 19, b=77}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
    screen:copyfrom(playerMenu, nil)
    gfx.update()
-   collectgarbage()
+   --ADLogger.trace(collectgarbage("count")*1024)
+   --collectgarbage()
+   collectgarbage("stop")
+   --for testing, prints bytes of memory used for each transaction
+   --ADLogger.trace(collectgarbage("count")*1024)
+   --collectgarbage()
 end
 
 function singlePlayerMenu.drawBorder(playerMenu, startX, startY, width, height, margin, color)
