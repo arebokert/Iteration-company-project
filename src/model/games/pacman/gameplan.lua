@@ -5,8 +5,7 @@
 font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 require("model.games.pacman.dumper")
 require("model.games.pacman.collisionhandler")
-Score = require("model.games.pacman.score")
-GameplanGraphics = require("model.games.pacman.gameplangraphics")
+require("model.games.pacman.player")
 
 -- 4 because first time the lives are printed, one life is deducted
 lives = 4
@@ -245,7 +244,7 @@ end
 -- Sets the number of lives left
 -- 4 since one life is deducted first time the no. of lives are printed
 function Gameplan:resetLives()
-  lives = 4
+  lives = 2
 end  
 
 -- This function resets all players to their origin position
@@ -277,6 +276,9 @@ function Gameplan:reloadPlayerPos()
     screen:copyfrom(bg["0"], nil, currentpos)
     gfx.update()
     player:setPos(startpos.x,startpos.y)
+    if player.type == "pacman" then
+      player.latentdirection = "right"
+    end
   end
 end
 
