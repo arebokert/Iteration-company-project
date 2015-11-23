@@ -1,9 +1,10 @@
 Gamehandler = {}
 
 Gameplan = require "model.games.pacman.gameplan"
-require("model.games.pacman.player")
 GameplanGraphics = require("model.games.pacman.gameplangraphics")
 Score = require("model.games.pacman.score")
+
+local menuoption = 0
 
 --
 -- Load a game of pacman 
@@ -52,14 +53,13 @@ end
 function Gamehandler.refresh()
   if gameStatus == true then
     gameStatus = gameplan:refresh()
-    Gamehandler.endGame()
-    
     if gameStatus == false then      
       if gameplan:getLives() > 0 then
         gameplan:reloadPlayerPos()
         gameStatus = true
       end
     end
+    Gamehandler.checkVictory()
   elseif gameStatus == false and gameplan:getLives() < 1 then
     gameTimer:stop()
     GameplanGraphics.gameOver('views/pacman/data/gameover.png')
@@ -69,56 +69,84 @@ end
 -- This function end game if no yelowdots remaining
 -- RESET FUNCTION NEEDS TO BE ADDED
 --     
-function Gamehandler.endGame()
+function Gamehandler.checkVictory()
     if noDotsRemaining == 0 then  
       gameTimer:stop()
+      gameStatus = false
       GameplanGraphics.gameOver('views/pacman/data/victory.png')
-      -- reset function!!!!!!!!
     end 
 end
 
 -- The onKey-function for the pacman game
 function Gamehandler.pacmanOnKey(key)
-  --For testing
-  if key == "0" then
-    gameplan:refresh()
-  end
-
-  if key == "down" or key == "up" or key == "left" or key == "right" then
-    gameplan:setPacmanDirection(key)
-  end
---[[
---Yellow doesn't work for some reason, resolve later!
-  if key == "yellow" then
-    gameplan:refresh()
-  end
-]]--
-  if key == "ok" then
-    if not gameTimer then
-      gameTimer = sys.new_timer(100, "callback") -- starts a timer that calls function callback
-    else
-      gameTimer:start()
-    end  
-  end
-
-  if key == "pause" then
-    if gameTimer then
-      gameTimer:stop()
+  -- -----------------------------------------------------------------
+  -- For testing
+  if gameStatus == true then
+    if key == "0" then
+      if gameStatus == true then
+        gameplan:refresh()
+      end  
+    end
+    if key == "down" or key == "up" or key == "left" or key == "right" then
+      gameplan:setPacmanDirection(key)
+    end
+    if key == "ok" then
+      if not gameTimer then
+        gameTimer = sys.new_timer(100, "callback") -- starts a timer that calls function callback
+      elseif gameStatus == true then
+        gameTimer:start()
+      end  
+    end
+    if key == "pause" then
+      if gameTimer then
+        gameTimer:stop()
+      end
+    end
+    if key == "1" then
+      Gamehandler.startPacman()
+    end
+    if key == "exit" then
+      gameStatus = false
+      if gameTimer then
+        gameTimer:stop()
+      end
+      screen:clear({r=100,g=0,b=0})
+      return false
     end
   end
-
-  if key == "1" then
-    Gamehandler.startPacman()
-  end
-
-  if key == "exit" then
-    if gameTimer then
-      gameTimer:stop()
+-- -----------------------------------------------------------------
+  if gameStatus == false then
+  -- This is probably going to be part of the common game menu. 
+    if key == "down" or key == "up" then
+      local delta = 0
+      if key == "down" then
+        delta = 1
+      else
+        delta = -1
+      end
+      menuoption = math.abs((menuoption + delta) % 2)
+      dump(menuoption)
+      local w = gfx.new_surface(20, 20)
+      w:clear({r=0, g=0, b=0})
+      screen:copyfrom(w,nil,{x=480, y=350})
+      screen:copyfrom(w,nil,{x=480, y=390})
+      w:clear({r=200, g=0, b=0})
+      screen:copyfrom(w,nil,{x=480, y=(350 + menuoption*40)})
+      gfx.update()
     end
-    screen:clear({r=100,g=0,b=0})
-    return false
+    if key == "ok" then
+      if menuoption == 0 then
+        Gamehandler.startPacman()
+      elseif menuoption == 1 then
+        gameStatus = false
+        if gameTimer then
+          gameTimer:stop()
+        end
+        screen:clear({r=100,g=0,b=0})
+        return false
+      end
+    end
   end
-
   return true
 end
 
