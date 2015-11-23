@@ -42,7 +42,7 @@ function Game.showMove()
 end
 
 function Game.showGamePage()
-   screen:fill({r=10,g=5,b=50})
+   screen:fill({r=245,g=245,b=245})
    screen:clear({r=0,g=205,b=204},{x=400,y=100,w = 415, h=415})
    -- draw rows
    for i =1, 4 do

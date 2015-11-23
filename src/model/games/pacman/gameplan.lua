@@ -5,8 +5,7 @@
 font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 require("model.games.pacman.dumper")
 require("model.games.pacman.collisionhandler")
-Score = require("model.games.pacman.score")
-GameplanGraphics = require("model.games.pacman.gameplangraphics")
+require("model.games.pacman.player")
 
 -- 4 because first time the lives are printed, one life is deducted
 lives = 4
@@ -41,9 +40,9 @@ end
 -- Load the pacman map. 
 --
 function Gameplan:loadMap(map)
-    -- If map is not specified, default is "map1.txt"
+    -- If map is not specified, default is "map2.txt"
     if map == nil then
-      map = 'map1.txt'
+      map = 'map2.txt'
     end
     
     -- The map file
@@ -165,6 +164,9 @@ function Gameplan:displayMap(container, containerPos)
                 --self:paintdoor({x=i, y=key})
                 container:copyfrom(bg["0"], nil, pos)
                 container:copyfrom(bg["D"], nil, pos)
+            elseif c == "H" then   
+            -- House position - no yellow dot 
+                container:copyfrom(bg["0"], nil, pos)
             elseif c == "S" then
                 -- STARTPOSITION
                 pacman = Player:new("pacman")   -- Initiate object
@@ -228,6 +230,7 @@ function Gameplan:updateLives()
   w:clear({r=0, g=0, b=0})
   screen:copyfrom(w,nil,{x=70, y=680})
   local life = gfx.loadpng('views/pacman/data/pacmanright0.png')
+  life:premultiply()
   screen:copyfrom(life, nil, {x=70, y=680})
   screen:copyfrom(w,nil,{x=100, y=680})
   lives_text = sys.new_freetype({r=255,g=255,b=255},20, {x=100, y=680},font_path)
@@ -247,6 +250,39 @@ end
 function Gameplan:resetLives()
   lives = 4
 end  
+
+function deadAnimation() 
+    if animationcount > 8 then
+      deadAnimationTimer:stop()
+      gameStatus = true
+      gameTimer:start()
+      for k,player in pairs(gameplan.players) do
+        local startpos = player.startPos
+        local currentpos = gameplan:relativeToAbsolutePosition(player.x, player.y)
+        screen:copyfrom(bg["0"], nil, currentpos)
+        gfx.update()
+        player:setPos(startpos.x,startpos.y)
+        if player.type == "pacman" then
+          player.latentdirection = "right"
+      end
+    end
+    end
+    if animationmode == 0 then
+      for k,player in pairs(gameplan.players) do
+        local currentpos = gameplan:relativeToAbsolutePosition(player.x, player.y)
+        screen:copyfrom(bg["0"], nil, currentpos) 
+      end
+      animationmode = 1
+    elseif animationmode == 1 then
+      for k,player in pairs(gameplan.players) do
+        local currentpos = gameplan:relativeToAbsolutePosition(player.x, player.y)
+        screen:copyfrom(player.bg, nil, currentpos)
+      end
+      animationmode = 0
+    end
+    gfx.update()
+    animationcount = animationcount + 1
+end
 
 -- This function resets all players to their origin position
 function Gameplan:reloadPlayerPos()
@@ -270,14 +306,20 @@ function Gameplan:reloadPlayerPos()
   wait(0.5)
   end
   --]]
-  wait(1)
-  for k,player in pairs(self.players) do
-    local startpos = player.startPos
-    local currentpos = self:relativeToAbsolutePosition(player.x, player.y)
-    screen:copyfrom(bg["0"], nil, currentpos)
-    gfx.update()
-    player:setPos(startpos.x,startpos.y)
+  if not deadAnimationTimer then
+    animationcount = 0
+    animationmode = 0
+    gameStatus = false
+    gameTimer:stop()
+    deadAnimationTimer = sys.new_timer(200, "deadAnimation")
+  else
+    animationcount = 0
+    animationmode = 0
+    gameStatus = false
+    gameTimer:stop()
+    deadAnimationTimer:start()
   end
+  
 end
 
 -- 
@@ -458,9 +500,9 @@ function Gameplan:refresh()
             -- If player is pacman update score and remove yellowdot from yellowdot matrix
             if player.type == "pacman" then
               if self:checkDotStatus(self:xyToCell(pos.x, pos.y)) == true then 
-                Score.countScore("yellowdot")
-              end 
-              self:updateDotStatus(self:xyToCell(new_pos.x,new_pos.y))
+                Score.countScore("yellowdot") 
+                self:updateDotStatus(self:xyToCell(new_pos.x,new_pos.y))
+              end       
             end
         end
         
@@ -527,12 +569,14 @@ end
 -- Should be run when map is instantiated
 function Gameplan:yellowDotStatus(map)
     dotmatrix = {}
+    noDotsRemaining = 0
     for key, value in pairs(map) do
         dotmatrix[key] = {}
         for i = 1, #value do
             local c = value:sub(i,i)
             if c == "0" then
                 dotmatrix[key][i] = true
+                noDotsRemaining = noDotsRemaining + 1
             else
                 dotmatrix[key][i] = false
             end
@@ -543,7 +587,8 @@ end
 
 -- Updates cells to not have a yellow dot
 function Gameplan:updateDotStatus(pos)
-    yellowdotmatrix[pos.y][pos.x] = "false"
+    noDotsRemaining = noDotsRemaining - 1
+    yellowdotmatrix[pos.y][pos.x] = "false" 
 end
 
 -- Checks if a cell has a yellow dot

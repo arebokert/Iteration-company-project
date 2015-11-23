@@ -4,15 +4,22 @@ GameplanGraphics = {}
 -- A block for walls. Colors and size
 function GameplanGraphics.createWall(block)
     local w = gfx.new_surface(block, block)
-    w:clear({r=0, g=0, b=150})
+    w:clear({r=118, g=18, b=36})
     return w
 end
 
 -- Gameover screen to be loaded when all lives is run out
-function GameplanGraphics.gameOver()
-    local gameOver = gfx.loadpng('views/pacman/data/gameover.png')
+function GameplanGraphics.gameOver(picpath)
+    local gameOver = gfx.loadpng(picpath)
     screen:copyfrom(gameOver, nil,{x=450, y=250})
-    Score.printScore({x=620,y=400})
+    local score_text = sys.new_freetype({r=255,g=255,b=255}, 20, {x=575,y=315}, font_path)
+    local word = "Score: " .. Score.getScore()
+    score_text:draw_over_surface(screen,word)
+    -- This is for the dot that marks position
+    local w = gfx.new_surface(20, 20)
+    w:clear({r=200, g=0, b=0})
+    screen:copyfrom(w,nil,{x=480, y=350})
+    -- --------
     gfx.update()
  -- gameOver:destroy() 
 end
@@ -70,9 +77,11 @@ function GameplanGraphics.updatePlayerGraphic(player)
     GameplanGraphics.updatePlayerRotation(player)
     if player.moveanim == 0 then
       player.bg = gfx.loadpng(player.picture0)
+      player.bg:premultiply()
       player.moveanim = 1
     elseif player.moveanim == 1 then 
       player.bg = gfx.loadpng(player.picture1)
+      player.bg:premultiply()
       player.moveanim = 0
     end  
 end

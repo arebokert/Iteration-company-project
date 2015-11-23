@@ -51,7 +51,7 @@ function showmenu.loadMainMenu()
         button_marked = datapath .. '/highscore-selected.png'
     }
 
-	options[3] = {title = "Multiplayer",
+  options[3] = {title = "Multiplayer",
         action = function()
             current_menu = "multiPlayerMenu"
             return "Return Option3"
@@ -66,7 +66,7 @@ function showmenu.loadMainMenu()
         button = datapath .. '/multi-normal.png',
         button_marked = datapath .. '/multi-selected.png'
     }
-	
+  
     options[4] = {title = "Exit",
         action = function()
             sys.stop()
