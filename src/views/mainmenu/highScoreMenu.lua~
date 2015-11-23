@@ -198,7 +198,6 @@ function highScoreMenu.loadGameMenu(Screen)
   end
 end
 
--- if the highScoreMenu failed, repalce the code with the commited one, and commit on the code from local highScores = HighscoreHandler...... to return
 function highScoreMenu.loadScores(GameName, scoreType)
   if(scoreType =="global") then
   

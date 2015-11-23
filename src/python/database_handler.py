@@ -59,7 +59,6 @@ def connect_db():
 
     Returns:
 
-
     Raises:
         
     """
@@ -81,7 +80,6 @@ def get_db():
 
     Returns:
 
-
     Raises:
         
     """
@@ -98,7 +96,6 @@ def get_db_cursor():
 
     Returns:
 
-
     Raises:
         
     """
@@ -111,7 +108,6 @@ def persist_db():
     Args:
 
     Returns:
-
 
     Raises:
         
@@ -162,6 +158,7 @@ def remove_user(mac, playerid):
     Raises:
         Will NOT raise an error.
     """
+    #TODO: Implement this function.
 
 def get_user(mac):
     """Get user information from database.
@@ -172,10 +169,36 @@ def get_user(mac):
     Returns:
         A dict mapping database column to the corresponding table rows. For
         example if there are two users linked to the specified MAC-address:
-        {'user_id': ('1', '2')}
+        {'user_id': ('1', '2')}. 
+        If no user could be found a dictionary with
+        empty values will be returned.
     Raises:
         Will NOT raise an error.
     """
+
+    cursor = get_db_cursor()
+    try:
+        cursor.execute("SELECT mac"
+                       ", user_id"
+                       " FROM user_list"
+                       " WHERE mac = ?", (mac,))
+        cfo = cursor.fetchone()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfo is None:
+        return {'mac':None
+                ,'user_id': None}
+    return dict_factory(cursor, cfo);
+
+def user_exists(mac, playerid):
+    #TODO(bjowi): Implement function
+    return false
+
+def game_exists(gamename):
+    #TODO(bjowi): Implement function
+    return false
+
 
 # MATCH HANDLING
 def get_match_history(gamename, mac, playerid, number_of_matches):
@@ -189,14 +212,99 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
             that is desired to be retreived, e.g. 10 or 3.
 
     Returns:
-        A dict mapping table column keys to table row data. The matches will
-        be returned in order of creation, with the oldest match being the
-        first.
+        A dict containing the top X match_id.
 
     Raises:
         
     """
 
+    if isinstance( number_of_matches, int ):
+        nom = number_of_matches
+    else:
+        nom = 3
+    cursor = get_db_cursor()
+    try:    
+        cursor.execute("SELECT match_id"
+                       ", winner"
+                       " FROM matches"
+                       " WHERE gamename = ?", (mac,))
+        #TODO(bjowi227): Fix the database query.
+        cfo = cursor.fetchone()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfo is None:
+        return {'mac':None
+                ,'user_id': None}
+                #TODO(bjowi227): Fix the return values.
+    return dict_factory(cursor, cfo);
+
+def insert_player_one(gamename, mac, playerid):
+    """ create new row in matches and add player one 
+
+    Args:
+        gamename: Specific game that the action is related to.
+        mac: MAC-address for the player.
+        playerid: An integer that specifies id for player of a set-top-box.
+
+    Returns: id of the match as an integer
+
+
+    Raises:
+        
+    """
+
+    c = get_db()
+    try:
+        c.execute(
+            "INSERT INTO matches (gamename"
+            ", player_one_mac"
+            ", player_one_id"
+            " VALUES (?,?,?)"
+            , (gamename, mac, playerid,))
+    except:
+        get_db().rollback()
+        raise
+
+    cursor = get_db_cursor()
+    try:    
+        cursor.execute("SELECT match_id"
+                       " FROM matches"
+                       " WHERE player_two_mac = null")
+        
+        cfo = cursor.fetchone()
+
+    return cfo.match_id
+
+def insert_player_two(gamename, mac, playerid, match_id,):
+
+   """ insert player two into an exisitng match 
+
+    Args:
+        gamename: Specific game that the action is related to.
+        mac: MAC-address for the player.
+        playerid: An integer that specifies id for player of a set-top-box.
+        match_id: An integer that specifies id for the match that the player shall be inserted in
+
+    Returns: id of the match as an integer
+
+
+    Raises:
+        
+    """
+
+  c = get_db()
+    try:
+        c.execute(
+            "UPDATE matches "
+            "SET player_two_id = ?"
+            "WHERE match_id = ?"
+            , (playerid, match_id,))
+    except:
+        get_db().rollback()
+        raise
+
+    return match_id
 
 def add_match(gamename, mac, playerid):
     """ Create new match with first player or add a new player to a currently
@@ -213,6 +321,21 @@ def add_match(gamename, mac, playerid):
     Raises:
         
     """
+    # Check for empty rows in matches
+
+    cursor = get_db_cursor()
+    try:    
+        cursor.execute("SELECT match_id"
+                       " FROM matches"
+                       " WHERE player_two_mac = null")
+        
+        cfo = cursor.fetchone()
+    #TODO(bjowi): Fix error handling.
+    if cfo is none:
+        return insert_player_one(gamename, mac, playerid)
+    else:
+        return insert_player_two(gamename, mac, playerid, cfo.match_id)
+
 
 def add_round_score(gamename, match, mac, playerid, score):
     """ Add game score to a round.
@@ -232,6 +355,21 @@ def add_round_score(gamename, match, mac, playerid, score):
         
     """
 
+#TODO implement correctly. Choose correct SQL statements and make a comparison 
+#to select if the score shall be added to player one or two in database
+
+c = get_db()
+    try:
+        c.execute("INSERT INTO round (gamename"
+            ", game_number"
+            ", player_one_score"
+            ", player_two_score)"
+            " VALUES (?,?,?,?,?)"
+            , (gamename, match, mac, playerid, score,))
+    except:
+        get_db().rollback()
+        raise
+    return True
 
 def get_number_of_rounds(gamename, match):
     """ Get the number of played and completed rounds of a match.
@@ -293,6 +431,19 @@ def set_winner(gamename, match, mac, playerid):
     Raises:
         
     """
+    c = get_db()
+    try:
+        c.execute(
+            "UPDATE matches "
+            "SET winner = ?"
+            "WHERE match_id = ?"
+            , (playerid, match,))
+    except:
+        get_db().rollback()
+        raise
+
+    return match_id
+
 
 def get_winner(gamename, match):
     """ Get the winner of a specified match.
@@ -308,6 +459,18 @@ def get_winner(gamename, match):
         
     """
 
+    #TODO (bjowi): Check that this is implementet correctly
+    #especially the usage of "winner" and the "?"
+
+    cursor = get_db_cursor()
+    try:    
+        cursor.execute("SELECT winner"
+                       " FROM matches"
+                       " WHERE match_id = ?")
+        , (match_id,))
+        cfo = cursor.fetchone()
+
+        return cfo.winner
 
 # HIGHSCORE HANDLING
 
@@ -321,13 +484,37 @@ def add_highscore(gamename, mac, playerid, score):
         score: Score to be saved.
 
     Returns:
-
+        An integer value depending on the score;
+        -1: Error
+        1: Nothing out of the ordinary
+        2: Top 10 local
+        3: Top 10 global
 
     Raises:
         
     """
 
-def get_highscore(gamename, mac, playerid, number_of_scores):
+    if not game_exists(gamename):
+        add_game(gamename)
+    if not player_exists(mac, playerid):
+        add_user(mac, playerid)
+
+    c = get_db()
+    try:
+        c.execute("INSERT INTO high_scores (gamename"
+            ", player_mac"
+            ", player_id"
+            ", score)"
+            " VALUES (?,?,?,?)"
+            , (gamename, mac, playerid, score,))
+    except:
+        get_db().rollback()
+        return -1
+    #TODO: Add calculation if score was global or local top 10.
+    return 1
+
+
+def get_highscore_by_player(gamename, mac, playerid, number_of_results):
     """ Get highscore related to specific player.
 
     Args:
@@ -338,11 +525,82 @@ def get_highscore(gamename, mac, playerid, number_of_scores):
             is desired, e.g. 10 or 3.
 
     Returns:
-
+        A dictionary with the top N results for the player. Each dictionary row
+        contains the score and the player_id linked to this score.
 
     Raises:
         
     """
+    if isinstance( number_of_results, int ):
+        nor = number_of_results
+    else:
+        nor = 10
+
+    cursor = get_db_cursor()
+    try:
+        cursor.execute("SELECT player_id"
+                       ", score"
+                       " FROM high_scores"
+                       " WHERE gamename = ?"
+                       " AND player_mac = ?"
+                       " AND player_id = ?"
+                       " ORDER BY score DESC"
+                       " LIMIT ?"
+                       , (gamename, mac, playerid, nor,))
+        cfa = cursor.fetchall()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfa is None:
+        return {'player_id': None
+                , 'score': None}
+    result = []
+    for row in cfa:
+        result.append(dict_factory(cursor, row))
+    return result
+
+def get_highscore_by_box(gamename, mac, number_of_scores):
+    """ Get all highscores for players of a specific set-top-box.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        mac: MAC-address for the player.
+        number_of_scores: An integer that describes the number of scores that
+            is desired, e.g. 10 or 3.
+
+    Returns:
+        A dictionary with the top N results for the box. Each dictionary row
+        contains the score and the player_id linked to this score.
+
+    Raises:
+        
+    """
+    if isinstance( number_of_results, int ):
+        nor = number_of_results
+    else:
+        nor = 10
+
+    cursor = get_db_cursor()
+    try:
+        cursor.execute("SELECT player_id"
+                       ", score"
+                       " FROM high_scores"
+                       " WHERE gamename = ?"
+                       " AND player_mac = ?"
+                       " ORDER BY score DESC"
+                       " LIMIT ?"
+                       , (gamename, mac, nor,))
+        cfa = cursor.fetchall()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfa is None:
+        return {'player_id': None
+                , 'score': None}
+    result = []
+    for row in cfa:
+        result.append(dict_factory(cursor, row))
+    return result  
 
 def get_global_highscore(gamename, number_of_scores):
     """ Get the top number of scores for specific game. Not depedent 
