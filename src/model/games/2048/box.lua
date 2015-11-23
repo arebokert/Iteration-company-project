@@ -23,8 +23,8 @@ end
 function Boxes.showScore()
   local score_font = sys.new_freetype({g=100,r=100,b=100}, 60, {x=900,y=50},root_path .."views/mainmenu/data/font/Gidole-Regular.otf")
   score_font:draw_over_surface(screen,"Score:")
-  screen:clear({r=10,g=5,b=50}, {x=950,y = 120, w=100, h =100})
-  local score = sys.new_freetype({g=0,r=100,b=0}, 50, {x=950,y=120},root_path .. "views/mainmenu/data/font/Gidole-Regular.otf")
+  screen:clear({r=245,g=245,b=245}, {x=950,y = 120, w=150, h =100})
+  local score = sys.new_freetype({g=10,r=10,b=10}, 50, {x=950,y=120},root_path .. "views/mainmenu/data/font/Gidole-Regular.otf")
   score:draw_over_surface(screen,Boxes.current_score)
   
 end
