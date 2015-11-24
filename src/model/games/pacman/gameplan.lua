@@ -122,6 +122,45 @@ function Gameplan:loadBackgroundObjects(blockSize, dotSize)
 end   
 
 
+function Gameplan:reprintMap()
+local dotoffset = GameplanGraphics.yellowDotOffset(self.block, self.dotSize)
+for key, value in pairs(self.map) do
+      ADLogger.trace(collectgarbage("count")*1024)
+        collectgarbage("stop")
+        collectgarbage()
+        for i = 1, #value do            
+            local pos = {x = (i-1)*self.block, y = (key-1)*self.block }
+            local dotpos = {x = (i-1)*self.block + dotoffset, y = (key-1)*self.block + dotoffset}--position of yellow dot
+            local c = value:sub(i,i)
+            if c == "1" or c == "0" then
+                container:copyfrom(bg[c], nil, pos)
+                if c == "0" then
+                  --print yellow dot
+                  if self:checkDotStatus({x=i, y=key}) then
+                    container:copyfrom(bg["d"], nil, dotpos)
+                  end   
+                end 
+            elseif c == "D" then
+                --self:paintdoor({x=i, y=key})
+                container:copyfrom(bg["0"], nil, pos)
+                container:copyfrom(bg["D"], nil, pos)
+            elseif c == "H" then   
+            -- House position - no yellow dot 
+                container:copyfrom(bg["0"], nil, pos)
+            elseif c == "S" or c == "B" then
+                container:copyfrom(bg["0"], nil, pos)
+            end
+        end
+    end
+    Score.printScore({x=100, y=20})
+    screen:copyfrom(container, nil, self.containerpos)
+    -- Update GFX
+    gfx.update()
+
+
+end
+
+
 --
 -- Display the map on a container at a certain position 
 --
@@ -147,6 +186,7 @@ function Gameplan:displayMap(container, containerPos)
     
     -- Loop through the map (ixj table) and 
     for key, value in pairs(self.map) do
+        collectgarbage("stop")
         collectgarbage()
         self.logicalMap[key] = {}
         for i = 1, #value do            
@@ -286,37 +326,15 @@ end
 
 -- This function resets all players to their origin position
 function Gameplan:reloadPlayerPos()
-  -- Below commented code is supposed to make an animation of all the players
-  -- It should make them all twinkle three times
-  -- However, I did not get the code to work, since the wait function seems
-  -- to execute all the gfx.updates after it has waited all times.. This needs to be corrected
- --[[ 
-  for i=1,3 do
-    for k,player in pairs(self.players) do
-      local currentpos = self:relativeToAbsolutePosition(player.x, player.y)
-      screen:copyfrom(bg["0"], nil, currentpos) 
-    end
-    gfx.update()
-    wait(0.5)
-    for k,player in pairs(self.players) do
-      local currentpos = self:relativeToAbsolutePosition(player.x, player.y)
-      screen:copyfrom(player.bg, nil, currentpos)
-    end
-  gfx.update()  
-  wait(0.5)
-  end
-  --]]
-  if not deadAnimationTimer then
+
     animationcount = 0
     animationmode = 0
     gameStatus = false
     gameTimer:stop()
+
+  if not deadAnimationTimer then
     deadAnimationTimer = sys.new_timer(200, "deadAnimation")
   else
-    animationcount = 0
-    animationmode = 0
-    gameStatus = false
-    gameTimer:stop()
     deadAnimationTimer:start()
   end
   
@@ -523,10 +541,8 @@ function Gameplan:refresh()
       self:updateLives()
     end
     
-    collectgarbage()
-    collectgarbage("stop")
     --for testing, prints bytes of memory freed for each transaction
-    --ADLogger.trace(collectgarbage("count")*1024)
+    ADLogger.trace(collectgarbage("count")*1024)
     
     return not collision
     
@@ -588,7 +604,7 @@ end
 -- Updates cells to not have a yellow dot
 function Gameplan:updateDotStatus(pos)
     noDotsRemaining = noDotsRemaining - 1
-    yellowdotmatrix[pos.y][pos.x] = "false" 
+    yellowdotmatrix[pos.y][pos.x] = false 
 end
 
 -- Checks if a cell has a yellow dot
