@@ -202,9 +202,6 @@ function Gamehandler.pacmanOnKey(key)
         end
       end
     end   
- --[[ 
-      
-      ]]--
   end
   return true
 end
