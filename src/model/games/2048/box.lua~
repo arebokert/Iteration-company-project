@@ -69,8 +69,8 @@ function Boxes.showScore()
 end
 
 --------------------------------------------------------------------
---function: loadAllImg                                      --------
---description: load all imgs of numbers to box_img          --------
+--function: loadAllImg                                     --------
+--description: init the position of 2048                    --------
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
 function Boxes.loadAllImg()
@@ -89,8 +89,11 @@ function Boxes.loadAllImg()
 end
 
 --------------------------------------------------------------------
---function: showMove                                        --------
---description: show the move of numbers after key function  --------
+--function: setPosition                                     --------
+--@param each_square, the size of each_square               --------
+--@param box_start_x, the x of start point                  --------
+--@param box_start_y, the y of start point                  --------
+--description: init the position of 2048                    --------
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
 function Boxes.showMove()
@@ -111,8 +114,11 @@ function Boxes.showMove()
 end
 
 --------------------------------------------------------------------
---function: addRandomNumber                                 --------
---description: add random number two the 2048               --------
+--function: setPosition                                     --------
+--@param each_square, the size of each_square               --------
+--@param box_start_x, the x of start point                  --------
+--@param box_start_y, the y of start point                  --------
+--description: init the position of 2048                    --------
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
 function Boxes.addRandomNumber()
@@ -132,8 +138,11 @@ function Boxes.addRandomNumber()
 end
 
 --------------------------------------------------------------------
---function: endGame                                         --------
---description: weather the game end of not                  --------
+--function: setPosition                                     --------
+--@param each_square, the size of each_square               --------
+--@param box_start_x, the x of start point                  --------
+--@param box_start_y, the y of start point                  --------
+--description: init the position of 2048                    --------
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
 function Boxes.endGame() 
@@ -149,8 +158,11 @@ function Boxes.endGame()
 end
 
 --------------------------------------------------------------------
---function: moveLeft                                        --------
---description: key left                                     --------
+--function: setPosition                                     --------
+--@param each_square, the size of each_square               --------
+--@param box_start_x, the x of start point                  --------
+--@param box_start_y, the y of start point                  --------
+--description: init the position of 2048                    --------
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
 function Boxes.moveLeft()
@@ -198,8 +210,11 @@ function Boxes.moveLeft()
 end
 
 --------------------------------------------------------------------
---function: moveRight                                       --------
---description: key right                                    --------
+--function: setPosition                                     --------
+--@param each_square, the size of each_square               --------
+--@param box_start_x, the x of start point                  --------
+--@param box_start_y, the y of start point                  --------
+--description: init the position of 2048                    --------
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
 function Boxes.moveRight()
@@ -247,8 +262,11 @@ function Boxes.moveRight()
 end
 
 --------------------------------------------------------------------
---function: moveTop                                         --------
---description: key top                                      --------
+--function: setPosition                                     --------
+--@param each_square, the size of each_square               --------
+--@param box_start_x, the x of start point                  --------
+--@param box_start_y, the y of start point                  --------
+--description: init the position of 2048                    --------
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
 function Boxes.moveTop()
@@ -295,8 +313,11 @@ function Boxes.moveTop()
 end
 
 --------------------------------------------------------------------
---function: moveBottom                                      --------
---description: key bottom                                   --------
+--function: setPosition                                     --------
+--@param each_square, the size of each_square               --------
+--@param box_start_x, the x of start point                  --------
+--@param box_start_y, the y of start point                  --------
+--description: init the position of 2048                    --------
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
 function Boxes.moveBottom()

@@ -27,6 +27,9 @@ function Game.registerKey(key, state)
     end
 end
 
+function Game.showMove()
+  
+end
 
 -- 5px between each square
 --128, 272,105

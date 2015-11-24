@@ -162,6 +162,13 @@ function highScoreMenu.drawBorder(startX, startY, width, height, margin, color)
   highScoreSurface:clear({r=255, g=255, b=255}, {x = startX+width, y = startY, w = margin, h = height+margin})
 end
 
+--------------------------------------------------------------------
+--function: loadGlobalScore                                 --------
+--@param Screen, the current submenu                        --------
+--@param scores, table of username and score                --------
+--description: load the golbal score menu of the application--------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
 function highScoreMenu.loadGlobalScore(scores)
   local color = {r=255, g=255, b=255}
   local margin = 1
@@ -178,6 +185,12 @@ function highScoreMenu.loadGlobalScore(scores)
   end
 end
 
+
+--------------------------------------------------------------------
+--function: loadStatus                                      --------
+--description: load the status  menu of the application     --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
 function highScoreMenu.loadStatus()
   local color = {r=255, g=255, b=255}
   local margin = 1
@@ -186,6 +199,11 @@ function highScoreMenu.loadStatus()
   highScoreMenu.writeWord("Status",{r=255,g=255,b=255},24,{x = screen:get_width()*0.375, y = screen:get_height()*0.30})
 end
 
+--------------------------------------------------------------------
+--function: loadGameMenu                                    --------
+--description: load the game  menu of the application       --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
 function highScoreMenu.loadGameMenu()
   local bg = gfx.loadpng(datapath .. '/menu-arrow-left.png')
   highScoreSurface:copyfrom(bg, nil, {x =screen:get_width()*0.32, y= screen:get_height()*0.13})
@@ -204,6 +222,11 @@ function highScoreMenu.loadGameMenu()
   end
 end
 
+--------------------------------------------------------------------
+--function: loadScores                                      --------
+--description: load the scores from highscorehandler        --------
+--last modified Nov 17, 2015                                --------
+--------------------------------------------------------------------
 -- if the highScoreMenu failed, repalce the code with the commited one, and commit on the code from local highScores = HighscoreHandler...... to return
 function highScoreMenu.loadScores(GameName, scoreType)
   --if(scoreType =="global") then
