@@ -40,7 +40,7 @@ end
 -- @param playerID - The playerID associated with the score.
 -- @param score - The score.
 -- @return JSON - Returns server respons in a JSON object
-function Highscorehandler:submitGlobalHighscore(gameName, playerID, score)
+function HighscoreHandler:submitGlobalHighscore(gameName, playerID, score)
   local macAddress = "00-00-00-00-00-00-00-E0" -- Temporary hardcoded mac address
   
   local request = JSON:encode({
@@ -58,7 +58,7 @@ end
 -- @param gameName - The name of the game.
 -- @param numberOfHighscores - The number of highscores to be fetched. Standard is 10.
 -- @return Returns global highscore in a JSON object 
-function Highscorehandler:getGlobalHighscore(gameName, numberOfHighscores)
+function HighscoreHandler:getGlobalHighscore(gameName, numberOfHighscores)
   local macAddress = "00-00-00-00-00-00-00-E0" -- Temporary hardcoded mac address
   
   local request = JSON:encode({
