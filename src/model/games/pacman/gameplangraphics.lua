@@ -17,7 +17,7 @@ function GameplanGraphics.gameOver(picpath)
     score_text:draw_over_surface(screen,word)
     -- This is for the dot that marks position
     local w = gfx.new_surface(20, 20)
-    w:clear({r=200, g=0, b=0})
+    w:clear({r=255, g=255, b=255})
     screen:copyfrom(w,nil,{x=480, y=350})
     -- --------
     gfx.update()
