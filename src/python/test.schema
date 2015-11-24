@@ -1,1 +1,90 @@
-insert into pacMatchTable (P1Mac, P1ID, P1G1Score, P1G2Score, P1G3Score, P1TotalScore, P2Mac, P2ID, P2G1Score, P2G2Score, P2G3Score, P2TotalScore, Winner) values ('123abc', 'Eric', '10', '15', '20', '45', '456def', 'Azur', '5', '15', '20', '40', 'E');
+INSERT INTO games (gamename)
+VALUES ('Pacman');
+
+INSERT INTO user_list (mac, user_id)
+VALUES ('001', 1);
+
+INSERT INTO user_list (mac, user_id)
+VALUES ('001', 2);
+
+INSERT INTO user_list (mac, user_id)
+VALUES ('001', 3);
+
+INSERT INTO user_list (mac, user_id)
+VALUES ('002', 1);
+
+INSERT INTO matches (gamename, player_one_id, player_two_id)
+VALUES ('Pacman', 1, 4);
+
+INSERT INTO round (match_id, game_number, player_one_score, player_two_score)
+VALUE (1, 1, 2000, 1700);
+
+INSERT INTO matches (gamename, player_one_id, player_two_id, winner)
+VALUES ('Pacman', 2, 4, 1);
+
+INSERT INTO round (match_id, game_number, player_one_score, player_two_score)
+VALUE (2, 1, 2100, 1100);
+
+INSERT INTO round (match_id, game_number, player_one_score, player_two_score)
+VALUE (2, 2, 2200, 1200);
+
+INSERT INTO round (match_id, game_number, player_one_score, player_two_score)
+VALUE (2, 3, 2300, 1300);
+
+INSERT INTO matches (gamename, player_one_id, player_two_id, winner)
+VALUES ('Pacman', 3, 1, 2);
+
+INSERT INTO round (match_id, game_number, player_one_score, player_two_score)
+VALUE (3, 1, 1400, 3100);
+
+INSERT INTO round (match_id, game_number, player_one_score, player_two_score)
+VALUE (3, 2, 1500, 3200);
+
+INSERT INTO round (match_id, game_number, player_one_score, player_two_score)
+VALUE (3, 3, 1600, 3300);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 1, 5);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 2, 2222);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 4, 4444);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 1, 5);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 1, 10);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 1, 15);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 1, 25);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 1, 210);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 1, 215);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 1, 35);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 1, 310);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 1, 315);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 1, 45);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 1, 410);
+
+INSERT INTO high_sores (gamename, player_id, score)
+VALUES ('Pacmac', 1, 415);
+

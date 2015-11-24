@@ -5,6 +5,7 @@ GameplanGraphics = require("model.games.pacman.gameplangraphics")
 Score = require("model.games.pacman.score")
 
 local menuoption = 0
+local menuView = "false"
 
 --
 -- Load a game of pacman 
@@ -52,6 +53,7 @@ end
 --      - True: No collision
 --      - False: Collision - deduct one life and check if game over
 function Gamehandler.refresh()
+ADLogger.trace(collectgarbage("count")*1024)
   if gameStatus == true then
     gameStatus = gameplan:refresh()
     if gameStatus == false then      
@@ -64,6 +66,8 @@ function Gamehandler.refresh()
   elseif gameStatus == false and gameplan:getLives() < 1 then
     gameTimer:stop()
     GameplanGraphics.gameOver('views/pacman/data/gameover.png')
+    menuView = "gameOverMenu"
+    menuoption = 0
   end
 end
 
@@ -75,7 +79,37 @@ function Gamehandler.checkVictory()
       gameTimer:stop()
       gameStatus = false
       GameplanGraphics.gameOver('views/pacman/data/victory.png')
+      menuView = "gameOverMenu"
+      menuoption = 0
     end 
+end
+
+function Gamehandler.pausemenu()
+  gameStatus = false
+  local pauseMenu = gfx.loadpng('views/pacman/data/pause-menu.png')
+  screen:copyfrom(pauseMenu, nil,{x=450, y=250})
+  local w = gfx.new_surface(20, 20)
+  w:clear({r=255, g=255, b=255})
+  screen:copyfrom(w,nil,{x=480, y=285})
+  gfx.update()
+end
+
+function Gamehandler.changePausePos(key)
+  local delta = 0
+      if key == "down" then
+        delta = 1
+      else
+        delta = -1
+      end
+      menuoption = math.abs((menuoption + delta) % 3)
+      local w = gfx.new_surface(20, 20)
+      w:clear({r=0, g=0, b=0})
+      screen:copyfrom(w,nil,{x=480, y=285})
+      screen:copyfrom(w,nil,{x=480, y=335})
+      screen:copyfrom(w,nil,{x=480, y=385})
+      w:clear({r=255, g=255, b=255})
+      screen:copyfrom(w,nil,{x=480, y=(285 + menuoption*50)})
+      gfx.update()
 end
 
 -- The onKey-function for the pacman game
@@ -102,6 +136,9 @@ function Gamehandler.pacmanOnKey(key)
       if gameTimer then
         gameTimer:stop()
       end
+      menuView = "pauseMenu"
+      Gamehandler.pausemenu()
+      menuoption = 0
     end
     if key == "1" then
       Gamehandler.startPacman()
@@ -118,35 +155,53 @@ function Gamehandler.pacmanOnKey(key)
 -- -----------------------------------------------------------------
   if gameStatus == false then
   -- This is probably going to be part of the common game menu. 
-    if key == "down" or key == "up" then
-      local delta = 0
-      if key == "down" then
-        delta = 1
-      else
-        delta = -1
-      end
-      menuoption = math.abs((menuoption + delta) % 2)
-      dump(menuoption)
-      local w = gfx.new_surface(20, 20)
-      w:clear({r=0, g=0, b=0})
-      screen:copyfrom(w,nil,{x=480, y=350})
-      screen:copyfrom(w,nil,{x=480, y=390})
-      w:clear({r=200, g=0, b=0})
-      screen:copyfrom(w,nil,{x=480, y=(350 + menuoption*40)})
-      gfx.update()
-    end
-    if key == "ok" then
-      if menuoption == 0 then
-        Gamehandler.startPacman()
-      elseif menuoption == 1 then
-        gameStatus = false
-        if gameTimer then
-          gameTimer:stop()
+    if menuView == "pauseMenu" then
+      if key == "ok" then
+        if menuoption == 0 then
+          gameplan:reprintMap()
+          -- Gamestatus ? 
+          gameStatus = true
+          gameTimer:start()
+        elseif menuoption == 1 then
+          Gamehandler.startPacman()
+        elseif menuoption == 2 then
+          return false
         end
-        screen:clear({r=100,g=0,b=0})
-        return false
       end
-    end
+    
+      if key == "down" or key == "up" then
+          Gamehandler.changePausePos(key)
+      end
+    elseif menuView == "gameOverMenu" then
+      if key == "down" or key == "up" then
+        local delta = 0
+        if key == "down" then
+          delta = 1
+        else
+          delta = -1
+        end
+        menuoption = math.abs((menuoption + delta) % 2)
+        dump(menuoption)
+        local w = gfx.new_surface(20, 20)
+        w:clear({r=0, g=0, b=0})
+        screen:copyfrom(w,nil,{x=480, y=350})
+        screen:copyfrom(w,nil,{x=480, y=390})
+        w:clear({r=255, g=255, b=255})
+        screen:copyfrom(w,nil,{x=480, y=(350 + menuoption*40)})
+        gfx.update()
+      elseif key == "ok" then
+        if menuoption == 0 then
+          Gamehandler.startPacman()
+        elseif menuoption == 1 then
+          gameStatus = false
+          if gameTimer then
+            gameTimer:stop()
+          end
+          screen:clear({r=100,g=0,b=0})
+          return false
+        end
+      end
+    end   
   end
   return true
 end

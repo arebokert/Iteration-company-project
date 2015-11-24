@@ -9,6 +9,9 @@ app = Flask(__name__)
 DATABASE = 'database.db'
 DATABASE_SCHEMA = 'database.schema'
 
+TESTING = 1
+TEST_SCHEMA = 'test.schema'
+
 
 # SUPPORT METHODS
 def dict_factory(cursor, row):
@@ -49,6 +52,10 @@ def init_db():
         with app.open_resource(DATABASE_SCHEMA, mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
+        if TESTING = 1:
+            with app.open_resource(TEST_SCHEMA, mode='r') as f:
+                db.cursor().executescript(f.read())
+            db.commit()
     #return True
 
 
@@ -193,11 +200,16 @@ def get_user(mac):
 
 def user_exists(mac, playerid):
     #TODO(bjowi): Implement function
-    return false
+    return TRUE
+
+def add_game(gamename):
+    #TODO: Implement function
+    return TRUE
+
 
 def game_exists(gamename):
     #TODO(bjowi): Implement function
-    return false
+    return TRUE
 
 
 # MATCH HANDLING
@@ -525,8 +537,9 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
             is desired, e.g. 10 or 3.
 
     Returns:
-        A dictionary with the top N results for the player. Each dictionary row
-        contains the score and the player_id linked to this score.
+        An array of dictionaries with the top N results for the player. Each 
+        dictionary row contains the score and the player_id linked to this
+        score.
 
     Raises:
         
@@ -538,12 +551,14 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
 
     cursor = get_db_cursor()
     try:
-        cursor.execute("SELECT player_id"
-                       ", score"
+        cursor.execute("SELECT user_list.user_id"
+                       ", high_scores.score"
                        " FROM high_scores"
-                       " WHERE gamename = ?"
-                       " AND player_mac = ?"
-                       " AND player_id = ?"
+                       " LEFT JOIN user_list"
+                       " ON high_scores.player_id=user_list.global_id"
+                       " WHERE high_scores.gamename = ?"
+                       " AND user_list.mac = ?"
+                       " AND user_list.user_id = ?"
                        " ORDER BY score DESC"
                        " LIMIT ?"
                        , (gamename, mac, playerid, nor,))
@@ -552,7 +567,7 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
         print 'Database error: ' + e.args[0]
         cfo = None
     if cfa is None:
-        return {'player_id': None
+        return {'user_id': None
                 , 'score': None}
     result = []
     for row in cfa:
@@ -569,8 +584,9 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
             is desired, e.g. 10 or 3.
 
     Returns:
-        A dictionary with the top N results for the box. Each dictionary row
-        contains the score and the player_id linked to this score.
+        An array of dictionaries with the top N results for the box. Each 
+        dictionary row contains the score and the player_id linked to this
+        score.
 
     Raises:
         
@@ -582,12 +598,14 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
 
     cursor = get_db_cursor()
     try:
-        cursor.execute("SELECT player_id"
-                       ", score"
+        cursor.execute("SELECT user_list.user_id"
+                       ", high_scores.score"
                        " FROM high_scores"
-                       " WHERE gamename = ?"
-                       " AND player_mac = ?"
-                       " ORDER BY score DESC"
+                       " LEFT JOIN user_list"
+                       " ON high_scores.player_id=user_list.global_id"
+                       " WHERE high_scores.gamename = ?"
+                       " AND user_list.mac = ?"
+                       " ORDER BY high_scores.score DESC"
                        " LIMIT ?"
                        , (gamename, mac, nor,))
         cfa = cursor.fetchall()
@@ -595,7 +613,7 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
         print 'Database error: ' + e.args[0]
         cfo = None
     if cfa is None:
-        return {'player_id': None
+        return {'user_id': None
                 , 'score': None}
     result = []
     for row in cfa:
@@ -612,8 +630,38 @@ def get_global_highscore(gamename, number_of_scores):
             is desired, e.g. 10 or 3.
 
     Returns:
-
+        An array of dictionaries.
 
     Raises:
         
     """
+
+    if isinstance( number_of_results, int ):
+        nor = number_of_results
+    else:
+        nor = 10
+
+    cursor = get_db_cursor()
+    try:
+        cursor.execute("SELECT user_list.mac"
+                       ", user_list.user_id"
+                       ", high_scores.score"
+                       " FROM high_scores"
+                       " LEFT JOIN user_list"
+                       " ON high_scores.player_id=user_list.global_id"
+                       " WHERE high_scores.gamename = ?"
+                       " ORDER BY high_scores.score DESC"
+                       " LIMIT ?"
+                       , (gamename, nor,))
+        cfa = cursor.fetchall()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfa is None:
+        return {'mac': None
+                , 'user_id': None
+                , 'score': None}
+    result = []
+    for row in cfa:
+        result.append(dict_factory(cursor, row))
+    return result 

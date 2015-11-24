@@ -1,23 +1,20 @@
 CREATE TABLE IF NOT EXISTS user_list (
+	global_id INTEGER PRIMARY KEY AUTOINCREMENT,
 	mac VARCHAR(48),
-	user_id INTEGER,
-	primary key (mac, user_id)
+	user_id INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS games (
 	gamename TEXT PRIMARY KEY
-
 );
 
 CREATE TABLE IF NOT EXISTS matches (
 	match_id INTEGER PRIMARY KEY AUTOINCREMENT,
 	gamename TEXT not null references games(gamename),
-	date datetime not null DEFAULT NOW(),
-	player_one_mac VARCHAR(48) not null references user_list(mac),
-	player_one_id INTEGER not null references user_list(user_id),
-	player_two_mac VARCHAR(48) references user_list(mac),
-	player_two_id INTEGER references user_list(userid),
-	winner VARCHAR(48) references user_list(mac)
+	date DATETIME not null DEFAULT NOW(),
+	player_one_id INTEGER not null references user_list(global_id),
+	player_two_id INTEGER references user_list(global_id),
+	winner INTEGER DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS round (
@@ -31,9 +28,6 @@ CREATE TABLE IF NOT EXISTS round (
 CREATE TABLE IF NOT EXIST high_scores (
 	game_id INTEGER PRIMARY KEY AUTOINCREMENT,
 	gamename TEXT not null references games(gamename),
-	player_mac VARCHAR(48) not null references user_list(mac),
-	player_id INTEGER not null references user_list(user_id),
+	player_id INTEGER not null references user_list(global_id),
 	score INTEGER not null
 );
-
-
