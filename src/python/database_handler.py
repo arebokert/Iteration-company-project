@@ -551,12 +551,14 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
 
     cursor = get_db_cursor()
     try:
-        cursor.execute("SELECT player_id"
-                       ", score"
+        cursor.execute("SELECT user_list.user_id"
+                       ", high_scores.score"
                        " FROM high_scores"
-                       " WHERE gamename = ?"
-                       " AND player_mac = ?"
-                       " AND player_id = ?"
+                       " LEFT JOIN user_list"
+                       " ON high_scores.player_id=user_list.global_id"
+                       " WHERE high_scores.gamename = ?"
+                       " AND user_list.mac = ?"
+                       " AND user_list.user_id = ?"
                        " ORDER BY score DESC"
                        " LIMIT ?"
                        , (gamename, mac, playerid, nor,))
@@ -565,7 +567,7 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
         print 'Database error: ' + e.args[0]
         cfo = None
     if cfa is None:
-        return {'player_id': None
+        return {'user_id': None
                 , 'score': None}
     result = []
     for row in cfa:
@@ -596,12 +598,14 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
 
     cursor = get_db_cursor()
     try:
-        cursor.execute("SELECT player_id"
-                       ", score"
+        cursor.execute("SELECT user_list.user_id"
+                       ", high_scores.score"
                        " FROM high_scores"
-                       " WHERE gamename = ?"
-                       " AND player_mac = ?"
-                       " ORDER BY score DESC"
+                       " LEFT JOIN user_list"
+                       " ON high_scores.player_id=user_list.global_id"
+                       " WHERE high_scores.gamename = ?"
+                       " AND user_list.mac = ?"
+                       " ORDER BY high_scores.score DESC"
                        " LIMIT ?"
                        , (gamename, mac, nor,))
         cfa = cursor.fetchall()
@@ -609,7 +613,7 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
         print 'Database error: ' + e.args[0]
         cfo = None
     if cfa is None:
-        return {'player_id': None
+        return {'user_id': None
                 , 'score': None}
     result = []
     for row in cfa:
@@ -639,12 +643,14 @@ def get_global_highscore(gamename, number_of_scores):
 
     cursor = get_db_cursor()
     try:
-        cursor.execute("SELECT player_mac"
-                       ", player_id"
-                       ", score"
+        cursor.execute("SELECT user_list.mac"
+                       ", user_list.user_id"
+                       ", high_scores.score"
                        " FROM high_scores"
-                       " WHERE gamename = ?"
-                       " ORDER BY score DESC"
+                       " LEFT JOIN user_list"
+                       " ON high_scores.player_id=user_list.global_id"
+                       " WHERE high_scores.gamename = ?"
+                       " ORDER BY high_scores.score DESC"
                        " LIMIT ?"
                        , (gamename, nor,))
         cfa = cursor.fetchall()
@@ -652,8 +658,8 @@ def get_global_highscore(gamename, number_of_scores):
         print 'Database error: ' + e.args[0]
         cfo = None
     if cfa is None:
-        return {'player_mac': None
-                , 'player_id': None
+        return {'mac': None
+                , 'user_id': None
                 , 'score': None}
     result = []
     for row in cfa:
