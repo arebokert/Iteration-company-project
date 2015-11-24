@@ -18,6 +18,7 @@ function Gamehandler.loadPacman()
   
   -- Initiate pacman 
   Gamehandler.startPacman()
+  --ADLogger.trace(collectgarbage("count")*1024)
 end
 
 -- This function is a help function for the loadPacman
@@ -210,5 +211,6 @@ end
 
 callback = function(timer)
     Gamehandler.refresh()
+    --ADLogger.trace(collectgarbage("count")*1024)
 end
 return Gamehandler

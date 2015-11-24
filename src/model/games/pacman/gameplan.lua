@@ -465,7 +465,6 @@ end
 -- @return: A boolean value. True if collision with opponent. False if no collision
 function Gameplan:refresh()
 
-
     for k,player in pairs(self.players) do
         
         -- Checks whether the latent key press is a possible movement
@@ -523,6 +522,12 @@ function Gameplan:refresh()
     if collision == true then
       self:updateLives()
     end
+    
+    collectgarbage()
+    collectgarbage("stop")
+    --for testing, prints bytes of memory freed for each transaction
+    --ADLogger.trace(collectgarbage("count")*1024)
+    
     return not collision
     
 end

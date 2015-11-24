@@ -139,3 +139,5 @@ function insert(a, o)
   end
 
 end
+
+return HighscoreHandler

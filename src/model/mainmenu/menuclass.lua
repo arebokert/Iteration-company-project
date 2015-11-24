@@ -30,19 +30,19 @@ function Menu:setActive(a)
 			activeButtonPos = self.options[i].buttonPos
             activeButton = gfx.loadpng(self.options[i].button_marked)
             self.options[a].hover()
-		else
-			activeButtonPos = self.options[i].buttonPos
-			activeButton = gfx.loadpng(self.options[i].button)
-		end
-		if ((i ~= a) and (a == 3) and (hasInternet==false)) then
-			activeButtonPos = self.options[i].buttonPos
-			activeButton = gfx.loadpng(self.options[i].button)
-		end
-		if ((i == a) and (a == 3) and (hasInternet==false)) then
-			activeButtonPos = self.options[i].buttonPos
-			activeButton = gfx.loadpng(self.options[i].button)
-			a = a+1
-		end
+    		else
+    			activeButtonPos = self.options[i].buttonPos
+    			activeButton = gfx.loadpng(self.options[i].button)
+    		end
+    		if ((i ~= a) and (a == 3) and (hasInternet==false)) then
+    			activeButtonPos = self.options[i].buttonPos
+    			activeButton = gfx.loadpng(self.options[i].button)
+    		end
+    		if ((i == a) and (a == 3) and (hasInternet==false)) then
+    			activeButtonPos = self.options[i].buttonPos
+    			activeButton = gfx.loadpng(self.options[i].button)
+    			a = a+1
+    		end
         self.container:copyfrom(activeButton, nil , activeButtonPos)
         activeButton:destroy()
     end
@@ -51,7 +51,7 @@ function Menu:setActive(a)
     if self.containerPos then
         screen:copyfrom(self.container, nil, self.containerPos)
     else
-        screen:copyfrom(self.container, nil )
+        screen:copyfrom(self.container, nil)
     end
     
     gfx.update()
