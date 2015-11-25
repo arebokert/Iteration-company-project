@@ -126,11 +126,7 @@ def persist_db():
 # USER HANDLING
  
 
-<<<<<<< HEAD
-#TODO(B-Jowi): Check that false is really returned as it is stated in the comment
-# also theck that the arguments are in accordance with the new tables
-=======
->>>>>>> a8426b9fdfac95516e4c3f1f29427d28ab2bfab5
+    
 def add_user(mac, playerid):
     """Add new user to database.
 
@@ -178,7 +174,7 @@ def remove_user(mac, playerid):
     """
     #TODO: ensure that azuja469 won't crash gitlab with this code
 
-      c = get_db()
+    c = get_db()
     try:
         c.execute("DELETE FROM user_list WHERE mac <> ? AND playerid <> ?", 'mac', 'playerid')
         cnxn.commit()
