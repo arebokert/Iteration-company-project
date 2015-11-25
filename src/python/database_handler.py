@@ -125,7 +125,7 @@ def persist_db():
 # user_list TABLE
 # USER HANDLING
 
-def add_user(mac, playerid,):
+def add_user(mac, playerid):
     """Add new user to database.
 
     Args:
@@ -134,8 +134,8 @@ def add_user(mac, playerid,):
             using the same unit.
 
     Returns:
-        A boolean value to signal if the insertion went ok or not. TRUE
-        if insertion went ok, otherwise FALSE.
+        The integer value of the global_id of the added user.
+        Will return the integer value -1 if user could not be added. 
 
     Raises:
         Raises generic python error.
@@ -145,10 +145,13 @@ def add_user(mac, playerid,):
         c.execute("INSERT INTO user_list (mac"
             ", user_id) VALUES (?,?)"
             , (mac, playerid,))
+        gid = c.lastrowid()
     except:
         get_db().rollback()
         raise
-    return True
+    if gid is None:
+        return -1
+    return gid
 
 def remove_user(mac, playerid):
     """Remove user from database.
@@ -167,36 +170,32 @@ def remove_user(mac, playerid):
     """
     #TODO: Implement this function.
 
-def get_user(mac):
+def get_user(mac, playerid):
     """Get user information from database.
 
     Args:
         mac: MAC address of player. To differentiate between units.
 
     Returns:
-        A dict mapping database column to the corresponding table rows. For
-        example if there are two users linked to the specified MAC-address:
-        {'user_id': ('1', '2')}. 
-        If no user could be found a dictionary with
-        empty values will be returned.
+        The integer value of the global_id variable.
+        If the user is not found, the integer value -1 will be returned.
     Raises:
         Will NOT raise an error.
     """
 
     cursor = get_db_cursor()
     try:
-        cursor.execute("SELECT mac"
-                       ", user_id"
+        cursor.execute("SELECT global_id"
                        " FROM user_list"
-                       " WHERE mac = ?", (mac,))
+                       " WHERE mac = ?"
+                       " AND user_id = ?", (mac, playerid,))
         cfo = cursor.fetchone()
     except sqlite3.Error as e:
         print 'Database error: ' + e.args[0]
         cfo = None
     if cfo is None:
-        return {'mac':None
-                ,'user_id': None}
-    return dict_factory(cursor, cfo);
+        return -1
+    return cfo[0]
 
 def user_exists(mac, playerid):
     #TODO(bjowi): Implement function
@@ -508,17 +507,18 @@ def add_highscore(gamename, mac, playerid, score):
 
     if not game_exists(gamename):
         add_game(gamename)
-    if not player_exists(mac, playerid):
-        add_user(mac, playerid)
+
+    global_id = get_user(mac, playerid)
+    if global_id == -1:
+        global_id = add_user(mac, playerid)
 
     c = get_db()
     try:
         c.execute("INSERT INTO high_scores (gamename"
-            ", player_mac"
             ", player_id"
             ", score)"
             " VALUES (?,?,?,?)"
-            , (gamename, mac, playerid, score,))
+            , (gamename, global_id, score,))
     except:
         get_db().rollback()
         return -1
