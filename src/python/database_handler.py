@@ -145,7 +145,9 @@ def add_user(mac, playerid):
         c.execute("INSERT INTO user_list (mac"
             ", user_id) VALUES (?,?)"
             , (mac, playerid,))
+        c.co
         gid = c.lastrowid()
+        c.commit()
     except:
         get_db().rollback()
         raise
@@ -197,18 +199,53 @@ def get_user(mac, playerid):
         return -1
     return cfo[0]
 
-def user_exists(mac, playerid):
-    #TODO(bjowi): Implement function
-    return TRUE
-
 def add_game(gamename):
-    #TODO: Implement function
-    return TRUE
+    """ Add a new game to the games table.
 
+    Args:
+        gamename: Name of game that is to be added
+
+    Returns:
+        Boolean value true if game could be added, otherwise false.
+
+    Raises:
+        
+    """
+    c = get_db()
+    try:
+        c.execute("INSERT INTO games (gamename)"
+            " VALUES (?)"
+            , (gamename,))
+        c.commit()
+    except:
+        get_db().rollback()
+        return False
+    return True
 
 def game_exists(gamename):
-    #TODO(bjowi): Implement function
-    return TRUE
+    """ Check if a game exists in the database.
+
+    Args:
+        gamename: Name of game that is explored.
+
+    Returns:
+        Boolean value true if game exists, otherwise false.
+
+    Raises:
+        
+    """
+    cursor = get_db_cursor()
+    try:
+        cursor.execute("SELECT gamename"
+                       " FROM games"
+                       " WHERE gamename = ?", (gamename,))
+        cfo = cursor.fetchone()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfo is None:
+        return False
+    return True
 
 
 # MATCH HANDLING
@@ -519,6 +556,7 @@ def add_highscore(gamename, mac, playerid, score):
             ", score)"
             " VALUES (?,?,?,?)"
             , (gamename, global_id, score,))
+        c.commit()
     except:
         get_db().rollback()
         return -1
