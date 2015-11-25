@@ -158,6 +158,8 @@ def add_user(mac, playerid):
     return gid
 
 def remove_user(mac, playerid):
+    #TODO(azuja469): Implement SQL statements to remove all rows with
+    # Foreign keys that are connected to the user being removed.
     """Remove user from database.
 
     Args:
@@ -312,7 +314,8 @@ def insert_player_one(gamename, mac, playerid):
     Raises:
         
     """
-
+    #TODO(azuja469): Fix inputs to match new table schema (player_one_mac 
+        # does not exist)
     c = get_db()
     try:
         c.execute(
@@ -352,13 +355,14 @@ def insert_player_two(gamename, mac, playerid, match_id,):
         
     """
 
-  c = get_db()
+    gid = get_user(mac, playerid)
+    c = get_db()
     try:
         c.execute(
             "UPDATE matches "
             "SET player_two_id = ?"
             "WHERE match_id = ?"
-            , (playerid, match_id,))
+            , (gid, match_id,))
     except:
         get_db().rollback()
         raise
@@ -386,7 +390,7 @@ def add_match(gamename, mac, playerid):
     try:    
         cursor.execute("SELECT match_id"
                        " FROM matches"
-                       " WHERE player_two_mac = null")
+                       " WHERE player_two_id = null")
         
         cfo = cursor.fetchone()
     #TODO(bjowi): Fix error handling.
@@ -416,6 +420,8 @@ def add_round_score(gamename, match, mac, playerid, score):
 
 #TODO implement correctly. Choose correct SQL statements and make a comparison 
 #to select if the score shall be added to player one or two in database
+#TODO(erida995): Get user -> decide if player one or player 2. Look at 
+# function add_match for ideas.
 
 c = get_db()
     try:
@@ -443,6 +449,7 @@ def get_number_of_rounds(gamename, match):
     Raises:
         
     """
+    #TODO(erida995): Implement function. Write correct comments.
 
 def get_match_score(gamename, match):
     """ Get the scores of all games of a match.
@@ -452,11 +459,13 @@ def get_match_score(gamename, match):
         match: Integer that is describes the ID of a match.
 
     Returns:
-
+        Rows of all games played with corresponding scores and player.
+        Returned in the format as a dict.
 
     Raises:
         
     """
+    #TODO(azuja469): Implement function. Write correct comments.
 
 def get_match_total_score(gamename, match):
     """ Get the sum of scores for each player in a match.
@@ -471,6 +480,7 @@ def get_match_total_score(gamename, match):
     Raises:
         
     """
+    #TODO(erida995): Implement function. Write correct comments.
 
 def set_winner(gamename, match, mac, playerid):
     """ Set the winner of a specified match.
@@ -490,6 +500,7 @@ def set_winner(gamename, match, mac, playerid):
     Raises:
         
     """
+    #TODO(bjowi227): Add get user search for correct SQL statements.
     c = get_db()
     try:
         c.execute(
