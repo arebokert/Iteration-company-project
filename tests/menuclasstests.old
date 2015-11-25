@@ -12,8 +12,13 @@ require('luaunit')
 -- makes it possible to run the Zenterio API-function ADLogger in the command prompt without crashing
 ADLogger = require("SDK.Mocked.ADLogger")
 gfx = require('SDK.Mocked.gfx')
+surface = require "SDK.Mocked.surface"
+player = require "SDK.Mocked.player"
+freetype = require "SDK.Mocked.freetype"
+sys = require "SDK.Mocked.sys"
 
-mainMenuContainer = gfx.new_surface(10, 10)
+
+
 
 
 -- requireing the file which we're testing 
@@ -29,13 +34,11 @@ end
 -- returns true if non of the functions crash
 function runMenuclassFunctions()
   value = Menu:new ()
-  Menu:setOptions({1}) --fungerar inte pga ADlogger
-  
-  -- crashes because gfx-mock doesn't return proper values
-  -- x = mainMenuContainer:get_width()
+  Menu:setOptions({})
+  --mainMenuContainer = gfx.new_surface(10, 10)
   --Menu:print(mainMenuContainer, 1, 1, 1) 
-  --Menu:setActive(1)
-  --Menu:next()
+  -- Menu:setActive(1)
+  -- Menu:next()
   -- Menu:prev()
   -- Menu:action()
   -- Menu:hover()
