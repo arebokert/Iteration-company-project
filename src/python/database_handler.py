@@ -124,8 +124,11 @@ def persist_db():
 
 # user_list TABLE
 # USER HANDLING
+ 
 
-def add_user(mac, playerid,):
+#TODO(B-Jowi): Check that false is really returned as it is stated in the comment
+# also theck that the arguments are in accordance with the new tables
+def add_user(mac, playerid):
     """Add new user to database.
 
     Args:
@@ -165,7 +168,16 @@ def remove_user(mac, playerid):
     Raises:
         Will NOT raise an error.
     """
-    #TODO: Implement this function.
+    #TODO: ensure that azuja469 won't crash gitlab with this code
+
+      c = get_db()
+    try:
+        c.execute("DELETE FROM user_list WHERE mac <> ? AND playerid <> ?", 'mac', 'playerid')
+        cnxn.commit()
+    except:
+        get_db().rollback()
+        raise
+    return True
 
 def get_user(mac):
     """Get user information from database.
@@ -633,7 +645,6 @@ def get_global_highscore(gamename, number_of_scores):
         An array of dictionaries.
 
     Raises:
-        
     """
 
     if isinstance( number_of_results, int ):
