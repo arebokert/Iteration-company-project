@@ -9,7 +9,8 @@ require("model.games.pacman.player")
 
 -- 4 because first time the lives are printed, one life is deducted
 lives = 4
-
+-- The step that the players will take in pixels
+step = 5
 
 -- Define a shortcut function for testing
 function dump(...)
@@ -141,9 +142,7 @@ for key, value in pairs(self.map) do
                   end   
                 end 
             elseif c == "D" then
-                --self:paintdoor({x=i, y=key})
                 container:copyfrom(bg["0"], nil, pos)
-                container:copyfrom(bg["D"], nil, pos)
             elseif c == "H" then   
             -- House position - no yellow dot 
                 container:copyfrom(bg["0"], nil, pos)
@@ -153,11 +152,12 @@ for key, value in pairs(self.map) do
         end
     end
     Score.printScore({x=100, y=20})
+    for k,player in pairs(self.players) do
+      container:copyfrom(player.bg, nil, player:getPos())
+    end
     screen:copyfrom(container, nil, self.containerpos)
     -- Update GFX
     gfx.update()
-
-
 end
 
 
@@ -292,6 +292,17 @@ function Gameplan:resetLives()
 end  
 
 function deadAnimation() 
+    dump("ANIMATIONDUMP")
+    dump(gameStatus)
+    dump(menuView)
+    if menuView == "pauseMenu" then
+      deadAnimationTimer:stop()
+      for k,player in pairs(gameplan.players) do
+        player:setPos(player.startPos.x, player.startPos.y)
+      end  
+      pacman.latentdirection = "right"
+      return
+    else    
     if animationcount > 8 then
       deadAnimationTimer:stop()
       gameStatus = true
@@ -322,6 +333,7 @@ function deadAnimation()
     end
     gfx.update()
     animationcount = animationcount + 1
+    end
 end
 
 -- This function resets all players to their origin position
@@ -456,7 +468,6 @@ end
 function Gameplan:getPossibleMovements(position)
     local directions = {left = false, right = false, up = false, down = false}
     local pos = {}
-    local step = 5
     for k, v in pairs(directions) do
         pos.x = position.x
         pos.y = position.y
@@ -516,10 +527,22 @@ function Gameplan:refresh()
             self:repaint(player, oldPos)
             
             -- If player is pacman update score and remove yellowdot from yellowdot matrix
+            -- This if statement is to handle bugs in yellow dot handling that occured
+            -- It's not straight forward, but it's due to the size of pacman
+            -- related to the position that's in the upper left corner
+            -- This is purely SHIT CODE! And has to be rewritten.. The developers of this code are ashamed...
             if player.type == "pacman" then
-              if self:checkDotStatus(self:xyToCell(pos.x, pos.y)) == true then 
-                Score.countScore("yellowdot") 
-                self:updateDotStatus(self:xyToCell(new_pos.x,new_pos.y))
+              if player.direction == "right" then
+                  oldPos.x = oldPos.x + step * 3
+              elseif player.direction == "down" then
+                  oldPos.y = oldPos.y + step * 3
+              elseif player.direction == "left" then
+                  oldPos.x = oldPos.x + step 
+              elseif player.direction == "up" then
+                  oldPos.y = oldPos.y + step
+              end
+              if self:checkDotStatus(self:xyToCell(oldPos.x, oldPos.y)) == true then 
+                self:updateDotStatus(self:xyToCell(oldPos.x,oldPos.y))
               end       
             end
         end
@@ -568,6 +591,7 @@ end
 -- Dumps the positions of the players in the terminal
 function Gameplan:dumpPlayerPos()
     -- dump(self.players)
+    dump(yellowdotmatrix)
     for k,player in pairs(self.players) do
         local pos = player:getPos()
         ADLogger.trace("PLAYERS:")
@@ -604,6 +628,7 @@ end
 -- Updates cells to not have a yellow dot
 function Gameplan:updateDotStatus(pos)
     noDotsRemaining = noDotsRemaining - 1
+    Score.countScore("yellowdot")
     yellowdotmatrix[pos.y][pos.x] = false 
 end
 

@@ -5,7 +5,7 @@ GameplanGraphics = require("model.games.pacman.gameplangraphics")
 Score = require("model.games.pacman.score")
 
 local menuoption = 0
-local menuView = "false"
+menuView = nil
 
 --
 -- Load a game of pacman 
@@ -59,7 +59,6 @@ ADLogger.trace(collectgarbage("count")*1024)
     if gameStatus == false then      
       if gameplan:getLives() > 0 then
         gameplan:reloadPlayerPos()
-        gameStatus = true
       end
     end
     Gamehandler.checkVictory()
@@ -116,7 +115,13 @@ end
 function Gamehandler.pacmanOnKey(key)
   -- -----------------------------------------------------------------
   -- For testing
+  if key == "2" then
+      
+      gameplan:dumpPlayerPos()
+    
+  end
   if gameStatus == true then
+  
     if key == "0" then
       if gameStatus == true then
         gameplan:refresh()
@@ -158,13 +163,16 @@ function Gamehandler.pacmanOnKey(key)
     if menuView == "pauseMenu" then
       if key == "ok" then
         if menuoption == 0 then
+          menuView = nil
           gameplan:reprintMap()
           -- Gamestatus ? 
           gameStatus = true
           gameTimer:start()
         elseif menuoption == 1 then
+          menuView = nil
           Gamehandler.startPacman()
         elseif menuoption == 2 then
+          menuView = nil
           return false
         end
       end
@@ -192,8 +200,10 @@ function Gamehandler.pacmanOnKey(key)
       elseif key == "ok" then
         if menuoption == 0 then
           Gamehandler.startPacman()
+          menuView = nil
         elseif menuoption == 1 then
           gameStatus = false
+          menuView = nil
           if gameTimer then
             gameTimer:stop()
           end
