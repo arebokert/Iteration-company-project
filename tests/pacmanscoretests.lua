@@ -23,9 +23,9 @@ end
 
 -- runs the functions in Score.lua
 function runScoreFunctions() 
- countScore("Notyellowdot")
- value = getScore()
- resetScore()
+ Score.countScore("Notyellowdot")
+ value = Score.getScore()
+ Score.resetScore()
  return true
 end
 
@@ -33,33 +33,33 @@ end
 -- tests that getScore function is returning the correct value
 function testCountScore()
   result = 0
-  assertEquals(getScore(),result)
+  assertEquals(Score.getScore(),result)
   
-  countScore("yellowdot")
+  Score.countScore("yellowdot")
   result = 10
-  assertEquals(getScore(),result)
+  assertEquals(Score.getScore(),result)
   
-  countScore("yellowdot")
-  countScore("yellowdot")
-  countScore("yellowdot")
-  countScore("Notyellowdot")
-  countScore("yellowdot")
+  Score.countScore("yellowdot")
+  Score.countScore("yellowdot")
+  Score.countScore("yellowdot")
+  Score.countScore("Notyellowdot")
+  Score.countScore("yellowdot")
   result = 50
-  assertEquals(getScore(),result)
+  assertEquals(Score.getScore(),result)
 end
 
 -- tests that the reset-function is working
 function testResetScore()
-  resetScore()
+  Score.resetScore()
   result = 0
-  assertEquals(getScore(), result)
+  assertEquals(Score.getScore(), result)
   
-  countScore("yellowdot")
-  countScore("yellowdot")
-  assertNotEquals(getScore(), result)
+  Score.countScore("yellowdot")
+  Score.countScore("yellowdot")
+  assertNotEquals(Score.getScore(), result)
   
-  resetScore()
-  assertEquals(getScore(), result)
+  Score.resetScore()
+  assertEquals(Score.getScore(), result)
 end
 
 os.exit( LuaUnit.run() ) -- always end a test file with this line
