@@ -19,6 +19,7 @@ end
 showmenu = require "views.mainmenu.showmenu"
 gamehandler = require "model.games.pacman.gamehandler"
 game2048 = require "model.games.2048.game"
+game2048_multiplayer = require "model.games.2048.game_multiplayer"
 
 function onKey(key, state)
     
@@ -52,6 +53,8 @@ function onKey(key, state)
             end
         elseif activeView == "2048" then
           game2048.registerKey(key,state)
+        elseif activeView =="multiplayer2048" then
+          game2048_multiplayer.registerKey(key,state)
         end
         
          --This statement is used when going back to either menu or pacman
@@ -80,16 +83,15 @@ function onStart()
     if ADConfig.isSimulator then
         if arg[#arg] == "-debug" then require("mobdebug").start() end
     end
-	if ADConfig.isSimulator then
+  if ADConfig.isSimulator then
         if arg[#arg] == "-debug" then require("mobdebug").start() end
     end
  --[[ if http.request( "http://www.google.com" ) == nil then
-		hasInternet=false
-	else
-		hasInternet=true
-	end]]
+    hasInternet=false
+  else
+    hasInternet=true
+  end]]
     showmenu.loadMainMenu()
     _G.activeMenu = mainMenu
 end
-
 

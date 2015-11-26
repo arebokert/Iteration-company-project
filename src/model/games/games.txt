@@ -2,7 +2,7 @@
   
   gameHolder = {}
   gameHolder[1] = {name = "pacman", path = "model/games/pacman/", start = "model/games/pacman/start.lua"}
-  gameHolder[2] = {name = "2048", path = "model/games/2048/", start = "model/games/2048/start.lua"}
+  gameHolder[2] = {name = "multiplayer2048", path = "model/games/2048/", start = "model/games/2048/start.lua"}
   gameHolder[3] = {name = "empty", path = "model/games/empty/", start = "model/games/empty/start.lua"}
   
   return gameHolder

@@ -3,7 +3,7 @@
 --description: load the 2048 each number box                --------
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
-Boxes = {
+local Boxes = {
   current_score = 0, 
   tag = {},   -- end game tag
   current_zero = 16,  -- default 16 numbers = 0
@@ -68,11 +68,11 @@ end
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
 function Boxes.showScore()
-  local score_font = sys.new_freetype({g=100,r=100,b=100}, 36, {x=Boxes.box_start_x+ Boxes.each_square_2048 *5 +40,y=Boxes.box_start_y},root_path .."views/mainmenu/data/font/Gidole-Regular.otf")
-  score_font:draw_over_surface(screen2048,"Score:")
-  screen2048:clear({r=245,g=245,b=245}, {x=Boxes.box_start_x+ Boxes.each_square_2048 *5 +40,y = Boxes.box_start_y+60, w=50, h =50})
-  local score = sys.new_freetype({g=10,r=10,b=10}, 32, {x=Boxes.box_start_x+ Boxes.each_square_2048 *5+40,y = Boxes.box_start_y+60},root_path .. "views/mainmenu/data/font/Gidole-Regular.otf")
-  score:draw_over_surface(screen2048,Boxes.current_score)
+  local score_font = sys.new_freetype({g=100,r=100,b=100}, 32, {x=screen_player:get_width()*0.4,y=screen_player:get_height()*0.1},root_path .."views/mainmenu/data/font/Gidole-Regular.otf")
+  score_font:draw_over_surface(screen_player,"Score:")
+  screen_player:clear({r=245,g=245,b=245}, {x = screen_player:get_width()*0.4 + 100,y=screen_player:get_height()*0.1, w=50, h =50})
+  local score = sys.new_freetype({g=10,r=10,b=10}, 32, {x=screen_player:get_width()*0.4 + 100,y=screen_player:get_height()*0.1},root_path .. "views/mainmenu/data/font/Gidole-Regular.otf")
+  score:draw_over_surface(screen_player,Boxes.current_score)
   
 end
 
@@ -111,11 +111,11 @@ function Boxes.showMove()
       else
         box_img = Boxes.box_img[Boxes.box_table[i+j*4]]
       end
-      screen2048:copyfrom(box_img, nil,bg_pos,true)
+      screen_player:copyfrom(box_img, nil,bg_pos,true)
     end
   end
   Boxes.showScore() 
-  screen:copyfrom(screen2048,{x=0,y=0})
+  screen:copyfrom(screen_player,{x=0,y=0})
   gfx.update() 
 end
 
@@ -149,9 +149,9 @@ function Boxes.endGame()
   local result = Boxes.tag["left"] + Boxes.tag['right'] + Boxes.tag['top'] + Boxes.tag['bottom']
   if(result == 4) then
     ADLogger.trace("Game Over")
-    screen2048:clear({r=50,g=20,b=30})
+    screen_player:clear({r=50,g=20,b=30})
     local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=500,y=420},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
-    score:draw_over_surface(screen2048,"GAME OVER")
+    score:draw_over_surface(screen_player,"GAME OVER")
     gfx.update()
     current_menu = "2048_game_over"
   end

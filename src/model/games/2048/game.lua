@@ -9,12 +9,15 @@ function Game.registerKey(key, state)
         if key == "ok" then
           menuView = nil
           if menuoption == 0 then
-            Game.startGame()
+            Game.showGamePage(1)
           elseif menuoption == 1 then
             -- Restart function has to be implemented
+            Boxes.clear()
+            Game.startGame()
           elseif menuoption == 2 then
             activeView = "menu"
             current_menu = "mainMenu"
+            Boxes.clear()
             showmenu.loadMainMenu()
           end
         else
@@ -52,7 +55,7 @@ end
 -- 5px between each square
 --128, 272,105
 ---{x=400,y=100,w = 537, h=537}
-function Game.showGamePage()
+function Game.showGamePage(flag)         --- if flag == 1 , resume
    screen2048 = screen
    local width_2048 = screen2048:get_width()
    local height_2048 = screen2048:get_height()
@@ -78,14 +81,12 @@ function Game.showGamePage()
    screen2048:clear({r=245,g=245,b=245})
    screen2048:clear({r=0,g=205,b=204},centre_square)
    gfx.update()
-   Boxes.init(each_square, box_start_x, box_start_y)
+   Boxes.init(each_square, box_start_x, box_start_y,flag)
 end
 
 function Game.startGame()
- Game.showGamePage()
- local each_square = 128
- local box_start_x = 272
- local box_start_y = 105
+ Game.showGamePage(0)
+ --Game.multiplayer()
 end
 
 return Game

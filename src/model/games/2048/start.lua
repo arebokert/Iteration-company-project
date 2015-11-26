@@ -1,5 +1,5 @@
-game2048.startGame()
-
+game2048_multiplayer = require("model.games.2048.game_multiplayer")
+game2048_multiplayer.startMultiGame()
 --[[Page = require("page")
 Game = require("game")
 Boxes = require("box")
