@@ -14,6 +14,7 @@ freetype = require "SDK.Mocked.freetype"
 sys = require "SDK.Mocked.sys"
 
 require('model.games.pacman.player')
+require('model.games.pacman.gameplan')
 
 
 -- the acutal test function, test if subfunction runPacmanPLayerFunctions() doesn't cranch and return true
@@ -28,14 +29,15 @@ end
 -- @return: true
 function runPlayerFunctions() -- runs the functions in Player.lua
   value = Player:movement()
-  value = Player:new("pacman")   
-  value = Player:new("ghost")
+  pacman = Player:new("pacman")   
+  ghost = Player:new("ghost")
   Player:setPos(1,2)
   value = Player:getPos()
-  --Player:Randomdirection()
+  ghost:Randomdirection()
   
   return true
 end
+
 
 -- test if function movement returns correct values after the position is set
 function testMovement()
@@ -49,6 +51,7 @@ function testMovement()
   assertEquals(Player:movement(), {x=-1, y=-1})
 end
 
+
 -- test invalid values for function movement
 function testInvalidMovement() 
   Player:setPos(1,1)
@@ -57,6 +60,7 @@ function testInvalidMovement()
   Player:setPos(-1,-2)
   assertNotEquals(Player:movement(), {x=-1, y=-1})
 end
+
 
 -- test if pacman and ghost player can be created
 function testNew()
@@ -88,6 +92,7 @@ function testGetPos()
   assertEquals(Player:getPos(), result)
 end 
 
+
 -- test invalid values for function getPos
 function testInvalidGetPos()
   Player:setPos(1,1)
@@ -95,8 +100,7 @@ function testInvalidGetPos()
   assertNotEquals(Player:getPos(), result)
   Player:setPos(0,0)
   result = {x=1, y=0}  
-  assertNotEquals(Player:getPos(), result)
-  
+  assertNotEquals(Player:getPos(), result)  
 end
 
 
