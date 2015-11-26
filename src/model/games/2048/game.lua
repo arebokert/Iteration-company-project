@@ -1,20 +1,42 @@
 Boxes = require("model.games.2048.box")
+InGameMenu = require("model.ingamemenu.ingamemenuclass")
 Game = {current = 0}
+menuView = nil
 
 function Game.registerKey(key, state)
     if state == "down" then
-      if key == "up" then   --move every number to top
-        Boxes.moveTop()
-      elseif key == "down" then
-        Boxes.moveBottom()
-      elseif key == "left" then
-        Boxes.moveLeft()
-      elseif key == "right" then
-        Boxes.moveRight()
-      elseif key == "exit" then
-        activeView = "menu"
-        current_menu = "mainMenu"
-        showmenu.loadMainMenu()
+      if menuView == "pauseMenu" then
+        if key == "ok" then
+          menuView = nil
+          if menuoption == 0 then
+            Game.startGame()
+          elseif menuoption == 1 then
+            -- Restart function has to be implemented
+          elseif menuoption == 2 then
+            activeView = "menu"
+            current_menu = "mainMenu"
+            showmenu.loadMainMenu()
+          end
+        else
+            InGameMenu.changePausePos(key)
+        end
+      elseif menuView == nil then
+        if key == "up" then   --move every number to top
+          Boxes.moveTop()
+        elseif key == "down" then
+          Boxes.moveBottom()
+        elseif key == "left" then
+          Boxes.moveLeft()
+        elseif key == "right" then
+          Boxes.moveRight()
+        elseif key == "exit" then
+          activeView = "menu"
+          current_menu = "mainMenu"
+          showmenu.loadMainMenu()
+        elseif key == "ok" then
+          InGameMenu.loadPauseMenu()
+          menuView = "pauseMenu"
+        end
       end
     end
     if current_menu =="2048_game_over" then
@@ -26,7 +48,6 @@ function Game.registerKey(key, state)
        end
     end
 end
-
 
 -- 5px between each square
 --128, 272,105

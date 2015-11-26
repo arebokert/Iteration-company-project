@@ -17,12 +17,6 @@ function dump(...)
     print(DataDumper(...), "\n---")
 end
 
--- Sleep function
-function wait(seconds)
-  local start = os.time()
-  repeat until os.time() > start + seconds
-end
-
 -- The Gameplan class. 
 Gameplan = {}
 
@@ -288,13 +282,10 @@ end
 -- Sets the number of lives left
 -- 4 since one life is deducted first time the no. of lives are printed
 function Gameplan:resetLives()
-  lives = 4
+  lives = 2
 end  
 
 function deadAnimation() 
-    dump("ANIMATIONDUMP")
-    dump(gameStatus)
-    dump(menuView)
     if menuView == "pauseMenu" then
       deadAnimationTimer:stop()
       for k,player in pairs(gameplan.players) do
