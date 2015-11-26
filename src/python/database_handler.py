@@ -124,8 +124,10 @@ def persist_db():
 
 # user_list TABLE
 # USER HANDLING
+ 
 
-def add_user(mac, playerid,):
+    
+def add_user(mac, playerid):
     """Add new user to database.
 
     Args:
@@ -134,8 +136,8 @@ def add_user(mac, playerid,):
             using the same unit.
 
     Returns:
-        A boolean value to signal if the insertion went ok or not. TRUE
-        if insertion went ok, otherwise FALSE.
+        The integer value of the global_id of the added user.
+        Will return the integer value -1 if user could not be added. 
 
     Raises:
         Raises generic python error.
@@ -145,12 +147,19 @@ def add_user(mac, playerid,):
         c.execute("INSERT INTO user_list (mac"
             ", user_id) VALUES (?,?)"
             , (mac, playerid,))
+        c.co
+        gid = c.lastrowid()
+        c.commit()
     except:
         get_db().rollback()
         raise
-    return True
+    if gid is None:
+        return -1
+    return gid
 
 def remove_user(mac, playerid):
+    #TODO(azuja469): Implement SQL statements to remove all rows with
+    # Foreign keys that are connected to the user being removed.
     """Remove user from database.
 
     Args:
@@ -165,51 +174,91 @@ def remove_user(mac, playerid):
     Raises:
         Will NOT raise an error.
     """
-    #TODO: Implement this function.
+    #TODO: ensure that azuja469 won't crash gitlab with this code
 
-def get_user(mac):
+    c = get_db()
+    try:
+        c.execute("DELETE FROM user_list WHERE mac <> ? AND playerid <> ?", 'mac', 'playerid')
+        cnxn.commit()
+    except:
+        get_db().rollback()
+        raise
+    return True
+
+def get_user(mac, playerid):
     """Get user information from database.
 
     Args:
         mac: MAC address of player. To differentiate between units.
 
     Returns:
-        A dict mapping database column to the corresponding table rows. For
-        example if there are two users linked to the specified MAC-address:
-        {'user_id': ('1', '2')}. 
-        If no user could be found a dictionary with
-        empty values will be returned.
+        The integer value of the global_id variable.
+        If the user is not found, the integer value -1 will be returned.
     Raises:
         Will NOT raise an error.
     """
 
     cursor = get_db_cursor()
     try:
-        cursor.execute("SELECT mac"
-                       ", user_id"
+        cursor.execute("SELECT global_id"
                        " FROM user_list"
-                       " WHERE mac = ?", (mac,))
+                       " WHERE mac = ?"
+                       " AND user_id = ?", (mac, playerid,))
         cfo = cursor.fetchone()
     except sqlite3.Error as e:
         print 'Database error: ' + e.args[0]
         cfo = None
     if cfo is None:
-        return {'mac':None
-                ,'user_id': None}
-    return dict_factory(cursor, cfo);
-
-def user_exists(mac, playerid):
-    #TODO(bjowi): Implement function
-    return TRUE
+        return -1
+    return cfo[0]
 
 def add_game(gamename):
-    #TODO: Implement function
-    return TRUE
+    """ Add a new game to the games table.
 
+    Args:
+        gamename: Name of game that is to be added
+
+    Returns:
+        Boolean value true if game could be added, otherwise false.
+
+    Raises:
+        
+    """
+    c = get_db()
+    try:
+        c.execute("INSERT INTO games (gamename)"
+            " VALUES (?)"
+            , (gamename,))
+        c.commit()
+    except:
+        get_db().rollback()
+        return False
+    return True
 
 def game_exists(gamename):
-    #TODO(bjowi): Implement function
-    return TRUE
+    """ Check if a game exists in the database.
+
+    Args:
+        gamename: Name of game that is explored.
+
+    Returns:
+        Boolean value true if game exists, otherwise false.
+
+    Raises:
+        
+    """
+    cursor = get_db_cursor()
+    try:
+        cursor.execute("SELECT gamename"
+                       " FROM games"
+                       " WHERE gamename = ?", (gamename,))
+        cfo = cursor.fetchone()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfo is None:
+        return False
+    return True
 
 
 # MATCH HANDLING
@@ -265,7 +314,8 @@ def insert_player_one(gamename, mac, playerid):
     Raises:
         
     """
-
+    #TODO(azuja469): Fix inputs to match new table schema (player_one_mac 
+        # does not exist)
     c = get_db()
     try:
         c.execute(
@@ -305,13 +355,14 @@ def insert_player_two(gamename, mac, playerid, match_id,):
         
     """
 
-  c = get_db()
+    gid = get_user(mac, playerid)
+    c = get_db()
     try:
         c.execute(
             "UPDATE matches "
             "SET player_two_id = ?"
             "WHERE match_id = ?"
-            , (playerid, match_id,))
+            , (gid, match_id,))
     except:
         get_db().rollback()
         raise
@@ -339,7 +390,7 @@ def add_match(gamename, mac, playerid):
     try:    
         cursor.execute("SELECT match_id"
                        " FROM matches"
-                       " WHERE player_two_mac = null")
+                       " WHERE player_two_id = null")
         
         cfo = cursor.fetchone()
     #TODO(bjowi): Fix error handling.
@@ -369,6 +420,8 @@ def add_round_score(gamename, match, mac, playerid, score):
 
 #TODO implement correctly. Choose correct SQL statements and make a comparison 
 #to select if the score shall be added to player one or two in database
+#TODO(erida995): Get user -> decide if player one or player 2. Look at 
+# function add_match for ideas.
 
 c = get_db()
     try:
@@ -396,6 +449,7 @@ def get_number_of_rounds(gamename, match):
     Raises:
         
     """
+    #TODO(erida995): Implement function. Write correct comments.
 
 def get_match_score(gamename, match):
     """ Get the scores of all games of a match.
@@ -405,11 +459,13 @@ def get_match_score(gamename, match):
         match: Integer that is describes the ID of a match.
 
     Returns:
-
+        Rows of all games played with corresponding scores and player.
+        Returned in the format as a dict.
 
     Raises:
         
     """
+    #TODO(azuja469): Implement function. Write correct comments.
 
 def get_match_total_score(gamename, match):
     """ Get the sum of scores for each player in a match.
@@ -424,6 +480,7 @@ def get_match_total_score(gamename, match):
     Raises:
         
     """
+    #TODO(erida995): Implement function. Write correct comments.
 
 def set_winner(gamename, match, mac, playerid):
     """ Set the winner of a specified match.
@@ -443,6 +500,7 @@ def set_winner(gamename, match, mac, playerid):
     Raises:
         
     """
+    #TODO(bjowi227): Add get user search for correct SQL statements.
     c = get_db()
     try:
         c.execute(
@@ -508,17 +566,19 @@ def add_highscore(gamename, mac, playerid, score):
 
     if not game_exists(gamename):
         add_game(gamename)
-    if not player_exists(mac, playerid):
-        add_user(mac, playerid)
+
+    global_id = get_user(mac, playerid)
+    if global_id == -1:
+        global_id = add_user(mac, playerid)
 
     c = get_db()
     try:
         c.execute("INSERT INTO high_scores (gamename"
-            ", player_mac"
             ", player_id"
             ", score)"
             " VALUES (?,?,?,?)"
-            , (gamename, mac, playerid, score,))
+            , (gamename, global_id, score,))
+        c.commit()
     except:
         get_db().rollback()
         return -1
@@ -633,7 +693,6 @@ def get_global_highscore(gamename, number_of_scores):
         An array of dictionaries.
 
     Raises:
-        
     """
 
     if isinstance( number_of_results, int ):
