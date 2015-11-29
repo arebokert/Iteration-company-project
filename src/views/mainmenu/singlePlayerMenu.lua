@@ -96,7 +96,7 @@ function singlePlayerMenu.loadGame()
   if singlePlayerMenu.current_game == 2 then
      activeView = "pacman"
      current_menu = "none"
-     gamehandler.loadPacman()
+     gamehandler.loadPacman(600,00)
   elseif singlePlayerMenu.current_game == 3 then
     activeView = "2048"
     current_menu = "none"

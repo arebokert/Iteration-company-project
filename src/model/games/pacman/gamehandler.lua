@@ -10,12 +10,24 @@ menuView = nil
 --
 -- Load a game of pacman 
 --
-function Gamehandler.loadPacman()
+function Gamehandler.loadPacman(width, height)
   -- Set the background for the view. 
   local pacmanbg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
   screen:copyfrom(pacmanbg, nil)
   pacmanbg:destroy()
   
+  -- Default values for width and height! 
+  if width == nil then 
+    width = 600
+  end
+  
+  if height == nil then
+    height = 400
+  end
+  -- Display the map on a container
+  Gamehandler.container = gfx.new_surface(width, height)
+  Gamehandler.containerPos = {x = 300, y = 150}
+    
   -- Initiate pacman 
   Gamehandler.startPacman()
   --ADLogger.trace(collectgarbage("count")*1024)
@@ -37,12 +49,7 @@ function Gamehandler.startPacman()
   gameplan:resetLives()
   Score.resetScore()
   
-  -- Display the map on a container
-  container_width = 600
-  container_height = 400
-  container = gfx.new_surface(container_width, container_height)
-  containerPos = {x = 300, y = 150}
-  gameplan:displayMap(container, containerPos)
+  gameplan:displayMap(Gamehandler.container, Gamehandler.containerPos)
   
   -- Gamestatus ? 
   gameStatus = true
