@@ -14,8 +14,9 @@ player = require "SDK.Mocked.player"
 freetype = require "SDK.Mocked.freetype"
 sys = require "SDK.Mocked.sys"
 
-require('model.games.pacman.score')
-
+-- can't find the file (has been moved)
+--require('model.games.pacman.score')
+require('model.commongame.scorehandler')
 -- tests if any of the functions in Score.lua crashes
 function testCrashScore() 
  assertTrue(runScoreFunctions())
