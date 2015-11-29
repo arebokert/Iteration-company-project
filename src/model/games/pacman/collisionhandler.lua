@@ -3,8 +3,7 @@
 --@param: player1 - the second player that is to be checked for collision
 --return: true if collison
 --return: false if no collison
-function checkCollision(player1, player2)
-  local block = 25
+function checkCollision(player1, player2, block)
   if inRange(player2.x + 1, player1.x, player1.x + block) or inRange(player1.x + 1, player2.x, player2.x + block) then
     if inRange(player2.y + 1, player1.y, player1.y + block) or inRange(player1.y + 1, player2.y, player2.y + block) then
       return true

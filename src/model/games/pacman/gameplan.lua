@@ -219,7 +219,8 @@ function Gameplan:displayMap(container, containerPos)
                 -- BAD SOLUTION!!!
                 container:copyfrom(bg["0"], nil, pos)
                 pacman.bg:premultiply()
-                container:copyfrom(pacman.bg, nil, pacman:getPos())
+                local pacman_dest_rect = self:getDestRectangle(pacman:getPos())
+                container:copyfrom(pacman.bg, nil, pacman_dest_rect)                
                 pacman.direction = "right"
                 pacman.latentdirection = "right"
                 self:addPlayer(pacman)
@@ -240,7 +241,8 @@ function Gameplan:displayMap(container, containerPos)
                
                 container:copyfrom(bg["0"], nil, pos)
                 blinky.bg:premultiply()
-                container:copyfrom(blinky.bg, nil, blinky:getPos())
+                local blinky_dest_rect = self:getDestRectangle(blinky:getPos())
+                container:copyfrom(blinky.bg, nil, blinky_dest_rect)
                 blinky.direction = "left"
                 self:addPlayer(blinky)
             end
@@ -253,6 +255,11 @@ function Gameplan:displayMap(container, containerPos)
     screen:copyfrom(container, nil, self.containerpos)
     -- Update GFX
     gfx.update()
+end
+
+function Gameplan:getDestRectangle(pos)
+  local DestRect = {x = pos.x, y = pos.y, w = self.block, h = self.block}
+  return DestRect
 end
 
 -- Updates number of lives
@@ -372,7 +379,8 @@ function Gameplan:repaint(player, oldPos)
   end
 
   local absPos = self:relativeToAbsolutePosition(player:getPos().x,player:getPos().y)
-  screen:copyfrom(player.bg, nil, absPos)
+  local DestRect = self:getDestRectangle(absPos)
+  screen:copyfrom(player.bg, nil, DestRect)
   gfx.update()
 end
 
@@ -570,7 +578,7 @@ function Gameplan:checkPacmanCollision()
       if player.type == "pacman" then
         for j,opponent in pairs(self.players) do
           if opponent.type == "ghost" then
-            collision = checkCollision(player,opponent)
+            collision = checkCollision(player,opponent, self.block)
             if collision == true then return true end
           end
         end
