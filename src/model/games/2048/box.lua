@@ -1,10 +1,10 @@
 --------------------------------------------------------------------
 --class: Boxes                                              --------
 --description: load the 2048 each number box                --------
---last modified Nov 22, 2015                                --------
+--last modified Nov 29, 2015                                --------
 --------------------------------------------------------------------
+--
 Boxes = {
-  current_score = 0, 
   tag = {},   -- end game tag
   current_zero = 16,  -- default 16 numbers = 0
   box_table = {       -- default numbers in the table
@@ -65,15 +65,10 @@ end
 --------------------------------------------------------------------
 --function: showScore                                       --------
 --description: show the scores of 2048                      --------
---last modified Nov 22, 2015                                --------
+--last modified Nov 29, 2015                                --------
 --------------------------------------------------------------------
 function Boxes.showScore()
-  local score_font = sys.new_freetype({g=100,r=100,b=100}, 36, {x=Boxes.box_start_x+ Boxes.each_square_2048 *5 +40,y=Boxes.box_start_y},root_path .."views/mainmenu/data/font/Gidole-Regular.otf")
-  score_font:draw_over_surface(screen2048,"Score:")
-  screen2048:clear({r=245,g=245,b=245}, {x=Boxes.box_start_x+ Boxes.each_square_2048 *5 +40,y = Boxes.box_start_y+60, w=50, h =50})
-  local score = sys.new_freetype({g=10,r=10,b=10}, 32, {x=Boxes.box_start_x+ Boxes.each_square_2048 *5+40,y = Boxes.box_start_y+60},root_path .. "views/mainmenu/data/font/Gidole-Regular.otf")
-  score:draw_over_surface(screen2048,Boxes.current_score)
-  
+  Score.printScore()
 end
 
 --------------------------------------------------------------------
@@ -169,19 +164,19 @@ function Boxes.moveLeft()
       Boxes.box_table[1+i*4] = Boxes.box_table[1+i*4] *2
       Boxes.box_table[2+i*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
-      Boxes.current_score = Boxes.current_score +Boxes.box_table[1+i*4]
+      Score.increaseScore(Boxes.box_table[1+i*4])
    end
    if(Boxes.box_table[2+i*4] ~= 0 and Boxes.box_table[2+i*4] == Boxes.box_table[3+i*4]) then
       Boxes.box_table[2+i*4] = Boxes.box_table[2+i*4] *2
       Boxes.box_table[3+i*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
-      Boxes.current_score = Boxes.current_score +Boxes.box_table[2+i*4]
+      Score.increaseScore(Boxes.box_table[2+i*4])
    end
    if(Boxes.box_table[3+i*4] ~= 0 and Boxes.box_table[3+i*4] == Boxes.box_table[4+i*4]) then
       Boxes.box_table[3+i*4] = Boxes.box_table[3+i*4] *2
       Boxes.box_table[4+i*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
-      Boxes.current_score = Boxes.current_score +Boxes.box_table[3+i*4]
+      Score.increaseScore(Boxes.box_table[3+i*4])
    end
     -- change palces, make a promise, no 0 is left of numbers
     local count = 1 -- number of >= 0 
@@ -218,19 +213,19 @@ function Boxes.moveRight()
       Boxes.box_table[4+i*4] = Boxes.box_table[4+i*4] *2
       Boxes.box_table[3+i*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
-      Boxes.current_score = Boxes.current_score +Boxes.box_table[4+i*4]
+      Score.increaseScore(Boxes.box_table[4+i*4])
    end
    if(Boxes.box_table[3+i*4] ~= 0 and Boxes.box_table[3+i*4] == Boxes.box_table[2+i*4]) then
       Boxes.box_table[3+i*4] = Boxes.box_table[3+i*4] *2
       Boxes.box_table[2+i*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
-      Boxes.current_score = Boxes.current_score +Boxes.box_table[3+i*4]
+      Score.increaseScore(Boxes.box_table[3+i*4])
    end
    if(Boxes.box_table[2+i*4] ~= 0 and Boxes.box_table[2+i*4] == Boxes.box_table[1+i*4]) then
       Boxes.box_table[2+i*4] = Boxes.box_table[2+i*4] *2
       Boxes.box_table[1+i*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
-      Boxes.current_score = Boxes.current_score +Boxes.box_table[2+i*4]
+      Score.increaseScore(Boxes.box_table[2+i*4])
    end
     -- change palces, make a promise, no 0 is left of numbers
    local count = 4 -- number of >= 0 
@@ -267,19 +262,19 @@ function Boxes.moveTop()
       Boxes.box_table[i] = Boxes.box_table[i] *2
       Boxes.box_table[i+4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
-      Boxes.current_score = Boxes.current_score +Boxes.box_table[i]
+      Score.increaseScore(Boxes.box_table[i])
    end
    if(Boxes.box_table[i+4]~= 0 and Boxes.box_table[i+4] == Boxes.box_table[i+2*4]) then
       Boxes.box_table[i+4] = Boxes.box_table[i+4] *2
       Boxes.box_table[i+2*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
-      Boxes.current_score = Boxes.current_score +Boxes.box_table[i+4]
+      Score.increaseScore(Boxes.box_table[i+4])
    end
    if(Boxes.box_table[i+2*4] ~= 0 and Boxes.box_table[i+2*4] == Boxes.box_table[i+3*4]) then
       Boxes.box_table[i+2*4] = Boxes.box_table[i+2*4] *2
       Boxes.box_table[i+3*4] = 0
       Boxes.current_zero = Boxes.current_zero + 1
-      Boxes.current_score = Boxes.current_score +Boxes.box_table[i+2*4]
+      Score.increaseScore(Boxes.box_table[i+2*4])
    end
     -- change palces, make a promise, no 0 is left of numbers
    local count = 0 -- number of >= 0 
@@ -314,19 +309,19 @@ function Boxes.moveBottom()
         Boxes.box_table[i+3*4] = Boxes.box_table[i+3*4] *2
         Boxes.box_table[i+2*4] = 0
         Boxes.current_zero = Boxes.current_zero + 1
-        Boxes.current_score = Boxes.current_score + Boxes.box_table[i+3*4]
+        Score.increaseScore(Boxes.box_table[i+3*4])
     end
     if(Boxes.box_table[i+2*4] ~= 0 and Boxes.box_table[i+2*4] == Boxes.box_table[i+4]) then
         Boxes.box_table[i+2*4] = Boxes.box_table[i+2*4] *2
         Boxes.box_table[i+4]= 0
         Boxes.current_zero = Boxes.current_zero + 1
-        Boxes.current_score = Boxes.current_score + Boxes.box_table[i+2*4]
+        Score.increaseScore(Boxes.box_table[i+2*4])
     end
     if(Boxes.box_table[i+4] ~= 0 and Boxes.box_table[i+4] == Boxes.box_table[i]) then
         Boxes.box_table[i+4] = Boxes.box_table[i+4] *2
         Boxes.box_table[i] = 0
         Boxes.current_zero = Boxes.current_zero + 1
-        Boxes.current_score = Boxes.current_score + Boxes.box_table[i+4]
+        Score.increaseScore(Boxes.box_table[i+4])
     end
     -- change palces, make a promise, no 0 is left of numbers
     local count = 3 -- number of >= 0 

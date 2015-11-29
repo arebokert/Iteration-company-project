@@ -145,7 +145,7 @@ for key, value in pairs(self.map) do
             end
         end
     end
-    Score.printScore({x=100, y=20})
+    Score.printScore()
     for k,player in pairs(self.players) do
       container:copyfrom(player.bg, nil, player:getPos())
     end
@@ -247,7 +247,7 @@ function Gameplan:displayMap(container, containerPos)
             self.logicalMap[key][i] = c
         end
     end
-    Score.printScore({x=100, y=20})
+    Score.printScore()
     self:updateLives()
     yellowdotmatrix = self:yellowDotStatus(self.map)
     screen:copyfrom(container, nil, self.containerpos)
@@ -282,7 +282,7 @@ end
 -- Sets the number of lives left
 -- 4 since one life is deducted first time the no. of lives are printed
 function Gameplan:resetLives()
-  lives = 2
+  lives = 4
 end  
 
 function deadAnimation() 
@@ -548,7 +548,7 @@ function Gameplan:refresh()
         end
     end
     
-    Score.printScore({x=100, y=20})
+    Score.printScore()
     
     local collision = self:checkPacmanCollision()
     if collision == true then
@@ -619,7 +619,7 @@ end
 -- Updates cells to not have a yellow dot
 function Gameplan:updateDotStatus(pos)
     noDotsRemaining = noDotsRemaining - 1
-    Score.countScore("yellowdot")
+    Score.increaseScore(10)
     yellowdotmatrix[pos.y][pos.x] = false 
 end
 

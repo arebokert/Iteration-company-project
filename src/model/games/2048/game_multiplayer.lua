@@ -1,6 +1,6 @@
 Boxes_multiplayer = require("model.games.2048.box_multiplayer")
 Boxes_competitor = require("model.games.2048.box_competitor")
-InGameMenu = require("model.ingamemenu.ingamemenuclass")
+InGameMenu = require("model.commongame.ingamemenuclass")
 Game_multiplayer = {current = 0}
 menuView = nil
 

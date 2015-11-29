@@ -1,0 +1,59 @@
+-- The score class. 
+Score = {}
+
+
+-- This is the local variables needed for the score function
+local scoreCount = 0
+local size = 20
+local color = {r = 255, g = 255, b =255 }
+local pos = {x=100,y=20}
+local score_text = sys.new_freetype(color, size, pos, font_path)
+
+-- This is a black box to cover the old score
+local w = gfx.new_surface(1280, 58)
+w:clear({r=0, g=0, b=0})
+
+
+-- 
+-- Updates score with an increment
+--
+-- @increment: the number the score should be incremented with
+function Score.increaseScore(increment)
+   scoreCount = scoreCount + increment
+end
+
+--This function prints the score on the screen
+--@pos: The upper left corner where the score text is placed
+function Score.printScore()
+   word = "Score: " .. scoreCount
+   screen:copyfrom(w,nil,{x=0, y=0})
+   score_text:draw_over_surface(screen,word)
+end
+
+-- TODO
+-- This function should be called when a user has won a game, or reached game over condition
+-- The score should then be saved in the database. Probably only if it's a new highscore though, so
+-- it needs to check current high score..
+function Score.saveScore()
+end
+
+-- TODO
+-- This function should return the highscore of the game (globally, or personally?)
+-- @return: Highscore
+function Score.retrieveHighscore()
+end
+
+-- 
+-- Return score
+--
+-- @return: scoreCount, current score.  
+function Score.getScore()
+    return scoreCount
+end
+
+-- Resets the score
+function Score.resetScore()
+  scoreCount = 0
+end  
+
+return Score

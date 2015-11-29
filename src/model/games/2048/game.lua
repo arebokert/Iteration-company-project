@@ -1,5 +1,6 @@
 Boxes = require("model.games.2048.box")
-InGameMenu = require("model.ingamemenu.ingamemenuclass")
+InGameMenu = require("model.commongame.ingamemenuclass")
+Score = require("model.commongame.scorehandler")
 Game = {current = 0}
 menuView = nil
 
@@ -12,9 +13,11 @@ function Game.registerKey(key, state)
             Game.showGamePage(1)
           elseif menuoption == 1 then
             -- Restart function has to be implemented
+            Score.resetScore()
             Boxes.clear()
             Game.startGame()
           elseif menuoption == 2 then
+            Score.resetScore()
             activeView = "menu"
             current_menu = "mainMenu"
             Boxes.clear()
@@ -33,8 +36,10 @@ function Game.registerKey(key, state)
         elseif key == "right" then
           Boxes.moveRight()
         elseif key == "exit" then
+          Score.resetScore()
           activeView = "menu"
           current_menu = "mainMenu"
+          Boxes.clear()
           showmenu.loadMainMenu()
         elseif key == "ok" then
           InGameMenu.loadPauseMenu()

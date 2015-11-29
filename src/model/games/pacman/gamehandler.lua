@@ -2,8 +2,8 @@ Gamehandler = {}
 
 Gameplan = require "model.games.pacman.gameplan"
 GameplanGraphics = require("model.games.pacman.gameplangraphics")
-Score = require("model.games.pacman.score")
-InGameMenu = require("model.ingamemenu.ingamemenuclass")
+Score = require("model.commongame.scorehandler")
+InGameMenu = require("model.commongame.ingamemenuclass")
 
 menuView = nil
 
