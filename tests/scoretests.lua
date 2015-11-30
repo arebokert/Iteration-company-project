@@ -5,7 +5,7 @@ EXPORT_ASSERT_TO_GLOBALS = true;
 -- always start a test file with this line
 require('luaunit') 
 
---Include mock SDK
+--cInclude mock SDK
 ADLogger = require('SDK.Mocked.ADLogger')
 ADLogger = require('SDK.Mocked.ADLogger')
 gfx = require "SDK.Mocked.gfx"
@@ -15,48 +15,54 @@ freetype = require "SDK.Mocked.freetype"
 sys = require "SDK.Mocked.sys"
 
 -- can't find the file (has been moved)
---require('model.games.pacman.score')
+-- require('model.commongame.scorehandler')
 require('model.commongame.scorehandler')
 -- tests if any of the functions in Score.lua crashes
 function testCrashScore() 
  assertTrue(runScoreFunctions())
 end
 
+--
 -- runs the functions in Score.lua
+--
 function runScoreFunctions() 
- Score.countScore("Notyellowdot")
+ Score.increaseScore(0)
  value = Score.getScore()
  Score.resetScore()
  return true
 end
 
--- tests that scorecount is adding 10 when "yellowdot" is sent in
+--
+-- tests that scorecount is adding 10 
 -- tests that getScore function is returning the correct value
+--
 function testCountScore()
   result = 0
   assertEquals(Score.getScore(),result)
   
-  Score.countScore("yellowdot")
+  Score.increaseScore(10)
   result = 10
   assertEquals(Score.getScore(),result)
   
-  Score.countScore("yellowdot")
-  Score.countScore("yellowdot")
-  Score.countScore("yellowdot")
-  Score.countScore("Notyellowdot")
-  Score.countScore("yellowdot")
+  Score.increaseScore(10)
+  Score.increaseScore(10)
+  Score.increaseScore(10)
+  Score.increaseScore(0)
+  Score.increaseScore(10)
   result = 50
   assertEquals(Score.getScore(),result)
 end
 
+--
 -- tests that the reset-function is working
+--
 function testResetScore()
   Score.resetScore()
   result = 0
   assertEquals(Score.getScore(), result)
   
-  Score.countScore("yellowdot")
-  Score.countScore("yellowdot")
+  Score.increaseScore(10)
+  Score.increaseScore(10)
   assertNotEquals(Score.getScore(), result)
   
   Score.resetScore()
