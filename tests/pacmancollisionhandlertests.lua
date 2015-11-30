@@ -29,30 +29,31 @@ end
 function runCollisionhandlerFunctions() -- runs the functions in Collisionhandler.lua
   player = Player:new("pacman")   
   Player:setPos(1,2)
-  value = checkCollision(player, player)
+  value = checkCollision(player, player, 25)
   value = inRange(2,1,3)  
   return true
 end
 
 -- test if function collisionhandler returns true if pacman collision with ghost 
 function testCheckCollision()
+  block = 25
   player1 = Player:new("pacman")
   player1:setPos(0,0) 
   player2 = Player:new("ghost")
   player2:setPos(0,0) 
-  assertEquals(checkCollision(player1, player2), true)
+  assertEquals(checkCollision(player1, player2, block), true)
   
   player1:setPos(0,0) 
   player2:setPos(50,50) 
-  assertEquals(checkCollision(player1, player2), false)
+  assertEquals(checkCollision(player1, player2, block), false)
   
   player1:setPos(0,0) 
   player2:setPos(24,24) 
-  assertEquals(checkCollision(player1, player2), false)
+  assertEquals(checkCollision(player1, player2, block), false)
   
   player1:setPos(0,0) 
   player2:setPos(23,23) 
-  assertEquals(checkCollision(player1, player2), true)
+  assertEquals(checkCollision(player1, player2, block), true)
 end
 
 -- test if function collisionhandler returns false if pacman are in same x-coordinate but not y-coordinate as ghost 
@@ -62,19 +63,19 @@ function testCheckCollisionX()
 
   player1:setPos(0,0) 
   player2:setPos(0,24) 
-  assertEquals(checkCollision(player1, player2), false)
+  assertEquals(checkCollision(player1, player2, block), false)
   
   player1:setPos(0,24) 
   player2:setPos(0,0) 
-  assertEquals(checkCollision(player1, player2), false)
+  assertEquals(checkCollision(player1, player2, block), false)
   
   player1:setPos(0,23) 
   player2:setPos(0,0) 
-  assertEquals(checkCollision(player1, player2), true)
+  assertEquals(checkCollision(player1, player2, block), true)
   
   player1:setPos(0,0) 
   player2:setPos(0,23) 
-  assertEquals(checkCollision(player1, player2), true)
+  assertEquals(checkCollision(player1, player2, block), true)
 end
 
 -- test if function collisionhandler returns false if pacman are in same y-coordinate but not x-coordinate as ghost 
@@ -84,19 +85,19 @@ function testCheckCollisionY()
 
   player1:setPos(0,0) 
   player2:setPos(24,0) 
-  assertEquals(checkCollision(player1, player2), false)
+  assertEquals(checkCollision(player1, player2, block), false)
   
   player1:setPos(24,0) 
   player2:setPos(0,0) 
-  assertEquals(checkCollision(player1, player2), false)
+  assertEquals(checkCollision(player1, player2, block), false)
   
   player1:setPos(23,0) 
   player2:setPos(0,0) 
-  assertEquals(checkCollision(player1, player2), true)
+  assertEquals(checkCollision(player1, player2, block), true)
   
   player1:setPos(0,0) 
   player2:setPos(23,0) 
-  assertEquals(checkCollision(player1, player2), true)
+  assertEquals(checkCollision(player1, player2, block), true)
 end
 
 -- tesst if function inrange returns correct value depending on input 
