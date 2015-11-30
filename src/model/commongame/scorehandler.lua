@@ -13,17 +13,20 @@ local score_text = sys.new_freetype(color, size, pos, font_path)
 local w = gfx.new_surface(1280, 58)
 w:clear({r=0, g=0, b=0})
 
-
 -- 
--- Updates score with an increment
+-- Update score when pacman collide with a score type
 --
--- @increment: the number the score should be incremented with
+-- @param type: Yellowdot, cherries or powerpellets 
+--
 function Score.increaseScore(increment)
    scoreCount = scoreCount + increment
 end
 
---This function prints the score on the screen
---@pos: The upper left corner where the score text is placed
+--
+-- Prints the score on the screen
+--
+-- @param pos: The upper left corner where the score text is placed
+--
 function Score.printScore()
    word = "Score: " .. scoreCount
    screen:copyfrom(w,nil,{x=0, y=0})
@@ -46,12 +49,15 @@ end
 -- 
 -- Return score
 --
--- @return: scoreCount, current score.  
+-- @return scoreCount: current score. 
+--   
 function Score.getScore()
     return scoreCount
 end
 
+--
 -- Resets the score
+--
 function Score.resetScore()
   scoreCount = 0
 end  

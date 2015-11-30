@@ -32,7 +32,9 @@ end
 
 
 --
--- Load the pacman map. 
+-- Load the gameplan map
+--
+-- @param map: File name of map in txt format
 --
 function Gameplan:loadMap(map)
     -- If map is not specified, default is "map2.txt"
@@ -66,9 +68,10 @@ function Gameplan:loadMap(map)
     return true
 end
 
-
 -- 
--- Function to add a player to a gameplan. 
+-- Function to add a player to a gameplan
+-- 
+-- @param player: Player type
 --
 function Gameplan:addPlayer(player)
     if self.players == nil then
@@ -77,17 +80,20 @@ function Gameplan:addPlayer(player)
     table.insert(self.players, player)
 end
 
-
 --
--- Set direction of Pacman. Obs! Hardcoded as player 1, needs to be adjusted. 
+-- Set direction of Pacman. Obs! Hardcoded as player 1, needs to be adjusted.
+--
+-- @param dir: The direction player should start moving in
 --
 function Gameplan:setPacmanDirection(dir)
     self.players[1].latentdirection = dir
 end
 
-
--- Print a yellow dot to a cell
---@param cell: The cell-value in cell coordiantes
+--
+-- Print a yellow dot in a cell
+--
+-- @param cell: The cell-value in cell coordiantes
+--
 function Gameplan:printYellowDot(cell)
     local dotoffset = GameplanGraphics.yellowDotOffset(self.block, self.dotSize)
     local dotpos = {x = (cell.x-1)*self.block + dotoffset, y = (cell.y-1)*self.block + dotoffset}--position of yellow dot
@@ -95,12 +101,12 @@ function Gameplan:printYellowDot(cell)
     screen:copyfrom(bg["d"], nil, absPos) --print yellow dot
 end
 
-
 -- 
 -- Create an object with the different kinds of backgrounds for the map. 
--- 
--- @param: blockSize. The size of each block (squares)
--- @param: dotSize. The size of dot
+--
+-- @param blockSize: The size of each block (squares)
+-- @param dotSize: The size of dot
+--
 function Gameplan:loadBackgroundObjects(blockSize, dotSize) 
   -- The background object
   local background = {}
@@ -116,7 +122,9 @@ function Gameplan:loadBackgroundObjects(blockSize, dotSize)
   return background
 end   
 
-
+--
+-- Reprint the map with pacman, ghost and yellowdot current status.  
+--
 function Gameplan:reprintMap()
 local dotoffset = GameplanGraphics.yellowDotOffset(self.block, self.dotSize)
 for key, value in pairs(self.map) do
@@ -154,12 +162,12 @@ for key, value in pairs(self.map) do
     gfx.update()
 end
 
-
 --
 -- Display the map on a container at a certain position 
 --
--- @param: container. The container where to load the map
--- @param: containerPos. Where the container should be located. 
+-- @param container: The container where to load the map
+-- @param containerPos: Where the container should be located
+--
 function Gameplan:displayMap(container, containerPos)
     -- Save the position of the container and width/height
     self.containerpos = containerPos
@@ -262,7 +270,9 @@ function Gameplan:getDestRectangle(pos)
   return DestRect
 end
 
--- Updates number of lives
+--
+-- Updates number of lives left
+--
 function Gameplan:updateLives()
   
   lives = lives - 1
@@ -280,18 +290,26 @@ function Gameplan:updateLives()
   
 end
 
+--
 -- Returns the number of lives left
---@return: Number of lives left
+--
+-- @return: Number of lives left
+--
 function Gameplan:getLives()
   return lives
 end  
 
+--
 -- Sets the number of lives left
 -- 4 since one life is deducted first time the no. of lives are printed
+--
 function Gameplan:resetLives()
   lives = 4
 end  
 
+--
+-- Animation when pacman have no lives left
+--
 function deadAnimation() 
     if menuView == "pauseMenu" then
       deadAnimationTimer:stop()
@@ -334,7 +352,9 @@ function deadAnimation()
     end
 end
 
--- This function resets all players to their origin position
+--
+-- Resets all players to their origin position
+--
 function Gameplan:reloadPlayerPos()
 
     animationcount = 0
@@ -355,6 +375,7 @@ end
 --
 -- @player: The player 
 -- @oldPos: Old position in relative coordinates 
+--
 function Gameplan:repaint(player, oldPos)
   -- First turn, the old position is null. Return false. 
   if oldPos == nil then
@@ -384,10 +405,13 @@ function Gameplan:repaint(player, oldPos)
   gfx.update()
 end
 
+--
 -- Converts a relative position to an absolute position in the map
+--
 -- @param x: relative x position
 -- @param y: relative y position
 -- @return pos: absolute position in table
+--
 function Gameplan:relativeToAbsolutePosition(x, y)
     local pos = {}
     pos.x = x + self.containerpos.x
@@ -395,16 +419,22 @@ function Gameplan:relativeToAbsolutePosition(x, y)
     return pos
 end
 
+--
 -- Checks what a cell in the map contains
--- @param: cell: The cell wanted to check
--- @return: the content of the cell
+--
+-- @param cell: The cell wanted to check
+-- @return the content of the cell
+--
 function Gameplan:checkMap(cell)
     return self.logicalMap[cell.y][cell.x]
 end
 
+--
 -- Converts a cell position to reltive XY position
--- @param: cell: The cell wanted to convert
--- @return: the relative XY position
+--
+-- @param cell: The cell wanted to convert
+-- @return pos: The relative XY position
+--
 function Gameplan:cellToXY(cell)
     local x = (cell.x-1) * self.block
     local y = (cell.y-1) * self.block
@@ -412,10 +442,13 @@ function Gameplan:cellToXY(cell)
     return pos
 end
 
+--
 -- Converts an XY position to cell position
--- @param: x: Relative x position to be converted
--- @param: y: Relative y position to be converted
--- @return: The cell
+--
+-- @param x: Relative x position to be converted
+-- @param y: Relative y position to be converted
+-- @return pos: The cell
+--
 function Gameplan:xyToCell(x,y)
     -- RELATIVE COORDINATES
     local xcell = math.ceil( (x+1)/self.block )
@@ -424,10 +457,13 @@ function Gameplan:xyToCell(x,y)
     return pos
 end
 
-
--- This function checks whether a movement is possible
--- @direction: Wanted direction
--- @new_pos: Wanted position
+--
+-- This function checks whether a movement in a direction is possible
+--
+-- @param direction: Wanted direction
+-- @param new_pos: Wanted position
+-- @return true if ???
+--
 function Gameplan:possibleMovement(direction, new_pos)
     local target = {}
     target.x = new_pos.x
@@ -460,10 +496,12 @@ function Gameplan:possibleMovement(direction, new_pos)
     end
 end
 
-
+--
 -- Gets all the directions, and if it's possible to move that way
--- @param: position: Relative position
--- @return: Table with all directions containing true/false if possible to move
+--
+-- @param position: Relative position
+-- @return directions: Table with all directions containing true/false if possible to move
+--
 function Gameplan:getPossibleMovements(position)
     local directions = {left = false, right = false, up = false, down = false}
     local pos = {}
@@ -488,9 +526,11 @@ function Gameplan:getPossibleMovements(position)
     return directions
 end
 
-
+--
 -- Refreshes the gameplan one fram
+--
 -- @return: A boolean value. True if collision with opponent. False if no collision
+--
 function Gameplan:refresh()
 
     for k,player in pairs(self.players) do
@@ -570,9 +610,11 @@ function Gameplan:refresh()
     
 end
 
-
+--
 -- This functions loops all the players and checks if there's a collision with pacman
--- @return: True: If there's a collision with pacman, else False.
+--
+-- @return: True if there's a collision with pacman, else False.
+--
 function Gameplan:checkPacmanCollision()
     for k,player in pairs(self.players) do
       if player.type == "pacman" then
@@ -587,7 +629,9 @@ function Gameplan:checkPacmanCollision()
     return false
 end
 
+--
 -- Dumps the positions of the players in the terminal
+--
 function Gameplan:dumpPlayerPos()
     -- dump(self.players)
     dump(yellowdotmatrix)
@@ -603,9 +647,14 @@ function Gameplan:dumpPlayerPos()
     end
 end
 
+--
 -- Creates a matrix that describes if a cell has a yellow dot or not 
---  True means that it has a yellow dot
+-- True means that it has a yellow dot
 -- Should be run when map is instantiated
+--
+-- @param map: map containing structure of aisles and walls
+-- @return dotmatrix: created matirx with status of yellowdots
+--
 function Gameplan:yellowDotStatus(map)
     dotmatrix = {}
     noDotsRemaining = 0
@@ -624,15 +673,24 @@ function Gameplan:yellowDotStatus(map)
     return dotmatrix
 end
 
--- Updates cells to not have a yellow dot
+--
+-- Update cells to not contain a yellow dot.
+-- Decrease number of dots left with 1
+--
+-- @param pos: array containing x-pos and y-pos cell values
+--
 function Gameplan:updateDotStatus(pos)
     noDotsRemaining = noDotsRemaining - 1
     Score.increaseScore(10)
     yellowdotmatrix[pos.y][pos.x] = false 
 end
 
--- Checks if a cell has a yellow dot
+--
+-- Checks if a cell contains a yellow dot
+--
+-- @param pos: array containing x-pos and y-pos cell values
 -- @return: the status of a dot position. True/False value
+--
 function Gameplan:checkDotStatus(pos)
     return yellowdotmatrix[pos.y][pos.x]
 end

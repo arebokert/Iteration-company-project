@@ -33,8 +33,10 @@ function Gamehandler.loadPacman(width, height)
   --ADLogger.trace(collectgarbage("count")*1024)
 end
 
+--
 -- This function is a help function for the loadPacman
 -- Generates all needed objects, and calls the needed functions fto be able to play the game
+--
 function Gamehandler.startPacman()
   -- Initiate gameplan 
   gameplan = Gameplan:new()
@@ -56,9 +58,12 @@ function Gamehandler.startPacman()
 end
 
 -- This function refreshes the game by one "frame"
+--
+-- This function refreshes the game by one "frame"
 -- Gets a boolean from thhe gameplan-refresh 
---      - True: No collision
---      - False: Collision - deduct one life and check if game over
+-- True: No collision
+-- False: Collision - deduct one life and check if game over
+--
 function Gamehandler.refresh()
 ADLogger.trace(collectgarbage("count")*1024)
   if gameStatus == true then
@@ -77,8 +82,8 @@ ADLogger.trace(collectgarbage("count")*1024)
   end
 end
 
--- This function end game if no yelowdots remaining
--- RESET FUNCTION NEEDS TO BE ADDED
+--
+-- This function ends the game if all yelowdots have been eaten by pacman
 --     
 function Gamehandler.checkVictory()
     if noDotsRemaining == 0 then  

@@ -1,5 +1,11 @@
 Player = {}
 
+-- 
+-- Move player to new position based on direction
+--
+-- @param gameplan: 
+-- @return new_pos: Array with new position in XY coordinates
+--
 function Player:movement(gameplan)
   -- Set step of each movement 
   step = 5
@@ -32,10 +38,13 @@ function Player:movement(gameplan)
   return new_pos
 end
 
--- This function checks which possible direction the ghost can move, and randomizes which way to go
+--
+-- Checks which possible direction the ghost can move, and randomizes which way to go
 -- This enables the ghost to change direction when a new aisle appears
+--
 -- @gameplan: the gameplan
 -- @new_pos: The pos that ghost is at
+--
 function Player:changeGhostDir(gameplan,new_pos)
 
     local posdir = {}
@@ -62,6 +71,12 @@ function Player:changeGhostDir(gameplan,new_pos)
     end
 end
 
+--
+-- Create an instance of player
+--
+-- @param type: Player type
+-- @return obj: Player object
+-- 
 function Player:new (type)
   obj = {}   -- create object if user does not provide one
   setmetatable(obj, self)
@@ -70,16 +85,30 @@ function Player:new (type)
   return obj
 end
 
+--
+-- Sets player pos
+--
+-- @param x: position x-value
+-- @param y: position y-value
+-- 
 function Player:setPos(x, y)
   self.x = x
   self.y = y
 end
 
+--
+-- Returns player pos
+--
+-- @return pos: array with x- and y-coordinate
+-- 
 function Player:getPos()
   pos = {x = self.x, y = self.y}
   return pos
 end
 
+--
+-- Sets new direction for ghost depending on pacman position
+-- 
 function Player:Randomdirection()
   possibledirections = {"up", "down", "left", "right"}
   pacmanrelativepos = {} 
