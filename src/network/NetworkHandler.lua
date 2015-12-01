@@ -2,6 +2,7 @@ socket = require("socket")
 
 HOST = "2015-1.pumi.ida.liu.se"
 PORT = 24069
+invalidInput = "Invalid input"
 
     -- Convert the request to the designated prefix which can be found at
     -- https://docs.google.com/document/d/1OL8HuOFtW8QYHnB0PQ8q-LNm7j-zkNURJ7ER75IaMkk/edit
@@ -24,7 +25,7 @@ function convertRequestToPrefix(request)
     elseif request == "RequestReadYourOwnScore" then
         return "RO"
     else
-        return error("Invalid input")
+        return invalidInput
     end
 end
 
@@ -33,29 +34,31 @@ end
     -- depends on the request sent.
     -- @param JSONObject - the JSON object to be sent to the server.
     -- @param the request to be executed.
+    -- If not connection is found the string "No connection" is returned.
 function sendJSON(JSONObject, request)
 
-    local serverResponse = "No connection to the internet"
+    local serverResponse = "No connection"
 
     if hasInternet then
         ADLogger.trace("Internet connection exists")
         -- Retrieves the abreviation for the operation
         requestPrefix = convertRequestToPrefix(request)
-        if requestPrefix == "Invalid input" then
-            error("Invalid operation input!")
+        if requestPrefix == invalidInput then
+            return invalidInput
+        else
+            -- Connect to the server
+            connection = socket.tcp()
+            connection:settimeout(1000)
+            assert(connection:connect(HOST, PORT), "Connection failed!")
+            -- Concatenates the operation with the JSONObject
+            object = requestPrefix .. JSONObject
+            -- Sends the object to the server
+            assert(connection:send(object), "Object could not be delivered!")
+            serverResponse = connection:receive('*a')
+            -- Closes the connection
+            connection:close()
+            return serverResponse
         end
-        -- Connect to the server
-        connection = socket.tcp()
-        connection:settimeout(1000)
-        assert(connection:connect(HOST, PORT), "Connection failed!")
-        -- Concatenates the operation with the JSONObject
-        object = requestPrefix .. JSONObject
-        -- Sends the object to the server
-        assert(connection:send(object), "Object could not be delivered!")
-        serverResponse = assert(connection:receive('*a'), "Nothing received.")
-        -- Closes the connection
-        connection:close()
-        return serverResponse
     else
         return serverResponse
     end
