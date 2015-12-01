@@ -19,7 +19,6 @@ end
 showmenu = require "views.mainmenu.showmenu"
 gamehandler = require "model.games.pacman.gamehandler"
 game2048 = require "model.games.2048.game"
-game2048_multiplayer = require "model.games.2048.game_multiplayer"
 
 function onKey(key, state)
     
@@ -27,13 +26,21 @@ function onKey(key, state)
     
       -- This statement is used when switching to the picture of the TV screen
     if key=="3" and state == "down" then 
-    
-      --screen:clear()   
+      --collectgarbage()
+      --collectgarbage("stop")
+      --
+      if current_menu == "singlePlayerMenu" then
+        ab.destroy()
+      end
+      local tvSurface = gfx.new_surface(screen:get_width(),screen:get_height())
       local bg = gfx.loadpng(datapath .. '/TV-PH-full.png')
-      screen:copyfrom(bg, nil)
+      tvSurface:copyfrom(bg)
       bg:destroy()
+      
+      screen:copyfrom(tvSurface, nil)
       tvmode = true
       gfx.update()
+      
       --collectgarbage()
       if activeView == "pacman" then
         gamehandler.pacmanOnKey("pause")
@@ -56,22 +63,26 @@ function onKey(key, state)
         elseif activeView =="multiplayer2048" then
           game2048_multiplayer.registerKey(key,state)
         end
-        
-         --This statement is used when going back to either menu or pacman
-        if tvmode == true and key=="4" then
-          if activeView == "menu" then
-            ADLogger.trace(activeView)
-            current_menu = "singlePlayerMenu"
-            showmenu.loadMainMenu()
-            activeMenu = mainMenu
-          elseif activeView == "pacman" then
-            gamehandler.loadPacman()
-          else
-            current_menu = "singlePlayerMenu"
-            showmenu.loadMainMenu()
-          end
+    end
     
-        end
+             --This statement is used when going back to either menu or pacman
+    if tvmode == true and key=="4" then
+      if activeView == "menu" then
+          --ADLogger.trace(activeView)
+          current_menu = "singlePlayerMenu"
+          --collectgarbage()
+          --collectgarbage("stop")
+            
+          showmenu.loadMainMenu()
+          activeMenu = mainMenu
+        elseif activeView == "pacman" then
+          gamehandler.loadPacman()
+        else
+          --collectgarbage()
+          --collectgarbage("stop")
+          current_menu = "singlePlayerMenu"
+          showmenu.loadMainMenu()
+      end
     end
 end
 
@@ -91,7 +102,10 @@ function onStart()
   else
     hasInternet=true
   end]]
+    --ADLogger.trace("Memory limit: " .. gfx.get_memory_limit())
     showmenu.loadMainMenu()
+    
     _G.activeMenu = mainMenu
 end
+
 
