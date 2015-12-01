@@ -110,8 +110,8 @@ function Boxes.showMove()
     end
   end
   Boxes.showScore() 
-  screen:copyfrom(screen2048,{x=0,y=0})
-  gfx.update() 
+  screen:copyfrom(screen2048,nil)
+  gfx.update()
 end
 
 --------------------------------------------------------------------
