@@ -52,7 +52,7 @@ def init_db():
         with app.open_resource(DATABASE_SCHEMA, mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
-        if TESTING = 1:
+        if TESTING == 1:
             with app.open_resource(TEST_SCHEMA, mode='r') as f:
                 db.cursor().executescript(f.read())
             db.commit()
@@ -179,7 +179,7 @@ def remove_user(mac, playerid):
     c = get_db()
     try:
         c.execute("DELETE FROM user_list WHERE mac <> ? AND playerid <> ?", 'mac', 'playerid')
-        cnxn.commit()
+        c.commit()
     except:
         get_db().rollback()
         raise
@@ -321,7 +321,7 @@ def insert_player_one(gamename, mac, playerid):
         c.execute(
             "INSERT INTO matches (gamename"
             ", player_one_mac"
-            ", player_one_id"
+            ", player_one_id)"
             " VALUES (?,?,?)"
             , (gamename, mac, playerid,))
     except:
@@ -335,6 +335,9 @@ def insert_player_one(gamename, mac, playerid):
                        " WHERE player_two_mac = null")
         
         cfo = cursor.fetchone()
+    except:
+        get_db().rollback()
+        raise
 
     return cfo.match_id
 
@@ -354,20 +357,18 @@ def insert_player_two(gamename, mac, playerid, match_id,):
     Raises:
         
     """
-
-    gid = get_user(mac, playerid)
-    c = get_db()
-    try:
-        c.execute(
-            "UPDATE matches "
-            "SET player_two_id = ?"
-            "WHERE match_id = ?"
-            , (gid, match_id,))
-    except:
-        get_db().rollback()
-        raise
-
-    return match_id
+   gid = get_user(mac, playerid)
+   c = get_db()
+   try:
+       c.execute(
+           "UPDATE matches "
+           "SET player_two_id = ?"
+           "WHERE match_id = ?"
+           , (gid, match_id,))
+   except:
+       get_db().rollback()
+       raise
+   return match_id
 
 def add_match(gamename, mac, playerid):
     """ Create new match with first player or add a new player to a currently
@@ -390,11 +391,15 @@ def add_match(gamename, mac, playerid):
     try:    
         cursor.execute("SELECT match_id"
                        " FROM matches"
-                       " WHERE player_two_id = null")
+                       " WHERE player_two_id is null")
         
         cfo = cursor.fetchone()
+    except:
+        get_db().rollback()
+        raise
     #TODO(bjowi): Fix error handling.
-    if cfo is none:
+
+    if cfo is None:
         return insert_player_one(gamename, mac, playerid)
     else:
         return insert_player_two(gamename, mac, playerid, cfo.match_id)
@@ -423,7 +428,7 @@ def add_round_score(gamename, match, mac, playerid, score):
 #TODO(erida995): Get user -> decide if player one or player 2. Look at 
 # function add_match for ideas.
 
-c = get_db()
+    c = get_db()
     try:
         c.execute("INSERT INTO round (gamename"
             ", game_number"
@@ -482,7 +487,7 @@ def get_match_total_score(gamename, match):
     """
     #TODO(erida995): Implement function. Write correct comments.
 
-def set_winner(gamename, match, mac, playerid):
+def set_winner(gamename, match_id, mac, playerid):
     """ Set the winner of a specified match.
 
     This function does not actually calculate if the selection of winner is
@@ -507,7 +512,7 @@ def set_winner(gamename, match, mac, playerid):
             "UPDATE matches "
             "SET winner = ?"
             "WHERE match_id = ?"
-            , (playerid, match,))
+            , (playerid, match_id,))
     except:
         get_db().rollback()
         raise
@@ -515,7 +520,7 @@ def set_winner(gamename, match, mac, playerid):
     return match_id
 
 
-def get_winner(gamename, match):
+def get_winner(gamename, match_id):
     """ Get the winner of a specified match.
 
     Args:
@@ -534,11 +539,16 @@ def get_winner(gamename, match):
 
     cursor = get_db_cursor()
     try:    
-        cursor.execute("SELECT winner"
-                       " FROM matches"
-                       " WHERE match_id = ?")
-        , (match_id,))
+        cursor.execute(
+            "SELECT winner"
+            " FROM matches"
+            " WHERE match_id = ?"
+            , (match_id,))
         cfo = cursor.fetchone()
+
+    except:
+        get_db().rollback()
+        raise
 
         return cfo.winner
 
@@ -651,8 +661,8 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
     Raises:
         
     """
-    if isinstance( number_of_results, int ):
-        nor = number_of_results
+    if isinstance( number_of_scores, int ):
+        nor = number_of_scores
     else:
         nor = 10
 
@@ -695,8 +705,8 @@ def get_global_highscore(gamename, number_of_scores):
     Raises:
     """
 
-    if isinstance( number_of_results, int ):
-        nor = number_of_results
+    if isinstance( number_of_scores, int ):
+        nor = number_of_scores
     else:
         nor = 10
 
