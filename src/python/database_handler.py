@@ -300,7 +300,8 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
                 #TODO(bjowi227): Fix the return values.
     return dict_factory(cursor, cfo);
 
-def insert_player_one(gamename, mac, playerid):
+def insert_player_one(gamename, playerid):
+    #TODO(bjowi): Should only player id be taken as input (not mac)? 
     """ create new row in matches and add player one 
 
     Args:
@@ -320,10 +321,9 @@ def insert_player_one(gamename, mac, playerid):
     try:
         c.execute(
             "INSERT INTO matches (gamename"
-            ", player_one_mac"
             ", player_one_id)"
             " VALUES (?,?,?)"
-            , (gamename, mac, playerid,))
+            , (gamename, playerid,))
     except:
         get_db().rollback()
         raise
@@ -470,6 +470,7 @@ def get_match_score(gamename, match):
     Raises:
         
     """
+
     #TODO(azuja469): Implement function. Write correct comments.
 
 def get_match_total_score(gamename, match):
