@@ -9,7 +9,7 @@ app = Flask(__name__)
 DATABASE = 'database.db'
 DATABASE_SCHEMA = 'database.schema'
 
-TESTING = 1
+TESTING = 0
 TEST_SCHEMA = 'test.schema'
 
 
@@ -56,8 +56,26 @@ def init_db():
             with app.open_resource(TEST_SCHEMA, mode='r') as f:
                 db.cursor().executescript(f.read())
             db.commit()
-    #return True
+    return True
 
+def get_db():
+    """Get database.
+
+    Args:
+
+    Returns:
+
+    Raises:
+
+    """
+    db = None
+    try:
+        db = getattr(g, 'db', None)
+    except:
+        print "Det gick fel :("
+    if db is None:
+        db = g.db = connect_db()
+    return db
 
 def connect_db():
     """Connect to database.
@@ -67,7 +85,7 @@ def connect_db():
     Returns:
 
     Raises:
-        
+
     """
     return sqlite3.connect(DATABASE)
 
@@ -78,22 +96,6 @@ def close_db():
     if db is not None:
         db.close()
     return None
-
-
-def get_db():
-    """Get database.
-
-    Args:
-
-    Returns:
-
-    Raises:
-        
-    """
-    db = getattr(g, 'db', None)
-    if db is None:
-        db = g.db = connect_db()
-    return db
 
 
 def get_db_cursor():
@@ -185,6 +187,54 @@ def remove_user(mac, playerid):
         get_db().rollback()
         raise
     return True
+
+
+def quit_game(mac, playerid, gamename, match_id):
+    #TODO(azuja469): Implement SQL statements to insert a score of 0. 
+    """Remove user from database.
+    #Update comments
+
+    Args:
+        mac: MAC address of player. To differentiate between units.
+        playerid: User specific ID to seperate player from other players
+            using the same unit.
+
+    Returns:
+        Will return a boolean to describe if the user could be removed from
+        the database or not.
+
+    Raises:
+        Will NOT raise an error.
+    """
+
+
+    gid = get_user(mac, playerid)
+   c = get_db()
+   try:
+       c.execute(
+           "UPDATE round "
+           "SET player_two_id = ?"
+           "WHERE match_id = ?"
+           , (gid, match_id,))
+   except:
+       get_db().rollback()
+       raise
+   return match_id
+
+
+    c = get_db()
+    try:
+        c.execute("DELETE FROM user_list WHERE mac <> ? AND playerid <> ?", 'mac', 'playerid')
+        c.commit()
+    except:
+        get_db().rollback()
+        raise
+    return True
+
+
+
+def quit_match(mac, playerid, gamename, match_id)
+
 
 
 def get_user(mac, playerid):
@@ -408,7 +458,7 @@ def add_match(gamename, mac, playerid):
         return insert_player_two(gamename, mac, playerid, cfo.match_id)
 
 
-def add_round_score(gamename, match, mac, playerid, score):
+def add_round_score(gamename, match_id, mac, playerid, score):
     """ Add game score to a round.
     The specified player will have their score added to the match.
 
@@ -428,36 +478,119 @@ def add_round_score(gamename, match, mac, playerid, score):
 
 #TODO implement correctly. Choose correct SQL statements and make a comparison 
 #to select if the score shall be added to player one or two in database
-#TODO(erida995): Get user -> decide if player one or player 2. Look at 
-# function add_match for ideas.
+#TODO(erida995, bjowi): Get user -> decide if player one or player 2. Look at 
+# function add_match for ideas. Bjorn, please check this function. Daveby has
+# started on it, but has not implemented insert_round_score or 
+# update_round_score fully. 
 
-    c = get_db()
+
+    global_id = get_user(mac, playerid)
+    if global_id == -1:
+        global_id = add_user(mac, playerid)
+
+    cursor = get_db_cursor()
     try:
-        c.execute("INSERT INTO round (gamename"
-            ", game_number"
-            ", player_one_score"
-            ", player_two_score)"
-            " VALUES (?,?,?,?,?)"
-            , (gamename, match, mac, playerid, score,))
-    except:
-        get_db().rollback()
-        raise
-    return True
+        cursor.execute("SELECT matches.player_one_id, matches.player_two_id, round.player_one_score"
+                       ", round.player_two_score, round.match_id, round.game_number"
+                       " FROM matches"
+                       " INNER JOIN round"
+                       " ON round.match_id=matches.match_id"
+                       " WHERE matches.gamename = ?"
+                       " AND matches.match_id = ?"
+                       , (gamename, match_id,))
+        cfa = cursor.fetchall()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfa = None
+    if cfa is None:
+        return {'user_id': None
+                , 'score': None}
+    result = []
+    for row in cfa:
+        result.append(dict_factory(cursor, row))
+    return result
 
-def get_number_of_rounds(gamename, match):
-    """ Get the number of played and completed rounds of a match.
+    if cfa[0].player_one_id == global_id:
+        player1=True
+    else:
+        player1=False
+    if player1 == True:
+        updated=False
+        for row in cfa:
+            if cfa.player_one_id == null:
+                update_round_score(gamename, global_id, score, match_id, row.game_number)
+                updated=True
+            if updated==False:
+                insert_round_score(gamename, global_id, score, match_id, row.game_number)
+    if player1 == False:
+        updated=False
+        for row in cfa:
+            if cfa.player_two_id == null:
+                update_round_score(gamename, global_id, score, match_id, row.game_number)
+                updated=True
+            if updated==False:
+                insert_round_score(gamename, global_id, score, match_id, row.game_number)
 
+
+def insert_round_score(score, match_id, game_number, field_name):
+    #TODO(bjowi): get this function to work. implement so that this functions know if the player
+    #is player 1 or player 2.  
+    """ cretate or update round table with score
+    #Comments not up to date.
     Args:
         gamename: Specific game that the action is related to.
-        match: Integer that is describes the ID of a match.
+        mac: MAC-address for the player.
+        playerid: An integer that specifies id for player of a set-top-box.
 
-    Returns:
+    Returns: id of the match as an integer
 
 
     Raises:
         
     """
-    #TODO(erida995): Implement function. Write correct comments.
+    c = get_db()
+    try:
+        c.execute(
+            "INSERT INTO round (match_id"
+            ", game_number"
+            ", player_one_score)"  
+            " VALUES (?,?,?)"
+            , (match_id, game_number, score,))
+    except:
+        get_db().rollback()
+        raise 
+
+
+def get_number_of_rounds(gamename, match_id):
+    """ Get the number of completed rounds of a match.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        match_id: Integer that is describes the ID of a match.
+
+    Returns:
+        An integer describing the amount of completed rounds in one match.
+
+    Raises:
+        
+    """
+    #TODO(erida995): Implement function. 
+    #IS THIS OKAY??? Really not sure /erida995
+
+    cursor = get_db_cursor()
+    try:    
+        cursor.execute("SELECT Count(match_id) AS result"
+                       " FROM round"
+                       " WHERE match_id = ?"
+                       " AND player_one_score not null"
+                       " AND player_two_score not null"
+                       , (match_id,))
+        cfo = cursor.fetchone()
+    except:
+        get_db().rollback()
+        raise
+    return cfo.result
+
 
 def get_match_score(gamename, match):
     """ Get the scores of all games of a match.
@@ -478,20 +611,33 @@ def get_match_score(gamename, match):
 
 
 
-def get_match_total_score(gamename, match):
+def get_match_total_score(gamename, match_id):
     """ Get the sum of scores for each player in a match.
 
     Args:
         gamename: Specific game that the action is related to.
-        match: Integer that is describes the ID of a match.
+        match_id: Integer that is describes the ID of a match.
 
     Returns:
-
+        A dictionary with the row of both players score. 
 
     Raises:
         
     """
     #TODO(erida995): Implement function. Write correct comments.
+
+    cursor = get_db_cursor()
+    try:    
+        cursor.execute("SELECT Sum(player_one_score)"
+                        " , Sum(player_two_score)"
+                        " FROM round"
+                        " WHERE match_id = ?"
+                        , (match_id,))
+        cfo = cursor.fetchone()
+    except:
+        get_db().rollback()
+        raise
+    return dict_factory(cursor, cfo)
 
 def set_winner(gamename, match_id, mac, playerid):
     """ Set the winner of a specified match.
@@ -641,7 +787,7 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
         cfa = cursor.fetchall()
     except sqlite3.Error as e:
         print 'Database error: ' + e.args[0]
-        cfo = None
+        cfa = None
     if cfa is None:
         return {'user_id': None
                 , 'score': None}
@@ -687,7 +833,7 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
         cfa = cursor.fetchall()
     except sqlite3.Error as e:
         print 'Database error: ' + e.args[0]
-        cfo = None
+        cfa = None
     if cfa is None:
         return {'user_id': None
                 , 'score': None}
@@ -731,7 +877,7 @@ def get_global_highscore(gamename, number_of_scores):
         cfa = cursor.fetchall()
     except sqlite3.Error as e:
         print 'Database error: ' + e.args[0]
-        cfo = None
+        cfa = None
     if cfa is None:
         return {'mac': None
                 , 'user_id': None

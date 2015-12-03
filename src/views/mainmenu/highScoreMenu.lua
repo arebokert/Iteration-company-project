@@ -23,7 +23,7 @@ local highScore_local_text_5 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen
 local highScore_local_text_6 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.09, y= screen:get_height()*0.24 + 4 *30}, font_path)
 local highScore_local_text_7 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.09, y= screen:get_height()*0.24 + 5 *30}, font_path)
 
-local highScoreSurface
+highScoreSurface = nil
 
 local highScore_local_text = {
   highScore_local_text_3,
