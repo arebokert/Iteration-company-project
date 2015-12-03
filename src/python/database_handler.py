@@ -9,7 +9,7 @@ app = Flask(__name__)
 DATABASE = 'database.db'
 DATABASE_SCHEMA = 'database.schema'
 
-TESTING = 1
+TESTING = 0
 TEST_SCHEMA = 'test.schema'
 
 
@@ -58,6 +58,24 @@ def init_db():
             db.commit()
     #return True
 
+def get_db():
+    """Get database.
+
+    Args:
+
+    Returns:
+
+    Raises:
+
+    """
+    db = None
+    try:
+        db = getattr(g, 'db', None)
+    except:
+        print "Det gick fel :("
+    if db is None:
+        db = g.db = connect_db()
+    return db
 
 def connect_db():
     """Connect to database.
@@ -67,7 +85,7 @@ def connect_db():
     Returns:
 
     Raises:
-        
+
     """
     return sqlite3.connect(DATABASE)
 
@@ -78,22 +96,6 @@ def close_db():
     if db is not None:
         db.close()
     return None
-
-
-def get_db():
-    """Get database.
-
-    Args:
-
-    Returns:
-
-    Raises:
-        
-    """
-    db = getattr(g, 'db', None)
-    if db is None:
-        db = g.db = connect_db()
-    return db
 
 
 def get_db_cursor():
