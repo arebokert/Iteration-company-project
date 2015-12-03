@@ -129,8 +129,8 @@ function Gameplan:reprintMap()
 local dotoffset = GameplanGraphics.yellowDotOffset(self.block, self.dotSize)
 for key, value in pairs(self.map) do
       ADLogger.trace(collectgarbage("count")*1024)
-        collectgarbage("stop")
-        collectgarbage()
+        --collectgarbage("stop")
+        --collectgarbage()
         for i = 1, #value do            
             local pos = {x = (i-1)*self.block, y = (key-1)*self.block }
             local dotpos = {x = (i-1)*self.block + dotoffset, y = (key-1)*self.block + dotoffset}--position of yellow dot
@@ -188,8 +188,8 @@ function Gameplan:displayMap(container, containerPos)
     
     -- Loop through the map (ixj table) and 
     for key, value in pairs(self.map) do
-        collectgarbage("stop")
-        collectgarbage()
+        --collectgarbage("stop")
+        --collectgarbage()
         self.logicalMap[key] = {}
         for i = 1, #value do            
             local pos = {x = (i-1)*self.block, y = (key-1)*self.block }

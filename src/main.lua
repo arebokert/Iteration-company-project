@@ -4,6 +4,7 @@ http = require("socket.http")
 ADLogger.trace("Applicatio Init")
 hasInternet=true
 root_path = ""
+
 if ADConfig.isSimulator then
     gfx = require "SDK.Simulator.gfx"
     zto = require "SDK.Simulator.zto"
@@ -16,6 +17,7 @@ else
     root_path = sys.root_path().."/"
 end
 
+appsurface = require "appsurface"
 showmenu = require "views.mainmenu.showmenu"
 gamehandler = require "model.games.pacman.gamehandler"
 game2048 = require "model.games.2048.game"
@@ -24,43 +26,15 @@ function onKey(key, state)
     
     ADLogger.trace("OnKey("..key..","..state..")")
     
-      -- This statement is used when switching to the picture of the TV screen
+    -- This statement is used when switching to the picture of the TV appSurface
     if key=="3" and state == "down" then 
-
-      if current_menu == "singlePlayerMenu" then
-        ab.destroy()
-      elseif current_menu == "highScoreMenu" then
-        highScoreSurface:destroy()
-      elseif current_menu == "multiPlayerMenu" then
-        multiMenu:destroy()
-      elseif current_menu == "exit" then
-        if ab then
-        ADLogger.trace("Destroy 1!!!!!!!")
-        ab:destroy()
-      end
-      ADLogger.trace("Memory usage after 1 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 1 garbage load 2 " .. gfx.get_memory_use())
-      
-      if highScoreSurface then
-        ADLogger.trace("Destroy 2!!!!!!!")
-        highScoreSurface:destroy()
-      end
-      ADLogger.trace("Memory usage after 2 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 2 garbage load 2 " .. gfx.get_memory_use())
-  
-      if multiMenu then
-        ADLogger.trace("Destroy 3!!!!!!!")
-        multiMenu:destroy()
-      end
-      ADLogger.trace("Memory usage after 3 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 3 garbage load 2 " .. gfx.get_memory_use())  
-      end
-      local tvSurface = gfx.new_surface(screen:get_width(),screen:get_height())
+      ADLogger.trace("TV-Screen loaded!")
+      appSurface:destroy()
+    
       local bg = gfx.loadpng(datapath .. '/TV-PH-full.png')
-      tvSurface:copyfrom(bg, nil)
+     
+      appSurface:copyfrom(bg, nil)
       bg:destroy()
-      
-      screen:copyfrom(tvSurface, nil)
       tvmode = true
       gfx.update()
       
@@ -68,7 +42,7 @@ function onKey(key, state)
       if activeView == "pacman" then
         gamehandler.pacmanOnKey("pause")
       end
-      collectgarbage("stop")
+      --collectgarbage("stop")
     end
     
     if state == "down" or state == "repeat" then
@@ -90,14 +64,15 @@ function onKey(key, state)
     
              --This statement is used when going back to either menu or pacman
     if tvmode == true and key=="4" then
+    ADLogger.trace("Closing TV-Screen!")
       if activeView == "menu" then
           --ADLogger.trace(activeView)
           current_menu = "singlePlayerMenu"
           --collectgarbage()
           --collectgarbage("stop")
-            
+          appSurface:destroy()  
           showmenu.loadMainMenu()
-          activeMenu = mainMenu
+          --activeMenu = mainMenu
       elseif activeView == "pacman" then
           gamehandler.loadPacman()
       else
@@ -112,6 +87,9 @@ end
 
 function onStart()
     -- Set which state that's possible. Global variable
+    appSurface = appSurface:new()
+    appSurface:createScreen()
+    
     _G.activeView = "menu"
     ADLogger.trace("onStart")
     if ADConfig.isSimulator then

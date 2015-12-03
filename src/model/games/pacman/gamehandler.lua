@@ -11,11 +11,14 @@ menuView = nil
 -- Load a game of pacman 
 --
 function Gamehandler.loadPacman(width, height)
+  ADLogger.trace("First step")
   -- Set the background for the view. 
   local pacmanbg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
+  ADLogger.trace("Second step")
   screen:copyfrom(pacmanbg, nil)
+  ADLogger.trace("Third step")
   pacmanbg:destroy()
-  
+  ADLogger.trace("Fourth step")
   -- Default values for width and height! 
   if width == nil then 
     width = 600
@@ -38,6 +41,7 @@ end
 -- Generates all needed objects, and calls the needed functions fto be able to play the game
 --
 function Gamehandler.startPacman()
+ADLogger.trace("Reached startPacman()")
   -- Initiate gameplan 
   gameplan = Gameplan:new()
   
@@ -50,7 +54,7 @@ function Gamehandler.startPacman()
   
   gameplan:resetLives()
   Score.resetScore()
-  
+  ADLogger.trace("Reached midstart.")
   gameplan:displayMap(Gamehandler.container, Gamehandler.containerPos)
   
   -- Gamestatus ? 
@@ -65,7 +69,7 @@ end
 -- False: Collision - deduct one life and check if game over
 --
 function Gamehandler.refresh()
-ADLogger.trace(collectgarbage("count")*1024)
+--ADLogger.trace(collectgarbage("count")*1024)
   if gameStatus == true then
     gameStatus = gameplan:refresh()
     if gameStatus == false then      
@@ -178,6 +182,7 @@ end
 
 callback = function(timer)
     Gamehandler.refresh()
+    ADLogger.trace(gfx.get_memory_use())
     --ADLogger.trace(collectgarbage("count")*1024)
 end
 return Gamehandler
