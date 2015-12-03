@@ -68,13 +68,14 @@ def get_db():
     Raises:
 
     """
-    db = None
-    try:
-        db = getattr(g, 'db', None)
-    except:
-        print "Det gick fel :("
-    if db is None:
-        db = g.db = connect_db()
+    with app.app_context():
+        db = None
+        try:
+            db = getattr(g, 'db', None)
+        except:
+            print "Det gick fel :("
+        if db is None:
+            db = g.db = connect_db()
     return db
 
 def connect_db():
@@ -152,8 +153,8 @@ def add_user(mac, playerid):
         c.execute("INSERT INTO user_list (mac"
             ", user_id) VALUES (?,?)"
             , (mac, playerid,))
-        c.co
-        gid = c.lastrowid()
+
+        gid = c.cursor().lastrowid
         c.commit()
     except:
         get_db().rollback()
@@ -218,17 +219,17 @@ def quit_game(mac, playerid, gamename, match_id):
 
 
     gid = get_user(mac, playerid)
-   c = get_db()
-   try:
+    c = get_db()
+    try:
        c.execute(
            "UPDATE round "
            "SET player_two_id = ?"
            "WHERE match_id = ?"
            , (gid, match_id,))
-   except:
-       get_db().rollback()
-       raise
-   return match_id
+    except:
+        get_db().rollback()
+        raise
+    return match_id
 
 
     c = get_db()
@@ -242,7 +243,8 @@ def quit_game(mac, playerid, gamename, match_id):
 
 
 
-def quit_match(mac, playerid, gamename, match_id)
+def quit_match(mac, playerid, gamename, match_id):
+    print "SLUUUT!"
 
 
 
