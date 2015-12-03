@@ -143,6 +143,9 @@ def add_user(mac, playerid):
 
     Raises:
         Raises generic python error.
+
+    History (date user: text):
+        2015-12-03
     """
     c = get_db()
     try:
@@ -176,6 +179,9 @@ def remove_user(mac, playerid):
 
     Raises:
         Will NOT raise an error.
+
+    History (date user: text):
+        2015-12-03
     """
     #TODO: ensure that azuja469 won't crash gitlab with this code
 
@@ -205,6 +211,9 @@ def quit_game(mac, playerid, gamename, match_id):
 
     Raises:
         Will NOT raise an error.
+
+    History (date user: text):
+        2015-12-03
     """
 
 
@@ -239,8 +248,6 @@ def quit_match(mac, playerid, gamename, match_id)
 
 def get_user(mac, playerid):
     """Get user information from database.
-    History (date user: text):
-        2015-12-03 bjowi227: Corrected return variable.
 
     Args:
         mac: MAC address of player. To differentiate between units.
@@ -250,6 +257,9 @@ def get_user(mac, playerid):
         If the user is not found, the integer value -1 will be returned.
     Raises:
         Will NOT raise an error.
+
+    History (date user: text):
+        2015-12-03 bjowi227: Corrected return variable.
     """
 
     cursor = get_db_cursor()
@@ -268,8 +278,6 @@ def get_user(mac, playerid):
 
 def get_unit_user(global_id):
     """Get user information from database.
-    History (date user: text):
-        2015-12-03 bjowi227: Created first version of function.
 
     Args:
         global_id: Integer value corresponding to tuple global_id in
@@ -283,6 +291,9 @@ def get_unit_user(global_id):
 
     Raises:
         Will NOT raise an error.
+
+    History (date user: text):
+        2015-12-03 bjowi227: Created first version of function.
     """
 
     cursor = get_db_cursor()
@@ -310,7 +321,9 @@ def add_game(gamename):
         Boolean value true if game could be added, otherwise false.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     c = get_db()
     try:
@@ -333,7 +346,9 @@ def game_exists(gamename):
         Boolean value true if game exists, otherwise false.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     cursor = get_db_cursor()
     try:
@@ -352,8 +367,6 @@ def game_exists(gamename):
 # MATCH HANDLING
 def get_match_history(gamename, mac, playerid, number_of_matches):
     """ Get history of the most recent matches for a player.
-    History (date user: text):
-        2015-12-03 bjowi227: Updated SQL query and return part.
 
     Args:
         gamename: Specific game that the action is related to.
@@ -366,7 +379,9 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
         A dict containing the top X match_id.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03 bjowi227: Updated SQL query and return part.
     """
 
     if isinstance( number_of_matches, int ):
@@ -417,7 +432,9 @@ def insert_player_one(gamename, mac, playerid):
 
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     #TODO(azuja469): Fix inputs to match new table schema (player_one_mac 
         # does not exist)
@@ -460,7 +477,9 @@ def insert_player_two(gamename, mac, playerid, match_id,):
 
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
    gid = get_user(mac, playerid)
    c = get_db()
@@ -488,7 +507,9 @@ def add_match(gamename, mac, playerid):
 
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     # Check for empty rows in matches
 
@@ -525,7 +546,9 @@ def add_round_score(gamename, match_id, mac, playerid, score):
 
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
 
 #TODO implement correctly. Choose correct SQL statements and make a comparison 
@@ -598,7 +621,9 @@ def insert_round_score(score, match_id, game_number, field_name):
 
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     c = get_db()
     try:
@@ -624,7 +649,9 @@ def get_number_of_rounds(gamename, match_id):
         An integer describing the amount of completed rounds in one match.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     #TODO(erida995): Implement function. 
     #IS THIS OKAY??? Really not sure /erida995
@@ -656,6 +683,9 @@ def get_match_score(gamename, match):
         Returned in the format as a dict.
 
     Raises:
+
+    History (date user: text):
+        2015-12-03
         
     """
 
@@ -674,7 +704,9 @@ def get_match_total_score(gamename, match_id):
         A dictionary with the row of both players score. 
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     #TODO(erida995): Implement function. Write correct comments.
 
@@ -744,7 +776,9 @@ def get_winner(gamename, match_id):
         database table user_list.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
 
     #TODO (bjowi): Check that this is implementet correctly
@@ -785,7 +819,9 @@ def add_highscore(gamename, mac, playerid, score):
         3: Top 10 global
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
 
     if not game_exists(gamename):
@@ -826,7 +862,9 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
         score.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     if isinstance( number_of_results, int ):
         nor = number_of_results
@@ -873,7 +911,9 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
         score.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     if isinstance( number_of_scores, int ):
         nor = number_of_scores
@@ -917,6 +957,9 @@ def get_global_highscore(gamename, number_of_scores):
         An array of dictionaries.
 
     Raises:
+
+    History (date user: text):
+        2015-12-03
     """
 
     if isinstance( number_of_scores, int ):
