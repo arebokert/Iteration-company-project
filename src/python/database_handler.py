@@ -419,8 +419,7 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
         result.append(dict_factory(cursor, row))
     return result
 
-def insert_player_one(gamename, mac, playerid):
-    #TODO(bjowi): Should only player id be taken as input (not mac)? 
+def create_match(gamename, mac, playerid):
     """ create new row in matches and add player one 
 
     Args:
@@ -434,34 +433,27 @@ def insert_player_one(gamename, mac, playerid):
     Raises:
 
     History (date user: text):
-        2015-12-03
+        2015-12-03 bjowi227: Changed name to create_match. Fixed INSERT query.
     """
-    #TODO(azuja469): Fix inputs to match new table schema (player_one_mac 
-        # does not exist)
+
+    global_id = get_user(mac, playerid)
+    if global_id == -1:
+        global_id = add_user(mac, playerid)
 
     c = get_db()
     try:
-        c.execute(
+        cursor.execute(
             "INSERT INTO matches (gamename"
             ", player_one_id)"
-            " VALUES (?,?,?)"
-            , (gamename, playerid,))
+            " VALUES (?,?)"
+            , (gamename, global_id,))
+        lastid = c.cursor().lastrowid
+        c.commit()
     except:
         get_db().rollback()
         raise
 
-    cursor = get_db_cursor()
-    try:    
-        cursor.execute("SELECT match_id"
-                       " FROM matches"
-                       " WHERE player_two_mac = null")
-        
-        cfo = cursor.fetchone()
-    except:
-        get_db().rollback()
-        raise
-
-    return cfo.match_id
+    return lastid
 
 def insert_player_two(gamename, mac, playerid, match_id,):
 
@@ -479,16 +471,17 @@ def insert_player_two(gamename, mac, playerid, match_id,):
     Raises:
 
     History (date user: text):
-        2015-12-03
+        2015-12-03 bjowi227: Added commit.
     """
    gid = get_user(mac, playerid)
    c = get_db()
    try:
        c.execute(
            "UPDATE matches "
-           "SET player_two_id = ?"
-           "WHERE match_id = ?"
+           " SET player_two_id = ?"
+           " WHERE match_id = ?"
            , (gid, match_id,))
+       c.commit()
    except:
        get_db().rollback()
        raise
@@ -523,10 +516,10 @@ def add_match(gamename, mac, playerid):
     except:
         get_db().rollback()
         raise
-    #TODO(bjowi): Fix error handling.
 
+    # If cfo is None, a new row will have to be created to keep the new match.
     if cfo is None:
-        return insert_player_one(gamename, mac, playerid)
+        return create_match(gamename, mac, playerid)
     else:
         return insert_player_two(gamename, mac, playerid, cfo.match_id)
 
