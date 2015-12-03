@@ -98,11 +98,19 @@ function Menu:printSub(container)
 end
 
 function Menu:print(container, startx, starty, m)
-
+    ADLogger.trace("BP 1")
+    ADLogger.trace("Before mainmenu: ")
+    if self.container then
+      self.container:destroy()
+    end
     self.container = container
+    ADLogger.trace("BP 2")
     margin = m
+    ADLogger.trace("BP 3")
     width = (container:get_width() - margin*(self.size - 1) - 2*startx)/ self.size
+    ADLogger.trace("BP 4")
     height = container:get_height() - 2*starty
+    ADLogger.trace("BP 5")
 
     for i = 1,self.size do
 
@@ -115,7 +123,7 @@ function Menu:print(container, startx, starty, m)
         local temppic = gfx.loadpng(self.options[i].button)
         container:copyfrom(temppic, nil, opt.buttonPos)
         temppic:destroy()
-        collectgarbage()
+        --collectgarbage()
     end
 
     -- Updating the new container on the screen

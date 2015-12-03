@@ -4,12 +4,13 @@
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 showmenu = {}
---print(package.path)
+
 Menu = require "model.mainmenu.menuclass"
 highScoreMenu = require "views.mainmenu.highScoreMenu"
 singlePlayerMenu = require "views.mainmenu.singlePlayerMenu"
 multiPlayerMenu = require "views.multiplayermenu.multiplayermenu"
 
+--print(package.path)
 datapath = "views/mainmenu/data"
 local mainMenuContainer = nil
 
@@ -19,6 +20,10 @@ local mainMenuContainer = nil
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 function showmenu.loadMainMenu()
+  --collectgarbage()
+  --collectgarbage("stop")
+  
+  --ADLogger.trace("Usage begin mainMenu: " .. gfx.get_memory_use())
     local options = {}
     options[1] = {title = "Game",
         action = function()
@@ -30,6 +35,7 @@ function showmenu.loadMainMenu()
             screen:copyfrom(bg, nil)
             bg:destroy()
             showmenu.loadMenu("singlePlayer")
+            ADLogger.trace("Calling show loadmenu")
             return true
         end,
         button = datapath .. '/games-normal.png',
@@ -54,6 +60,7 @@ function showmenu.loadMainMenu()
   options[3] = {title = "Multiplayer",
         action = function()
             current_menu = "multiPlayerMenu"
+            
             return "Return Option3"
         end,
         hover = function()
@@ -69,8 +76,8 @@ function showmenu.loadMainMenu()
   
     options[4] = {title = "Exit",
         action = function()
-            sys.stop()
             current_menu = "exit"
+            sys.stop()
             --showmenu.loadMenu("exit")
             return "Return Option4"
         end,
@@ -86,14 +93,23 @@ function showmenu.loadMainMenu()
     --collectgarbage()
     _G.mainMenu = Menu:new()
     mainMenu:setOptions(options)
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     mainMenuContainer = gfx.new_surface(screen:get_width(), screen:get_height()/3.0)
-    mainMenuContainer:clear( {g=0, r=0, b=255, a=25})
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
+    mainMenuContainer:clear( {g=0, r=0, b=255, a=25} )
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     _G.current_menu = "mainMenu"
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     mainMenu.containerPos = {x = 0, y=screen:get_height()-mainMenuContainer:get_height()}
+    ADLogger.trace(mainMenuContainer:get_height())
     mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     _G.activeMenu = mainMenu
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     mainMenu:setActive(1)
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     gfx.update()
+    ADLogger.trace("Usage end mainMenu after gfx: " .. gfx.get_memory_use())
     --collectgarbage("stop")
 end
 
@@ -105,37 +121,119 @@ end
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 function showmenu.loadMenu(subMenuFlag)
-
-  if(subMenuFlag == "highScore") then
-    if(highScoreMenu == nil) then
-      local hs = require "views.mainmenu.highScoreMenu"
-        hs.loadMenu()
-    else
+  --collectgarbage()
+  --collectgarbage("stop")
+  if(subMenuFlag == "highScore") then 
+      if ab then
+        ADLogger.trace("Destroy 1!!!!!!!")
+        ab:destroy()
+        ADLogger.trace("Destroyed")
+      end
+      ADLogger.trace("Memory usage after 1 garbage load " .. collectgarbage("count"))
+      --gfx.get_memory_use() won't work on the emulator, but helps keep track of gfx-mem
+      --usage while getting logs from the box.
+      --ADLogger.trace("Memory usage after 1 garbage load 2 " .. gfx.get_memory_use())
+      if highScoreSurface then
+        ADLogger.trace("Destroy 2!!!!!!!")
+        highScoreSurface:destroy()
+        ADLogger.trace("Destroyed")
+      end
+      ADLogger.trace("Memory usage after 2 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 2 garbage load 2 " .. gfx.get_memory_use())
+  
+      if multiMenu then
+        ADLogger.trace("Destroy 3!!!!!!!")
+        multiMenu:destroy()
+        ADLogger.trace("Destroyed")
+      end
+      ADLogger.trace("Memory usage after 3 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 3 garbage load 2 " .. gfx.get_memory_use()) 
+      
       highScoreMenu.loadMenu()
-    end
-    --ADLogger.trace(collectgarbage("count")*1024)
+      
   elseif(subMenuFlag == "singlePlayer") then
-    if(singlePlayerMenu == nil) then
-      local sp = require "views.mainmenu.singlePlayerMenu"
-      sp.loadMenu()
-    else
+      if ab then
+        ADLogger.trace("Destroy 1!!!!!!!")
+        ab:destroy()
+        ADLogger.trace("Destroyed")
+      end
+      ADLogger.trace("Memory usage after 1 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 1 garbage load 2 " .. gfx.get_memory_use())
+      
+      if highScoreSurface then
+        ADLogger.trace("Destroy 2!!!!!!!")
+        highScoreSurface:destroy()
+        ADLogger.trace("Destroyed")
+      end
+      ADLogger.trace("Memory usage after 2 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 2 garbage load 2 " .. gfx.get_memory_use())
+  
+      if multiMenu then
+        ADLogger.trace("Destroy 3!!!!!!!")
+        multiMenu:destroy()
+        ADLogger.trace("Destroyed")
+      end
+      ADLogger.trace("Memory usage after 3 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 3 garbage load 2 " .. gfx.get_memory_use()) 
+        
+      ADLogger.trace("Reached end of if - singleplayer")  
       singlePlayerMenu.loadMenu()
-    end
-    ADLogger.trace(collectgarbage("count")*1024)
+      
   elseif(subMenuFlag == "multiplayer") then
-    if(multiPlayerMenu == nil) then
-      local mp = require "views.multiplayermenu.multiplayermenu"
-      mp.loadMenu()
-    else
+      if ab then
+        ADLogger.trace("Destroy 1!!!!!!!")
+        ab:destroy()
+        ADLogger.trace("Destroyed")
+      end
+      ADLogger.trace("Memory usage after 1 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 1 garbage load 2 " .. gfx.get_memory_use())
+      
+      if highScoreSurface then
+        ADLogger.trace("Destroy 2!!!!!!!")
+        highScoreSurface:destroy()
+        ADLogger.trace("Destroyed")
+      end
+      ADLogger.trace("Memory usage after 2 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 2 garbage load 2 " .. gfx.get_memory_use())
+  
+      if multiMenu then
+        ADLogger.trace("Destroy 3!!!!!!!")
+        multiMenu:destroy()
+        ADLogger.trace("Destroyed")
+      end
+      ADLogger.trace("Memory usage after 3 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 3 garbage load 2 " .. gfx.get_memory_use()) 
+      
       multiPlayerMenu.loadMenu()
-    end
-    --ADLogger.trace(collectgarbage("count")*1024)
+      
   elseif(subMenuFlag == "exit") then
+      if ab then
+        ADLogger.trace("Destroy 1!!!!!!!")
+        ab:destroy()
+      end
+      ADLogger.trace("Memory usage after 1 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 1 garbage load 2 " .. gfx.get_memory_use())
+      
+      if highScoreSurface then
+        ADLogger.trace("Destroy 2!!!!!!!")
+        highScoreSurface:destroy()
+      end
+      ADLogger.trace("Memory usage after 2 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 2 garbage load 2 " .. gfx.get_memory_use())
+  
+      if multiMenu then
+        ADLogger.trace("Destroy 3!!!!!!!")
+        multiMenu:destroy()
+      end
+      ADLogger.trace("Memory usage after 3 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 3 garbage load 2 " .. gfx.get_memory_use()) 
+      --collectgarbage()
+      --collectgarbage("stop")
   end
 end
 
 --------------------------------------------------------------------
---function: registerKey                                     --------
+--function: registerKey                                   --------
 --@param: key    the key pressed(left,right,up,down,ok)     --------
 --@param: state  the state of keypress(up,down, repeat)     --------
 --description: key functions of mainmenu                    --------
@@ -143,19 +241,9 @@ end
 --------------------------------------------------------------------
 function showmenu.registerKey(key,state)
     if key == "left" then
-        if current_menu == "highScoreMenu" then
-          local sp = require "views.mainmenu.singlePlayerMenu"
-          sp.loadMenu()
-        else
-          mainMenu:prev()
-        end
+        mainMenu:prev()
     elseif key == "right" then
-        if current_menu == "exit" then
-            local sp = require "views.mainmenu.singlePlayerMenu"
-            sp.loadMenu()
-        else
-            mainMenu:next()
-        end
+        mainMenu:next()
     elseif key == "ok"   then
         mainMenu:action()
     elseif key == "up"  then
