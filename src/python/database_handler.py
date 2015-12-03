@@ -56,7 +56,7 @@ def init_db():
             with app.open_resource(TEST_SCHEMA, mode='r') as f:
                 db.cursor().executescript(f.read())
             db.commit()
-    #return True
+    return True
 
 def get_db():
     """Get database.
