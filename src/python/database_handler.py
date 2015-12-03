@@ -158,6 +158,7 @@ def add_user(mac, playerid):
     return gid
 
 def remove_user(mac, playerid):
+    #LowPrio
     #TODO(azuja469): Implement SQL statements to remove all rows with
     # Foreign keys that are connected to the user being removed.
     """Remove user from database.
@@ -184,6 +185,7 @@ def remove_user(mac, playerid):
         get_db().rollback()
         raise
     return True
+
 
 def get_user(mac, playerid):
     """Get user information from database.
@@ -300,7 +302,7 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
                 #TODO(bjowi227): Fix the return values.
     return dict_factory(cursor, cfo);
 
-def insert_player_one(gamename, playerid):
+def insert_player_one(gamename, mac, playerid):
     #TODO(bjowi): Should only player id be taken as input (not mac)? 
     """ create new row in matches and add player one 
 
@@ -317,6 +319,7 @@ def insert_player_one(gamename, playerid):
     """
     #TODO(azuja469): Fix inputs to match new table schema (player_one_mac 
         # does not exist)
+
     c = get_db()
     try:
         c.execute(
@@ -471,7 +474,9 @@ def get_match_score(gamename, match):
         
     """
 
-    #TODO(azuja469): Implement function. Write correct comments.
+    #TODO(bjowi): Implement function. Write correct comments.
+
+
 
 def get_match_total_score(gamename, match):
     """ Get the sum of scores for each player in a match.
