@@ -76,10 +76,10 @@ function singlePlayerMenu.start()
       current_menu = "none"
       activeView = "pacman"
       gamehandler.loadPacman()
-    elseif a[tempActive]["name"] == "2048" then
+    elseif a[tempActive]["name"] == "multiplayer2048" then
       current_menu = "none"
       activeView = "2048"
-      game.startGame()
+      game2048.startGame()
     else
       sys.stop()
     end
