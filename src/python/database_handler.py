@@ -302,7 +302,8 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
                 #TODO(bjowi227): Fix the return values.
     return dict_factory(cursor, cfo);
 
-def insert_player_one(gamename, mac, playerid):
+def insert_player_one(gamename, playerid):
+    #TODO(bjowi): Should only player id be taken as input (not mac)? 
     """ create new row in matches and add player one 
 
     Args:
@@ -322,10 +323,9 @@ def insert_player_one(gamename, mac, playerid):
     try:
         c.execute(
             "INSERT INTO matches (gamename"
-            ", player_one_mac"
             ", player_one_id)"
             " VALUES (?,?,?)"
-            , (gamename, mac, playerid,))
+            , (gamename, playerid,))
     except:
         get_db().rollback()
         raise
@@ -443,8 +443,8 @@ def add_round_score(gamename, match, mac, playerid, score):
         raise
     return True
 
-def get_number_of_rounds(gamename, match):
-    """ Get the number of played and completed rounds of a match.
+def get_number_of_rounds(gamename, match_id):
+    """ Get the number of completed rounds of a match.
 
     Args:
         gamename: Specific game that the action is related to.
@@ -457,6 +457,22 @@ def get_number_of_rounds(gamename, match):
         
     """
     #TODO(erida995): Implement function. Write correct comments.
+    #IS THIS OKAY??? Really not sure /erida995
+
+    cursor = get_db_cursor()
+    try:    
+        cursor.execute("SELECT Count(match_id) AS result"
+                       " FROM round"
+                       " WHERE match_id = ?"
+                       " AND player_one_score not null"
+                       " AND player_two_score not null"
+                       , (match_id,))
+        cfo = cursor.fetchone()
+    except:
+        get_db().rollback()
+        raise
+    return cfo.result
+
 
 def get_match_score(gamename, match):
     """ Get the scores of all games of a match.
@@ -472,6 +488,7 @@ def get_match_score(gamename, match):
     Raises:
         
     """
+
     #TODO(azuja469): Implement function. Write correct comments.
 
 def get_match_total_score(gamename, match):
@@ -488,6 +505,19 @@ def get_match_total_score(gamename, match):
         
     """
     #TODO(erida995): Implement function. Write correct comments.
+
+    cursor = get_db_cursor()
+    try:    
+        cursor.execute("SELECT Sum(player_one_score)"
+                        " , Sum(player_two_score)"
+                        " FROM round"
+                        " WHERE match_id = ?"
+                        , (match_id,))
+        cfo = cursor.fetchone()
+    except:
+        get_db().rollback()
+        raise
+    return dict_factory(cursor, cfo)
 
 def set_winner(gamename, match_id, mac, playerid):
     """ Set the winner of a specified match.
@@ -637,7 +667,7 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
         cfa = cursor.fetchall()
     except sqlite3.Error as e:
         print 'Database error: ' + e.args[0]
-        cfo = None
+        cfa = None
     if cfa is None:
         return {'user_id': None
                 , 'score': None}
@@ -683,7 +713,7 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
         cfa = cursor.fetchall()
     except sqlite3.Error as e:
         print 'Database error: ' + e.args[0]
-        cfo = None
+        cfa = None
     if cfa is None:
         return {'user_id': None
                 , 'score': None}
@@ -727,7 +757,7 @@ def get_global_highscore(gamename, number_of_scores):
         cfa = cursor.fetchall()
     except sqlite3.Error as e:
         print 'Database error: ' + e.args[0]
-        cfo = None
+        cfa = None
     if cfa is None:
         return {'mac': None
                 , 'user_id': None
