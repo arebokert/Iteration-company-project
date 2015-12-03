@@ -1,46 +1,35 @@
 model = require "model.multiplayermenu.multiplayermenu"
 
-multiplayermenu = {title = "Multiplayer Menu"}
-
-if showmenu == nil then
-  local showmenu = require "views.mainmenu.showmenu"
-end
-
-if gamehandler == nil then
-  local gamehandler = require "model.games.pacman.gamehandler"
-end
-
-if game2048 == nil then
-  local game2048 = require "model.games.2048.game"
-end
+multiplayermenu = {}
 
 local resulttable = nil
 local activeGame = nil
 local a = {}
 local tempActive = 2
-local multiMenu = nil
+multiMenu = nil
 local font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 
 --loads the view for the multiplayer menu
 --@param model - instantiates the model for the multiplayermenu
 function multiplayermenu.loadMenu()
-  --collectgarbage()
+  ADLogger.trace("Booting")
+  collectgarbage("stop")
   model = model:new()
   a = model:fetchPath()
   multiMenu = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
-  multiMenu:clear({r=7, g = 19, b=77}, {x =screen:get_width()/20, y = screen:get_height()/20, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
+  multiMenu:clear({r=7, g = 19, b=77, a = 25}, {x =screen:get_width()/20, y = screen:get_height()/20, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
   multiplayermenu.loadGameMenu()
   multiplayermenu.loadRecentResults(model:fetchResults())
   multiplayermenu.loadCurrentPlayers(0)
-  gfx.update()
-  --screen:clear({r=7, g = 19, b=77, a = 20}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
+  
+  --gfx.update()
+
   screen:copyfrom(multiMenu, nil)
   gfx.update()
-  --ADLogger.trace(collectgarbage("count")*1024)
+  
+  --collectgarbage("stop")
   --collectgarbage()
-  collectgarbage("stop")
-  --for testing, prints bytes of memory used for each transaction
-  --ADLogger.trace(collectgarbage("count")*1024)
+  --collectgarbage("stop")
 end
 
 --prints a word on a selected surface
@@ -63,6 +52,7 @@ end
 --loads the most recent results
 --@param recentRes - array from where to read recent results
 function multiplayermenu.loadRecentResults(recentRes)
+  
   resulttable = recentRes
   local wincol = {r=0, g=155, b=0}
   local losecol = {r=155, g=0, b=0}
@@ -111,6 +101,7 @@ function multiplayermenu.loadRecentResults(recentRes)
   btnfirst:draw_over_surface(multiMenu,score1)
   btnsec:draw_over_surface(multiMenu,score2)
   btnthird:draw_over_surface(multiMenu,score3)
+  
   screen:copyfrom(multiMenu, nil)
   gfx.update()
 end
@@ -163,6 +154,10 @@ function multiplayermenu.reloadRecent()
   btntre:draw_over_surface(multiMenu,score3)
   --collectgarbage("stop")
   screen:copyfrom(multiMenu, nil)
+  
+  ADLogger.trace("Memory usage after multi-gameswitch load " .. collectgarbage("count"))
+  --ADLogger.trace("Memory usage after multi-gameswitch load 2 " .. gfx.get_memory_use()) 
+  
   gfx:update()
 end
 
@@ -197,6 +192,7 @@ function multiplayermenu.start()
     activeView = a[tempActive]["name"]
     current_menu = "none"
     local commence = assert(loadfile(root_path..a[tempActive]["start"]))
+    multiMenu:destroy()
     commence()
 end
 
@@ -294,7 +290,6 @@ function multiplayermenu.registerKey(key,state)
     elseif key == "ok" then
         multiplayermenu:start()
     elseif key == "down" then
-        --multiMenu:destroy()
         current_menu = "mainMenu"
     end
   end
