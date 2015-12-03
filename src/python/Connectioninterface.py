@@ -8,6 +8,7 @@ import json
 import Highscorehandler
 from database_handler import init_db
 
+init_db()
 def sendScore(jsonObj):
     return Highscorehandler.add_Highscore(jsonObj)
 
