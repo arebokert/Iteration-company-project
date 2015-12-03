@@ -60,6 +60,7 @@ function showmenu.loadMainMenu()
   options[3] = {title = "Multiplayer",
         action = function()
             current_menu = "multiPlayerMenu"
+            
             return "Return Option3"
         end,
         hover = function()
@@ -92,16 +93,23 @@ function showmenu.loadMainMenu()
     --collectgarbage()
     _G.mainMenu = Menu:new()
     mainMenu:setOptions(options)
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     mainMenuContainer = gfx.new_surface(screen:get_width(), screen:get_height()/3.0)
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     mainMenuContainer:clear( {g=0, r=0, b=255, a=25} )
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     _G.current_menu = "mainMenu"
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     mainMenu.containerPos = {x = 0, y=screen:get_height()-mainMenuContainer:get_height()}
+    ADLogger.trace(mainMenuContainer:get_height())
     mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     _G.activeMenu = mainMenu
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     mainMenu:setActive(1)
-    --ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
+    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     gfx.update()
-    --ADLogger.trace("Usage end mainMenu after gfx: " .. gfx.get_memory_use())
+    ADLogger.trace("Usage end mainMenu after gfx: " .. gfx.get_memory_use())
     --collectgarbage("stop")
 end
 
@@ -113,7 +121,8 @@ end
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 function showmenu.loadMenu(subMenuFlag)
-  
+  --collectgarbage()
+  --collectgarbage("stop")
   if(subMenuFlag == "highScore") then 
       if ab then
         ADLogger.trace("Destroy 1!!!!!!!")
@@ -218,13 +227,13 @@ function showmenu.loadMenu(subMenuFlag)
       end
       ADLogger.trace("Memory usage after 3 garbage load " .. collectgarbage("count"))
       --ADLogger.trace("Memory usage after 3 garbage load 2 " .. gfx.get_memory_use()) 
-      collectgarbage()
-      collectgarbage("stop")
+      --collectgarbage()
+      --collectgarbage("stop")
   end
 end
 
 --------------------------------------------------------------------
---function: registerKey                                     --------
+--function: registerKey                                   --------
 --@param: key    the key pressed(left,right,up,down,ok)     --------
 --@param: state  the state of keypress(up,down, repeat)     --------
 --description: key functions of mainmenu                    --------

@@ -26,15 +26,38 @@ function onKey(key, state)
     
       -- This statement is used when switching to the picture of the TV screen
     if key=="3" and state == "down" then 
-      --collectgarbage()
-      --collectgarbage("stop")
-      --
+
       if current_menu == "singlePlayerMenu" then
         ab.destroy()
+      elseif current_menu == "highScoreMenu" then
+        highScoreSurface:destroy()
+      elseif current_menu == "multiPlayerMenu" then
+        multiMenu:destroy()
+      elseif current_menu == "exit" then
+        if ab then
+        ADLogger.trace("Destroy 1!!!!!!!")
+        ab:destroy()
+      end
+      ADLogger.trace("Memory usage after 1 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 1 garbage load 2 " .. gfx.get_memory_use())
+      
+      if highScoreSurface then
+        ADLogger.trace("Destroy 2!!!!!!!")
+        highScoreSurface:destroy()
+      end
+      ADLogger.trace("Memory usage after 2 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 2 garbage load 2 " .. gfx.get_memory_use())
+  
+      if multiMenu then
+        ADLogger.trace("Destroy 3!!!!!!!")
+        multiMenu:destroy()
+      end
+      ADLogger.trace("Memory usage after 3 garbage load " .. collectgarbage("count"))
+      --ADLogger.trace("Memory usage after 3 garbage load 2 " .. gfx.get_memory_use())  
       end
       local tvSurface = gfx.new_surface(screen:get_width(),screen:get_height())
       local bg = gfx.loadpng(datapath .. '/TV-PH-full.png')
-      tvSurface:copyfrom(bg)
+      tvSurface:copyfrom(bg, nil)
       bg:destroy()
       
       screen:copyfrom(tvSurface, nil)
@@ -75,9 +98,9 @@ function onKey(key, state)
             
           showmenu.loadMainMenu()
           activeMenu = mainMenu
-        elseif activeView == "pacman" then
+      elseif activeView == "pacman" then
           gamehandler.loadPacman()
-        else
+      else
           --collectgarbage()
           --collectgarbage("stop")
           current_menu = "singlePlayerMenu"

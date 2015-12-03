@@ -6,7 +6,7 @@ local activeGame = nil
 --local ab = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)'
 ab = nil
 local a = {}
-local tempActive = 2
+local tempActive = nil
 local font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 
 --loads the view for the multiplayer menu
@@ -15,9 +15,13 @@ function singlePlayerMenu.loadMenu()
   ADLogger.trace("Loading singleplayer")
   --collectgarbage("stop")
   smodel = smodel:new()
+  ADLogger.trace("Finished reading file")
   a = smodel:fetchPath()
+  ADLogger.trace("Finished fetching paths")
   ab = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
   ab:clear({r=7, g = 19, b=77}, {x =screen:get_width()/20, y = screen:get_height()/20, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
+  ADLogger.trace("Created surface")
+  
   singlePlayerMenu.loadGameMenu()
   --gfx.update()
   --screen:clear({r=7, g = 19, b=77, a = 20}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
@@ -79,19 +83,24 @@ end
 
 --loads the game menu and carousel
 function singlePlayerMenu.loadGameMenu()
+  tempActive = 2
   activeGame = tempActive
-
+  ADLogger.trace("set variable "..activeGame)
+  ADLogger.trace(gfx.get_memory_use())
   local bg = gfx.loadjpeg(a[activeGame-1]["path"] .. 'background-small.jpg')
   ab:copyfrom(bg, nil, {x=((ab:get_width())/2)-350, y= ab:get_height()/20+77})
   bg:destroy()
+  ADLogger.trace(gfx.get_memory_use())
   local bg = gfx.loadjpeg(a[activeGame+1]["path"] .. 'background-small.jpg')
   ab:copyfrom(bg, nil, {x=((ab:get_width())/2)+100, y= ab:get_height()/20+77})
   bg:destroy()
+  ADLogger.trace("second loaded")
   local bg = gfx.loadjpeg(a[activeGame]["path"] .. 'background.jpg')
   ab:copyfrom(bg, nil, {x=((ab:get_width())/2)-150, y= ab:get_height()/20+60})
   bg:destroy()
+  ADLogger.trace("third loaded")
   screen:copyfrom(ab, nil)
-  
+
   ADLogger.trace("Memory usage after single-gameswitch load " .. collectgarbage("count"))
   --ADLogger.trace("Memory usage after single-gameswitch load 2 " .. gfx.get_memory_use()) 
   gfx.update()
