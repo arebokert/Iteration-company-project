@@ -73,9 +73,13 @@ function singlePlayerMenu.start()
     --temporary, hard-coded gamestart
     ab:destroy()
     if a[tempActive]["name"] == "pacman" then
+      current_menu = "none"
+      activeView = "pacman"
       gamehandler.loadPacman()
-    elseif a[tempActive]["name"] == "2048" then
-      game.startGame()
+    elseif a[tempActive]["name"] == "multiplayer2048" then
+      current_menu = "none"
+      activeView = "2048"
+      game2048.startGame()
     else
       sys.stop()
     end
