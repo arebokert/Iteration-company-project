@@ -189,10 +189,12 @@ def remove_user(mac, playerid):
 
 def get_user(mac, playerid):
     """Get user information from database.
+    History (date user: text):
+        2015-12-03 bjowi227: Corrected return variable.
 
     Args:
         mac: MAC address of player. To differentiate between units.
-
+        playerid: Local id of player.
     Returns:
         The integer value of the global_id variable.
         If the user is not found, the integer value -1 will be returned.
@@ -212,7 +214,41 @@ def get_user(mac, playerid):
         cfo = None
     if cfo is None:
         return -1
-    return cfo[0]
+    return cfo.global_id
+
+def get_unit_user(global_id):
+    """Get user information from database.
+    History (date user: text):
+        2015-12-03 bjowi227: Created first version of function.
+
+    Args:
+        global_id: Integer value corresponding to tuple global_id in
+        the user_list table.
+
+    Returns:
+        A dict containing the mac and user_id of the player.
+        See database table user_list for more information.
+        If no user is found a dict with the correct tuples will be
+        returned with the value of None.
+
+    Raises:
+        Will NOT raise an error.
+    """
+
+    cursor = get_db_cursor()
+    try:
+        cursor.execute("SELECT mac"
+                       ", user_id"
+                       " FROM user_list"
+                       " WHERE global_id = ?", (global_id,))
+        cfo = cursor.fetchone()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfo is None:
+        return {'mac': None
+                ,'user_id': None}
+    return dict_factory(cursor, cfo)
 
 def add_game(gamename):
     """ Add a new game to the games table.
@@ -266,6 +302,8 @@ def game_exists(gamename):
 # MATCH HANDLING
 def get_match_history(gamename, mac, playerid, number_of_matches):
     """ Get history of the most recent matches for a player.
+    History (date user: text):
+        2015-12-03 bjowi227: Updated SQL query and return part.
 
     Args:
         gamename: Specific game that the action is related to.
@@ -285,22 +323,36 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
         nom = number_of_matches
     else:
         nom = 3
+
+    global_id = get_user(mac, playerid)
+    if global_id == -1:
+        global_id = add_user(mac, playerid)
+
     cursor = get_db_cursor()
     try:    
-        cursor.execute("SELECT match_id"
-                       ", winner"
+        cursor.execute("SELECT matches.match_id AS match_id"
+                       ", matches.start_time AS start_time"
+                       ", matches.winner AS winner"
                        " FROM matches"
-                       " WHERE gamename = ?", (mac,))
-        #TODO(bjowi227): Fix the database query.
-        cfo = cursor.fetchone()
+                       " LEFT JOIN user_list"
+                       " ON matches.player_one_id=user_list.global_id"
+                       " OR matches.player_two_id=user_list.global_id"
+                       " WHERE matches.gamename = ?"
+                       " AND user_list.global_id = ?"
+                       " ORDER BY matches.start_time DESC"
+                       " LIMIT ?", (gamename, global_id, nom,))
+        cfa = cursor.fetchall()
     except sqlite3.Error as e:
         print 'Database error: ' + e.args[0]
-        cfo = None
-    if cfo is None:
-        return {'mac':None
-                ,'user_id': None}
-                #TODO(bjowi227): Fix the return values.
-    return dict_factory(cursor, cfo);
+        cfa = None
+    if cfa is None:
+        return {'match_id':None
+                ,'start_time': None
+                ,'winner': None}
+    result = []
+    for row in cfa:
+        result.append(dict_factory(cursor, row))
+    return result
 
 def insert_player_one(gamename, playerid):
     #TODO(bjowi): Should only player id be taken as input (not mac)? 
@@ -532,24 +584,32 @@ def set_winner(gamename, match_id, mac, playerid):
         playerid: An integer that specifies id for player of a set-top-box.
 
     Returns:
-
+        Boolean value True if table was updated, otherwise False.
 
     Raises:
+
+    History (date user: text):
+        2015-12-03 bjowi227: Fixed SQL query to check the correct tuples.
         
     """
-    #TODO(bjowi227): Add get user search for correct SQL statements.
+
+    global_id = get_user(mac, playerid)
+    if global_id == -1:
+        return False
+
     c = get_db()
     try:
         c.execute(
             "UPDATE matches "
-            "SET winner = ?"
-            "WHERE match_id = ?"
-            , (playerid, match_id,))
+            " SET winner = ?"
+            " WHERE match_id = ?"
+            " AND gamename = ?"
+            , (global_id, match_id, gamename,))
     except:
         get_db().rollback()
         raise
 
-    return match_id
+    return True
 
 
 def get_winner(gamename, match_id):
@@ -560,7 +620,8 @@ def get_winner(gamename, match_id):
         match: Integer that is describes the ID of a match.
 
     Returns:
-
+        Integer that corresponds to the global_id variable in
+        database table user_list.
 
     Raises:
         
@@ -575,14 +636,15 @@ def get_winner(gamename, match_id):
             "SELECT winner"
             " FROM matches"
             " WHERE match_id = ?"
-            , (match_id,))
+            " AND gamename = ?"
+            , (match_id, gamename,))
         cfo = cursor.fetchone()
 
     except:
         get_db().rollback()
         raise
 
-        return cfo.winner
+    return cfo.winner
 
 # HIGHSCORE HANDLING
 
@@ -618,7 +680,7 @@ def add_highscore(gamename, mac, playerid, score):
         c.execute("INSERT INTO high_scores (gamename"
             ", player_id"
             ", score)"
-            " VALUES (?,?,?,?)"
+            " VALUES (?,?,?)"
             , (gamename, global_id, score,))
         c.commit()
     except:
