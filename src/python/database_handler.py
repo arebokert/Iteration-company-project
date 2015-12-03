@@ -68,13 +68,14 @@ def get_db():
     Raises:
 
     """
-    db = None
-    try:
-        db = getattr(g, 'db', None)
-    except:
-        print "Det gick fel :("
-    if db is None:
-        db = g.db = connect_db()
+    with app.app_context():
+        db = None
+        try:
+            db = getattr(g, 'db', None)
+        except:
+            print "Det gick fel :("
+        if db is None:
+            db = g.db = connect_db()
     return db
 
 def connect_db():
@@ -143,14 +144,17 @@ def add_user(mac, playerid):
 
     Raises:
         Raises generic python error.
+
+    History (date user: text):
+        2015-12-03
     """
     c = get_db()
     try:
         c.execute("INSERT INTO user_list (mac"
             ", user_id) VALUES (?,?)"
             , (mac, playerid,))
-        c.co
-        gid = c.lastrowid()
+
+        gid = c.cursor().lastrowid
         c.commit()
     except:
         get_db().rollback()
@@ -176,6 +180,9 @@ def remove_user(mac, playerid):
 
     Raises:
         Will NOT raise an error.
+
+    History (date user: text):
+        2015-12-03
     """
     #TODO: ensure that azuja469 won't crash gitlab with this code
 
@@ -255,29 +262,20 @@ def quit_match(mac, playerid, gamename, match_id):
         
 
 
-
-
-
-    c = get_db()
-    try:
-        c.execute("DELETE FROM user_list WHERE mac <> ? AND playerid <> ?", 'mac', 'playerid')
-        c.commit()
-    except:
-        get_db().rollback()
-        raise
-    return True
-
 def get_user(mac, playerid):
     """Get user information from database.
 
     Args:
         mac: MAC address of player. To differentiate between units.
-
+        playerid: Local id of player.
     Returns:
         The integer value of the global_id variable.
         If the user is not found, the integer value -1 will be returned.
     Raises:
         Will NOT raise an error.
+
+    History (date user: text):
+        2015-12-03 bjowi227: Corrected return variable.
     """
 
     cursor = get_db_cursor()
@@ -292,7 +290,42 @@ def get_user(mac, playerid):
         cfo = None
     if cfo is None:
         return -1
-    return cfo[0]
+    return cfo.global_id
+
+def get_unit_user(global_id):
+    """Get user information from database.
+
+    Args:
+        global_id: Integer value corresponding to tuple global_id in
+        the user_list table.
+
+    Returns:
+        A dict containing the mac and user_id of the player.
+        See database table user_list for more information.
+        If no user is found a dict with the correct tuples will be
+        returned with the value of None.
+
+    Raises:
+        Will NOT raise an error.
+
+    History (date user: text):
+        2015-12-03 bjowi227: Created first version of function.
+    """
+
+    cursor = get_db_cursor()
+    try:
+        cursor.execute("SELECT mac"
+                       ", user_id"
+                       " FROM user_list"
+                       " WHERE global_id = ?", (global_id,))
+        cfo = cursor.fetchone()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfo is None:
+        return {'mac': None
+                ,'user_id': None}
+    return dict_factory(cursor, cfo)
 
 def add_game(gamename):
     """ Add a new game to the games table.
@@ -304,7 +337,9 @@ def add_game(gamename):
         Boolean value true if game could be added, otherwise false.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     c = get_db()
     try:
@@ -327,7 +362,9 @@ def game_exists(gamename):
         Boolean value true if game exists, otherwise false.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     cursor = get_db_cursor()
     try:
@@ -358,32 +395,47 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
         A dict containing the top X match_id.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03 bjowi227: Updated SQL query and return part.
     """
 
     if isinstance( number_of_matches, int ):
         nom = number_of_matches
     else:
         nom = 3
+
+    global_id = get_user(mac, playerid)
+    if global_id == -1:
+        global_id = add_user(mac, playerid)
+
     cursor = get_db_cursor()
     try:    
-        cursor.execute("SELECT match_id"
-                       ", winner"
+        cursor.execute("SELECT matches.match_id AS match_id"
+                       ", matches.start_time AS start_time"
+                       ", matches.winner AS winner"
                        " FROM matches"
-                       " WHERE gamename = ?", (mac,))
-        #TODO(bjowi227): Fix the database query.
-        cfo = cursor.fetchone()
+                       " LEFT JOIN user_list"
+                       " ON matches.player_one_id=user_list.global_id"
+                       " OR matches.player_two_id=user_list.global_id"
+                       " WHERE matches.gamename = ?"
+                       " AND user_list.global_id = ?"
+                       " ORDER BY matches.start_time DESC"
+                       " LIMIT ?", (gamename, global_id, nom,))
+        cfa = cursor.fetchall()
     except sqlite3.Error as e:
         print 'Database error: ' + e.args[0]
-        cfo = None
-    if cfo is None:
-        return {'mac':None
-                ,'user_id': None}
-                #TODO(bjowi227): Fix the return values.
-    return dict_factory(cursor, cfo);
+        cfa = None
+    if cfa is None:
+        return {'match_id':None
+                ,'start_time': None
+                ,'winner': None}
+    result = []
+    for row in cfa:
+        result.append(dict_factory(cursor, row))
+    return result
 
-def insert_player_one(gamename, mac, playerid):
-    #TODO(bjowi): Should only player id be taken as input (not mac)? 
+def create_match(gamename, mac, playerid):
     """ create new row in matches and add player one 
 
     Args:
@@ -395,34 +447,29 @@ def insert_player_one(gamename, mac, playerid):
 
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03 bjowi227: Changed name to create_match. Fixed INSERT query.
     """
-    #TODO(azuja469): Fix inputs to match new table schema (player_one_mac 
-        # does not exist)
+
+    global_id = get_user(mac, playerid)
+    if global_id == -1:
+        global_id = add_user(mac, playerid)
 
     c = get_db()
     try:
-        c.execute(
+        cursor.execute(
             "INSERT INTO matches (gamename"
             ", player_one_id)"
-            " VALUES (?,?,?)"
-            , (gamename, playerid,))
+            " VALUES (?,?)"
+            , (gamename, global_id,))
+        lastid = c.cursor().lastrowid
+        c.commit()
     except:
         get_db().rollback()
         raise
 
-    cursor = get_db_cursor()
-    try:    
-        cursor.execute("SELECT match_id"
-                       " FROM matches"
-                       " WHERE player_two_mac = null")
-        
-        cfo = cursor.fetchone()
-    except:
-        get_db().rollback()
-        raise
-
-    return cfo.match_id
+    return lastid
 
 def insert_player_two(gamename, mac, playerid, match_id,):
 
@@ -438,16 +485,19 @@ def insert_player_two(gamename, mac, playerid, match_id,):
 
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03 bjowi227: Added commit.
     """
    gid = get_user(mac, playerid)
    c = get_db()
    try:
        c.execute(
            "UPDATE matches "
-           "SET player_two_id = ?"
-           "WHERE match_id = ?"
+           " SET player_two_id = ?"
+           " WHERE match_id = ?"
            , (gid, match_id,))
+       c.commit()
    except:
        get_db().rollback()
        raise
@@ -466,7 +516,9 @@ def add_match(gamename, mac, playerid):
 
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     # Check for empty rows in matches
 
@@ -480,10 +532,10 @@ def add_match(gamename, mac, playerid):
     except:
         get_db().rollback()
         raise
-    #TODO(bjowi): Fix error handling.
 
+    # If cfo is None, a new row will have to be created to keep the new match.
     if cfo is None:
-        return insert_player_one(gamename, mac, playerid)
+        return create_match(gamename, mac, playerid)
     else:
         return insert_player_two(gamename, mac, playerid, cfo.match_id)
 
@@ -537,7 +589,9 @@ def add_round_score(gamename, match_id, mac, playerid, score):
 
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
 
 #TODO implement correctly. Choose correct SQL statements and make a comparison 
@@ -610,7 +664,9 @@ def insert_round_score(score, match_id, game_number, field_name):
 
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     c = get_db()
     try:
@@ -636,7 +692,9 @@ def get_number_of_rounds(gamename, match_id):
         An integer describing the amount of completed rounds in one match.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     #TODO(erida995): Implement function. 
     #IS THIS OKAY??? Really not sure /erida995
@@ -668,6 +726,9 @@ def get_match_score(gamename, match):
         Returned in the format as a dict.
 
     Raises:
+
+    History (date user: text):
+        2015-12-03
         
     """
 
@@ -686,7 +747,9 @@ def get_match_total_score(gamename, match_id):
         A dictionary with the row of both players score. 
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     #TODO(erida995): Implement function. Write correct comments.
 
@@ -716,24 +779,32 @@ def set_winner(gamename, match_id, mac, playerid):
         playerid: An integer that specifies id for player of a set-top-box.
 
     Returns:
-
+        Boolean value True if table was updated, otherwise False.
 
     Raises:
+
+    History (date user: text):
+        2015-12-03 bjowi227: Fixed SQL query to check the correct tuples.
         
     """
-    #TODO(bjowi227): Add get user search for correct SQL statements.
+
+    global_id = get_user(mac, playerid)
+    if global_id == -1:
+        return False
+
     c = get_db()
     try:
         c.execute(
             "UPDATE matches "
-            "SET winner = ?"
-            "WHERE match_id = ?"
-            , (playerid, match_id,))
+            " SET winner = ?"
+            " WHERE match_id = ?"
+            " AND gamename = ?"
+            , (global_id, match_id, gamename,))
     except:
         get_db().rollback()
         raise
 
-    return match_id
+    return True
 
 
 def get_winner(gamename, match_id):
@@ -744,10 +815,13 @@ def get_winner(gamename, match_id):
         match: Integer that is describes the ID of a match.
 
     Returns:
-
+        Integer that corresponds to the global_id variable in
+        database table user_list.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
 
     #TODO (bjowi): Check that this is implementet correctly
@@ -759,14 +833,15 @@ def get_winner(gamename, match_id):
             "SELECT winner"
             " FROM matches"
             " WHERE match_id = ?"
-            , (match_id,))
+            " AND gamename = ?"
+            , (match_id, gamename,))
         cfo = cursor.fetchone()
 
     except:
         get_db().rollback()
         raise
 
-        return cfo.winner
+    return cfo.winner
 
 # HIGHSCORE HANDLING
 
@@ -787,7 +862,9 @@ def add_highscore(gamename, mac, playerid, score):
         3: Top 10 global
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
 
     if not game_exists(gamename):
@@ -802,7 +879,7 @@ def add_highscore(gamename, mac, playerid, score):
         c.execute("INSERT INTO high_scores (gamename"
             ", player_id"
             ", score)"
-            " VALUES (?,?,?,?)"
+            " VALUES (?,?,?)"
             , (gamename, global_id, score,))
         c.commit()
     except:
@@ -828,7 +905,9 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
         score.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     if isinstance( number_of_results, int ):
         nor = number_of_results
@@ -875,7 +954,9 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
         score.
 
     Raises:
-        
+
+    History (date user: text):
+        2015-12-03
     """
     if isinstance( number_of_scores, int ):
         nor = number_of_scores
@@ -919,6 +1000,9 @@ def get_global_highscore(gamename, number_of_scores):
         An array of dictionaries.
 
     Raises:
+
+    History (date user: text):
+        2015-12-03
     """
 
     if isinstance( number_of_scores, int ):

@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS games(
 CREATE TABLE IF NOT EXISTS matches(
 	match_id INTEGER AUTO_INCREMENT,
 	gamename TEXT not null references games(gamename),
-	date DATETIME not null DEFAULT (DATETIME('now')),
+	start_time DATETIME not null DEFAULT (DATETIME('now')),
 	player_one_id INTEGER not null references user_list(global_id),
 	player_two_id INTEGER references user_list(global_id),
 	winner INTEGER DEFAULT 0,
