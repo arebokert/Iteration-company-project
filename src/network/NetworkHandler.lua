@@ -24,6 +24,10 @@ function convertRequestToPrefix(request)
         return "RS"
     elseif request == "RequestReadYourOwnScore" then
         return "RO"
+    elseif request == "4096MultiPlayerSubmit" then
+        return "GFMS" --For "Game Fourtynintysix Multiplayer Submit"
+    elseif request == "4096MultiPlayerRequest" then
+        return "GFMR" --For "Game Fourtynintysix Multiplayer Submit"
     else
         return invalidInput
     end
@@ -62,4 +66,11 @@ function sendJSON(JSONObject, request)
     else
         return serverResponse
     end
+end
+
+
+    -- Returns the MAC adress of the unit.
+function getMAC()
+    -- Will currently use a mock-up of the MAC.
+    return 001
 end
