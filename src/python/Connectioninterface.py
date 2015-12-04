@@ -6,8 +6,10 @@ import SocketServer
 import sys
 import json
 import Highscorehandler
+import Game4096_multiplayer_handler
 from database_handler import init_db
 
+init_db()
 def sendScore(jsonObj):
     return Highscorehandler.add_Highscore(jsonObj)
 
@@ -41,6 +43,11 @@ def fetchLastThree(jsonObj):
     data = json.loads(jsonObj)
     # return hiscore_handler.function(data["macAddress"], data["matchID"], data["gameName"]) #MAKE CORRECT
 
+def game4096MultiplayerSend(jsonObj):
+    return Game4096_multiplayer_handler.submit_box(jsonObj)
+
+def game4096MultiplayerRequest(jsonObj):
+    return Game4096_multiplayer_handler.request_box(jsonObj)
 
 class service(SocketServer.BaseRequestHandler):
 
@@ -65,6 +72,10 @@ class service(SocketServer.BaseRequestHandler):
             self.request.send(terminateGame(data[2:]))
         elif data[:4] == 'LR/M':
             self.request.send(fetchLastThree(data[4:]))
+        elif data[:4] == 'GFMS':
+            self.request.send(game4096MultiplayerSend(data[4:]))
+        elif data[:4] == 'GFMR':
+            self.request.send(game4096MultiplayerRequest(data[4:]))
         else:
             print 'Incorrect operation.'
         self.request.close()

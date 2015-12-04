@@ -1,33 +1,36 @@
-CREATE TABLE IF NOT EXISTS user_list (
-	global_id INTEGER PRIMARY KEY AUTOINCREMENT,
-	mac VARCHAR(48),
-	user_id INTEGER
+CREATE TABLE IF NOT EXISTS user_list(
+	global_id INTEGER AUTO_INCREMENT,
+	mac TEXT,
+	user_id INTEGER,
+	PRIMARY KEY (global_id)
 );
 
-CREATE TABLE IF NOT EXISTS games (
+CREATE TABLE IF NOT EXISTS games(
 	gamename TEXT PRIMARY KEY
 );
 
-CREATE TABLE IF NOT EXISTS matches (
-	match_id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS matches(
+	match_id INTEGER AUTO_INCREMENT,
 	gamename TEXT not null references games(gamename),
-	date DATETIME not null DEFAULT NOW(),
+	start_time DATETIME not null DEFAULT (DATETIME('now')),
 	player_one_id INTEGER not null references user_list(global_id),
 	player_two_id INTEGER references user_list(global_id),
-	winner INTEGER DEFAULT 0
+	winner INTEGER DEFAULT 0,
+	PRIMARY KEY (match_id)
 );
 
-CREATE TABLE IF NOT EXISTS round (
-	match_id INTEGER references pacman_matches(match_id),
-	game_number INTEGER not null,
+CREATE TABLE IF NOT EXISTS round(
+	match_id INTEGER references matches(match_id),
+	game_number INTEGER,
 	player_one_score INTEGER,
 	player_two_score INTEGER,
 	PRIMARY KEY (match_id, game_number)
 );
 
-CREATE TABLE IF NOT EXIST high_scores (
-	game_id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IF NOT EXISTS high_scores(
+	game_id INTEGER AUTO_INCREMENT,
 	gamename TEXT not null references games(gamename),
 	player_id INTEGER not null references user_list(global_id),
-	score INTEGER not null
+	score INTEGER not null,
+	PRIMARY KEY (game_id)
 );

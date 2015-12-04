@@ -57,20 +57,6 @@ end
 
 --starts the selected game
 function singlePlayerMenu.start()
-    --[[ADLogger.trace("Memory usage after pacman load " .. collectgarbage("count"))
-    --ADLogger.trace("Memory usage after pacman load 2 " .. gfx.get_memory_use())
-    activeView = a[tempActive]["name"]
-    current_menu = "none"
-    local commence = assert(loadfile(root_path..a[tempActive]["start"]))
-    collectgarbage()
-    collectgarbage("stop")
-    ADLogger.trace("Destroy!!!!!!!")
-    ab:destroy()
-    ADLogger.trace("Memory usage after pacman garbage load " .. collectgarbage("count"))
-    --ADLogger.trace("Memory usage after pacman garbage load 2 " .. gfx.get_memory_use())
-    commence()]]
-    
-    --temporary, hard-coded gamestart
     ab:destroy()
     appSurface:destroy()
     activeView = a[tempActive]["name"]

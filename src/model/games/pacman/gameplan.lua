@@ -9,8 +9,7 @@ require("model.games.pacman.player")
 
 -- 4 because first time the lives are printed, one life is deducted
 lives = 4
--- The step that the players will take in pixels
-step = 5
+
 
 -- Define a shortcut function for testing
 function dump(...)
@@ -20,6 +19,7 @@ end
 -- The Gameplan class. 
 Gameplan = {}
 
+
 --
 -- Create an instance of a gameplan. 
 --
@@ -28,6 +28,54 @@ function Gameplan:new ()
     setmetatable(obj, self)
     self.__index = self
     return obj
+end
+
+
+--
+-- Set the speed of the game
+--
+--@speed: An integer from 1 to 3. 
+--
+function Gameplan:setSpeed(speed)
+  -- Check input argument 
+  if speed == nil then
+    -- Set default value
+    speed = 2  
+  elseif speed < 1 then
+    speed = 1
+  elseif speed > 3 then
+    speed = 3
+  end
+  
+  local step = speed * math.floor(self.block / (8))
+  
+  -- The step must be a divider of the block-size! 
+  while self.block % step ~= 0 do
+    step = step - 1
+  end
+ 
+  -- Set step size. 
+  self:setStepSize(step)
+end
+
+
+--
+-- Set the step size of the game 
+--
+--@stepSize: The size of the step that the characters will move. 
+--
+function Gameplan:setStepSize(stepSize)
+  self.step = stepSize
+end
+
+
+--
+-- Get the size of a gameplan
+-- Returns an object with number of x-cells and y-xce
+--
+function Gameplan:getCellSize()
+    size = {x = self.xcells, y = self.ycells}
+    return size
 end
 
 
@@ -64,9 +112,11 @@ function Gameplan:loadMap(map)
     self.map = tabellines
     self.ycells = i
     self.xcells = string.len(tabellines[1])
-    -- File is saved to a table, return true. 
+    
+    -- File is saved to a table, return true 
     return true
 end
+
 
 -- 
 -- Function to add a player to a gameplan
@@ -343,7 +393,8 @@ function deadAnimation()
     elseif animationmode == 1 then
       for k,player in pairs(gameplan.players) do
         local currentpos = gameplan:relativeToAbsolutePosition(player.x, player.y)
-        screen:copyfrom(player.bg, nil, currentpos)
+        local player_dest_rectangle = gameplan:getDestRectangle(currentpos) 
+        screen:copyfrom(player.bg, nil, player_dest_rectangle)
       end
       animationmode = 0
     end
@@ -485,10 +536,10 @@ function Gameplan:possibleMovement(direction, new_pos)
         new_cell = self:xyToCell(target.x, target.y)
         new_cell2 = self:xyToCell(target.x + self.block -1, target.y)
     end
-
+    
     local new_cell_content = self:checkMap(new_cell)
     local new_cell2_content = self:checkMap(new_cell2)
-
+    
     if new_cell_content ~= "1" and new_cell2_content ~= "1" then
         return true
     else
@@ -509,16 +560,16 @@ function Gameplan:getPossibleMovements(position)
         pos.x = position.x
         pos.y = position.y
         if k == "left" then
-            pos.x = position.x - step
+            pos.x = position.x - self.step
             directions.left = self:possibleMovement(k, pos)
         elseif k == "right" then
-            pos.x = position.x + step
+            pos.x = position.x + self.step
             directions.right = self:possibleMovement(k, pos)
         elseif k == "up" then
-            pos.y = position.y - step
+            pos.y = position.y - self.step
             directions.up = self:possibleMovement(k, pos)
         elseif k == "down" then
-            pos.y = position.y + step
+            pos.y = position.y + self.step
             directions.down = self:possibleMovement(k, pos)
         end
     end
@@ -527,7 +578,7 @@ function Gameplan:getPossibleMovements(position)
 end
 
 --
--- Refreshes the gameplan one fram
+-- Refreshes the gameplan one frame
 --
 -- @return: A boolean value. True if collision with opponent. False if no collision
 --
@@ -548,11 +599,10 @@ function Gameplan:refresh()
         end
        
         local new_pos = player:movement(self)
-  
+        local oldPos = player:getPos()
         -- New cell is an aisle, OK!
         if self:possibleMovement(player.direction, new_pos) == true then
-            local oldPos = player:getPos()
-            
+
             -- If the player enters the "teleportation" aisle he is teleported to the other end
             -- This requires that the map "teleportation doors" are at the same cell height 
             if new_pos.x < 0 then
@@ -572,18 +622,27 @@ function Gameplan:refresh()
             -- This is purely SHIT CODE! And has to be rewritten.. The developers of this code are ashamed...
             if player.type == "pacman" then
               if player.direction == "right" then
-                  oldPos.x = oldPos.x + step * 3
+                  oldPos.x = oldPos.x + self.step*3
               elseif player.direction == "down" then
-                  oldPos.y = oldPos.y + step * 3
+                  oldPos.y = oldPos.y + self.step*3
               elseif player.direction == "left" then
-                  oldPos.x = oldPos.x + step 
+                  oldPos.x = oldPos.x + self.step 
               elseif player.direction == "up" then
-                  oldPos.y = oldPos.y + step
+                  oldPos.y = oldPos.y + self.step
               end
               if self:checkDotStatus(self:xyToCell(oldPos.x, oldPos.y)) == true then 
                 self:updateDotStatus(self:xyToCell(oldPos.x,oldPos.y))
               end       
             end
+        else
+          -- If pacman/ghost is approaching a wall, check 1px move. 
+          new_pos = player:movement(self, 1)
+          if self:possibleMovement(player.direction, new_pos) == true then          
+            player:setPos(new_pos.x, new_pos.y)
+            GameplanGraphics.updatePlayerGraphic(player)
+            self:repaint(player, oldPos)
+          end
+            
         end
         
         

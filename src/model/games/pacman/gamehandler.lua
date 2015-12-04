@@ -9,39 +9,76 @@ menuView = nil
 
 --
 -- Load a game of pacman 
---
-function Gamehandler.loadPacman(width, height)
-  ADLogger.trace("First step")
+-- @width: The desired width of the gameplan  
+-- @height The desired height of the gameplan
+-- @position: The desired position of the gameplan given in x and y coordinates. 
+function Gamehandler.loadPacman(width, height, position)
   -- Set the background for the view. 
   local pacmanbg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
-  ADLogger.trace("Second step")
   screen:copyfrom(pacmanbg, nil)
-  ADLogger.trace("Third step")
   pacmanbg:destroy()
-  ADLogger.trace("Fourth step")
-  -- Default values for width and height! 
-  if width == nil then 
-    width = 600
-  end
   
-  if height == nil then
-    height = 400
-  end
-  -- Display the map on a container
-  Gamehandler.container = gfx.new_surface(width, height)
-  Gamehandler.containerPos = {x = 300, y = 150}
+
     
   -- Initiate pacman 
-  Gamehandler.startPacman()
+  Gamehandler.startPacman(width, height, position)
   --ADLogger.trace(collectgarbage("count")*1024)
 end
+
+
+--
+-- A function to calculate size of a container that is divisible with respect to gameplan-map. 
+-- @width: Desired width
+-- @height: Desired height
+-- @xcells: Number of cells in x-direction
+-- @ycells: Number of cels in y-direction 
+-- Return: Object with x (width) and y (height). 
+function Gamehandler.calculateContainerSize( xcells, ycells )
+  local width = Gamehandler.containerWidth
+  local height = Gamehandler.containerHeight
+  
+  local multiplier = 10
+  if width/xcells < height/ycells then
+    -- The width is the limit
+    multiplier = math.floor(width/xcells)
+  elseif width/xcells > height/ycells then
+     -- The height is the limit
+     multiplier = math.floor(height/ycells)
+  else
+    -- The fractions is equal
+    multiplier = math.floor(width/xcells)
+  end
+  
+  -- Minimum size of gameplan.. 
+  if multiplier < 10 then
+    multiplier = 10
+  end
+  
+  -- The multiplier must be divisble by 4 (because of pacman step-length) 
+  while multiplier % 4 ~= 0 do
+    multiplier = multiplier - 1
+  end
+    
+  
+  -- Calculate return values 
+  local x = xcells*multiplier
+  local y = ycells*multiplier
+  local offsetX = (width - x) / 2
+  local offsetY = (height - y) / 2
+  
+  -- Save to return object 
+  size = {width = x, height = y, offsetWidth = offsetX, offsetHeight = offsetY}
+  
+  -- Return 
+  return size
+end
+
 
 --
 -- This function is a help function for the loadPacman
 -- Generates all needed objects, and calls the needed functions fto be able to play the game
 --
-function Gamehandler.startPacman()
-ADLogger.trace("Reached startPacman()")
+function Gamehandler.startPacman(width, height, position)
   -- Initiate gameplan 
   gameplan = Gameplan:new()
   
@@ -51,11 +88,50 @@ ADLogger.trace("Reached startPacman()")
     -- Return false if the map is not found. 
     return false
   end 
-  
+
   gameplan:resetLives()
   Score.resetScore()
-  ADLogger.trace("Reached midstart.")
-  gameplan:displayMap(Gamehandler.container, Gamehandler.containerPos)
+    
+  -- Default values for width, height and position! 
+  if width == nil then 
+    if Gamehandler.containerWidth == nil then 
+      Gamehandler.containerWidth = 600
+    end
+  else 
+    Gamehandler.containerWidth = width
+  end
+  
+  if height == nil then
+    if Gamehandler.containerHeight == nil then
+      Gamehandler.containerHeight = 400
+    end
+  else 
+    Gamehandler.containerHeight = height
+  end
+  
+  if position == nil then
+    if Gamehandler.containerPos == nil then
+      Gamehandler.containerPos = {x = 300, y = 150}
+    end
+  else
+    Gamehandler.containerPos = position
+  end
+  
+
+
+  -- Get the size of the gameplan 
+  local gameplanSize = gameplan:getCellSize()
+  -- Calculate a container size where to map will fit. 
+  local size = Gamehandler.calculateContainerSize( gameplanSize.x, gameplanSize.y )
+  local position = {x = Gamehandler.containerPos.x + size.offsetWidth, y = Gamehandler.containerPos.y + size.offsetHeight}
+  
+  -- Display the map on a container
+  Gamehandler.container = gfx.new_surface(size.width, size.height)
+  
+  gameplan:displayMap(Gamehandler.container, position)
+  
+  -- Set speed level: An integer from 1 to 3! 
+  gameplan:setSpeed(2)  
   
   -- Gamestatus ? 
   gameStatus = true
@@ -69,7 +145,7 @@ end
 -- False: Collision - deduct one life and check if game over
 --
 function Gamehandler.refresh()
---ADLogger.trace(collectgarbage("count")*1024)
+ADLogger.trace(collectgarbage("count")*1024)
   if gameStatus == true then
     gameStatus = gameplan:refresh()
     if gameStatus == false then      
@@ -87,7 +163,7 @@ function Gamehandler.refresh()
 end
 
 --
--- This function ends the game if all yelowdots have been eaten by pacman
+-- This function ends the game if all yellowdots have been eaten by pacman
 --     
 function Gamehandler.checkVictory()
     if noDotsRemaining == 0 then  
@@ -166,7 +242,7 @@ function Gamehandler.pacmanOnKey(key)
       elseif key == "ok" then
         menuView = nil
         if menuoption == 0 then
-          Gamehandler.startPacman()
+          Gamehandler.loadPacman()
         elseif menuoption == 1 then
           gameStatus = false
           if gameTimer then
@@ -182,7 +258,6 @@ end
 
 callback = function(timer)
     Gamehandler.refresh()
-    ADLogger.trace(gfx.get_memory_use())
     --ADLogger.trace(collectgarbage("count")*1024)
 end
 return Gamehandler

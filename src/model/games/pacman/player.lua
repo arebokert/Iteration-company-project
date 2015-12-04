@@ -6,9 +6,11 @@ Player = {}
 -- @param gameplan: 
 -- @return new_pos: Array with new position in XY coordinates
 --
-function Player:movement(gameplan)
-  -- Set step of each movement 
-  step = 5
+function Player:movement(gameplan, step)
+  if step == nil then
+    step = gameplan.step
+  end
+    
   -- Set new position, based on direction
   oldxpos = self.x
   oldypos = self.y
