@@ -1,5 +1,7 @@
 socket = require("socket")
 
+NH = {}
+
 HOST = "2015-1.pumi.ida.liu.se"
 PORT = 24069
 invalidInput = "Invalid input"
@@ -7,7 +9,7 @@ invalidInput = "Invalid input"
     -- Convert the request to the designated prefix which can be found at
     -- https://docs.google.com/document/d/1OL8HuOFtW8QYHnB0PQ8q-LNm7j-zkNURJ7ER75IaMkk/edit
     -- @param request - the request to be exectued.
-function convertRequestToPrefix(request)
+function NH.convertRequestToPrefix(request)
     if request == "QuickStart" then
         return "QS"
     elseif request == "SubmitScore" then
@@ -39,14 +41,14 @@ end
     -- @param JSONObject - the JSON object to be sent to the server.
     -- @param the request to be executed.
     -- If not connection is found the string "No connection" is returned.
-function sendJSON(JSONObject, request)
+function NH.sendJSON(JSONObject, request)
 
     local serverResponse = "No connection"
 
     if hasInternet then
         ADLogger.trace("Internet connection exists")
         -- Retrieves the abreviation for the operation
-        requestPrefix = convertRequestToPrefix(request)
+        requestPrefix = NH.convertRequestToPrefix(request)
         if requestPrefix == invalidInput then
             return invalidInput
         else
@@ -70,7 +72,9 @@ end
 
 
     -- Returns the MAC adress of the unit.
-function getMAC()
+function NH.getMAC()
     -- Will currently use a mock-up of the MAC.
     return 001
 end
+
+return NH

@@ -38,9 +38,11 @@ end
 --Attempts to count folder in a directory (using terminal commands).
 --Note: Discarded.
 function multiModel:countFolders(folder)
-    for folderName in io.popen([[ls -a "model/games/" /b /ad]]):lines() do 
-    foldertable[folderName] = "model/games/"..folderName.."/resources/" end
-    
+    --ADLogger.trace(root_path)
+    for folderName in io.popen([[ls -a "/mnt/nfs/src/model/games/" /b /ad]]):lines() do 
+    --foldertable[folderName] = "/mnt/nfs/src//model/games/"..folderName.."/resources/" end
+    ADLogger.trace("Found folder")
+    end
     return foldertable
     --Testing for Windows:
     --for folderName in io.popen([[dir "src/" /b /ad]]):lines() do print(folderName) end

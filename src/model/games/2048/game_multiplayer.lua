@@ -1,11 +1,12 @@
 Boxes_multiplayer = require("model.games.2048.box_multiplayer")
 Boxes_competitor = require("model.games.2048.box_competitor")
 InGameMenu = require("model.commongame.ingamemenuclass")
-NetworkHandler = require("model.network.NetworkHandler")
+nh = require("network.NetworkHandler")
 local JSON = assert(loadfile "model/highscore/JSON.lua")()
 Game_multiplayer = {current = 0}
 menuView = nil
 
+local call = false
 PLAYER_UPDATE = 1
 PLAYER_QUIT = 2
 PLAYER_SAME = 3
@@ -141,17 +142,17 @@ end
 --last modified Dec 03, 2015
 --------------------------------------------------------------------
 function Game_multiplayer.sendUpdatedBox(sendFlag)
-  local mac = NetworkHandler.getMac()
+  local mac = nh.getMAC()
   local id = 1
   local localSendFlag = sendFlag
   local request = JSON:encode({
-    flag = localSendFlag
+    flag = localSendFlag,
     mac = mac,
     playerid = id,
-    box = Boxes_multiplayer.box_table
+    box = Boxes_multiplayer.box_table,
     score = Boxes_multiplayer.current_score
     })
-  return NetworkHandler.sendJSON(JObj, "4096MultiPlayerSubmit")
+  return nh.sendJSON(JObj, "4096MultiPlayerSubmit")
 end
 
 
@@ -163,13 +164,13 @@ end
 --last modified Dec 03, 2015
 --------------------------------------------------------------------
 function Game_multiplayer.getCompetitorData()
-  local mac = NetworkHandler.getMac()
+  local mac = nh.getMAC()
   local id = 1
   local request = JSON:encode({
     mac = mac,
     playerid = id
     })
-  return NetworkHandler.sendJSON(JObj, "4096MultiPlayerRequest")
+  return nh.sendJSON(JObj, "4096MultiPlayerRequest")
   -- TODO: Add timeout function for server request.
 end
 
@@ -223,8 +224,14 @@ end
 
 -- Callback function used to get competitor data.
 callback_2048 = function (timer)
-  
+  ADLogger.trace(getMemoryUsage("ram"))
   -- Request opponent data from server.
+  ADLogger.trace(tostring(call))
+  if call then
+    return
+  end
+  call = true
+  ADLogger.trace(tostring(call))
   local competitor_Json = Game_multiplayer.getCompetitorData()
   -- TODO: Do not allow more than 1 request at the same time. Server 
   --  might be slow at times, but multible requests should not be sent.
@@ -236,6 +243,7 @@ callback_2048 = function (timer)
 
   -- Refresh competitor side of GUI.
   Boxes_competitor.refresh()
+  call = false
 end
 
 function Game_multiplayer.startMultiGame()

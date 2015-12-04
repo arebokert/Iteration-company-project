@@ -43,7 +43,7 @@ end
 -- are 32-bit. A limit of gfx.get_memory_limit() is enforced.
 -- *****************************************************************
 function gfx.get_memory_use()
-  return "HEJ HEJ"
+  return 1000000
 end
 
 ---
