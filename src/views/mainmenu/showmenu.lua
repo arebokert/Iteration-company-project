@@ -32,7 +32,7 @@ function showmenu.loadMainMenu()
         end,
         hover = function()
             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
-            screen:copyfrom(bg, nil)
+            appSurface:copyfrom(bg, nil)
             bg:destroy()
             showmenu.loadMenu("singlePlayer")
             ADLogger.trace("Calling show loadmenu")
@@ -48,7 +48,7 @@ function showmenu.loadMainMenu()
         end,
         hover = function()
             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
-            screen:copyfrom(bg, nil)
+            appSurface:copyfrom(bg, nil)
             bg:destroy()
             showmenu.loadMenu("highScore")
             return true
@@ -65,7 +65,7 @@ function showmenu.loadMainMenu()
         end,
         hover = function()
             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
-            screen:copyfrom(bg, nil)
+            appSurface:copyfrom(bg, nil)
             bg:destroy()
             showmenu.loadMenu("multiplayer")
             return true
@@ -83,7 +83,7 @@ function showmenu.loadMainMenu()
         end,
         hover = function()
             local bg = gfx.loadpng(datapath .. '/bg1280-720.png')
-            screen:copyfrom(bg, nil)
+            appSurface:copyfrom(bg, nil)
             bg:destroy()
             return true
         end,
@@ -93,15 +93,17 @@ function showmenu.loadMainMenu()
     --collectgarbage()
     _G.mainMenu = Menu:new()
     mainMenu:setOptions(options)
-    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
-    mainMenuContainer = gfx.new_surface(screen:get_width(), screen:get_height()/3.0)
-    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
+    ADLogger.trace("Usage end mainMenu before gfx: " .. getMemoryUsage("gfx"))
+    if not mainMenuContainer then
+      mainMenuContainer = gfx.new_surface(appSurface:get_width(), appSurface:get_height()/3.0)
+    end
+    ADLogger.trace("Usage end mainMenu before gfx: " .. getMemoryUsage("gfx"))
     mainMenuContainer:clear( {g=0, r=0, b=255, a=25} )
     ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     _G.current_menu = "mainMenu"
     ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
-    mainMenu.containerPos = {x = 0, y=screen:get_height()-mainMenuContainer:get_height()}
-    ADLogger.trace(mainMenuContainer:get_height())
+    mainMenu.containerPos = {x = 0, y=appSurface:get_height()-mainMenuContainer:get_height()}
+
     mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
     ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     _G.activeMenu = mainMenu
@@ -152,81 +154,15 @@ function showmenu.loadMenu(subMenuFlag)
       highScoreMenu.loadMenu()
       
   elseif(subMenuFlag == "singlePlayer") then
-      if ab then
-        ADLogger.trace("Destroy 1!!!!!!!")
-        ab:destroy()
-        ADLogger.trace("Destroyed")
-      end
-      ADLogger.trace("Memory usage after 1 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 1 garbage load 2 " .. gfx.get_memory_use())
-      
-      if highScoreSurface then
-        ADLogger.trace("Destroy 2!!!!!!!")
-        highScoreSurface:destroy()
-        ADLogger.trace("Destroyed")
-      end
-      ADLogger.trace("Memory usage after 2 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 2 garbage load 2 " .. gfx.get_memory_use())
-  
-      if multiMenu then
-        ADLogger.trace("Destroy 3!!!!!!!")
-        multiMenu:destroy()
-        ADLogger.trace("Destroyed")
-      end
-      ADLogger.trace("Memory usage after 3 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 3 garbage load 2 " .. gfx.get_memory_use()) 
-        
-      ADLogger.trace("Reached end of if - singleplayer")  
+      appSurface:destroyMenu()   
       singlePlayerMenu.loadMenu()
       
   elseif(subMenuFlag == "multiplayer") then
-      if ab then
-        ADLogger.trace("Destroy 1!!!!!!!")
-        ab:destroy()
-        ADLogger.trace("Destroyed")
-      end
-      ADLogger.trace("Memory usage after 1 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 1 garbage load 2 " .. gfx.get_memory_use())
-      
-      if highScoreSurface then
-        ADLogger.trace("Destroy 2!!!!!!!")
-        highScoreSurface:destroy()
-        ADLogger.trace("Destroyed")
-      end
-      ADLogger.trace("Memory usage after 2 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 2 garbage load 2 " .. gfx.get_memory_use())
-  
-      if multiMenu then
-        ADLogger.trace("Destroy 3!!!!!!!")
-        multiMenu:destroy()
-        ADLogger.trace("Destroyed")
-      end
-      ADLogger.trace("Memory usage after 3 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 3 garbage load 2 " .. gfx.get_memory_use()) 
-      
+      appSurface:destroyMenu() 
       multiPlayerMenu.loadMenu()
       
   elseif(subMenuFlag == "exit") then
-      if ab then
-        ADLogger.trace("Destroy 1!!!!!!!")
-        ab:destroy()
-      end
-      ADLogger.trace("Memory usage after 1 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 1 garbage load 2 " .. gfx.get_memory_use())
-      
-      if highScoreSurface then
-        ADLogger.trace("Destroy 2!!!!!!!")
-        highScoreSurface:destroy()
-      end
-      ADLogger.trace("Memory usage after 2 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 2 garbage load 2 " .. gfx.get_memory_use())
-  
-      if multiMenu then
-        ADLogger.trace("Destroy 3!!!!!!!")
-        multiMenu:destroy()
-      end
-      ADLogger.trace("Memory usage after 3 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 3 garbage load 2 " .. gfx.get_memory_use()) 
+      appSurface:destroyMenu() 
       --collectgarbage()
       --collectgarbage("stop")
   end

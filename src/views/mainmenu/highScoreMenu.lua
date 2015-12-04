@@ -11,17 +11,17 @@ highScoreMenu = {
 }
 
 --local text_size = 35
---local text_coords = {x =screen:get_width()*0.09, y= screen:get_height()*0.12}
+--local text_coords = {x =appSurface:get_width()*0.09, y= appSurface:get_height()*0.12}
 local font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 --local text_color = {r = 255, g = 255, b =255}
 --local highScore_text = sys.new_freetype(text_color, text_size, text_coords, font_path)
-local highScore_local_text_1 =sys.new_freetype({r=255,g=255,b=255},35,{x =screen:get_width()*0.09, y= screen:get_height()*0.12}, font_path)
-local highScore_local_text_2 =sys.new_freetype({r=255,g=255,b=255},20,{x = screen:get_width()*0.09, y= screen:get_height()*0.2}, font_path)
-local highScore_local_text_3 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.09, y= screen:get_height()*0.24 + 1 *30}, font_path)
-local highScore_local_text_4 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.09, y= screen:get_height()*0.24 + 2 *30}, font_path)
-local highScore_local_text_5 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.09, y= screen:get_height()*0.24 + 3 *30}, font_path)
-local highScore_local_text_6 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.09, y= screen:get_height()*0.24 + 4 *30}, font_path)
-local highScore_local_text_7 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.09, y= screen:get_height()*0.24 + 5 *30}, font_path)
+local highScore_local_text_1 =sys.new_freetype({r=255,g=255,b=255},35,{x =appSurface:get_width()*0.09, y= appSurface:get_height()*0.12}, font_path)
+local highScore_local_text_2 =sys.new_freetype({r=255,g=255,b=255},20,{x = appSurface:get_width()*0.09, y= appSurface:get_height()*0.2}, font_path)
+local highScore_local_text_3 =sys.new_freetype({r=255,g=255,b=255},20,{x= appSurface:get_width()*0.09, y= appSurface:get_height()*0.24 + 1 *30}, font_path)
+local highScore_local_text_4 =sys.new_freetype({r=255,g=255,b=255},20,{x= appSurface:get_width()*0.09, y= appSurface:get_height()*0.24 + 2 *30}, font_path)
+local highScore_local_text_5 =sys.new_freetype({r=255,g=255,b=255},20,{x= appSurface:get_width()*0.09, y= appSurface:get_height()*0.24 + 3 *30}, font_path)
+local highScore_local_text_6 =sys.new_freetype({r=255,g=255,b=255},20,{x= appSurface:get_width()*0.09, y= appSurface:get_height()*0.24 + 4 *30}, font_path)
+local highScore_local_text_7 =sys.new_freetype({r=255,g=255,b=255},20,{x= appSurface:get_width()*0.09, y= appSurface:get_height()*0.24 + 5 *30}, font_path)
 
 highScoreSurface = nil
 
@@ -33,13 +33,13 @@ local highScore_local_text = {
   highScore_local_text_7
 }
 
-local highScore_global_text_1 =sys.new_freetype({r=255,g=255,b=255},35,{x =screen:get_width()*0.715, y= screen:get_height()*0.12}, font_path)
-local highScore_global_text_2 =sys.new_freetype({r=255,g=255,b=255},20,{x = screen:get_width()*0.715, y= screen:get_height()*0.2}, font_path)
-local highScore_global_text_3 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.715, y= screen:get_height()*0.24 + 1 *30}, font_path)
-local highScore_global_text_4 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.715, y= screen:get_height()*0.24 + 2 *30}, font_path)
-local highScore_global_text_5 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.715, y= screen:get_height()*0.24 + 3 *30}, font_path)
-local highScore_global_text_6 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.715, y= screen:get_height()*0.24 + 4 *30}, font_path)
-local highScore_global_text_7 =sys.new_freetype({r=255,g=255,b=255},20,{x= screen:get_width()*0.715, y= screen:get_height()*0.24 + 5 *30}, font_path)
+local highScore_global_text_1 =sys.new_freetype({r=255,g=255,b=255},35,{x =appSurface:get_width()*0.715, y= appSurface:get_height()*0.12}, font_path)
+local highScore_global_text_2 =sys.new_freetype({r=255,g=255,b=255},20,{x = appSurface:get_width()*0.715, y= appSurface:get_height()*0.2}, font_path)
+local highScore_global_text_3 =sys.new_freetype({r=255,g=255,b=255},20,{x= appSurface:get_width()*0.715, y= appSurface:get_height()*0.24 + 1 *30}, font_path)
+local highScore_global_text_4 =sys.new_freetype({r=255,g=255,b=255},20,{x= appSurface:get_width()*0.715, y= appSurface:get_height()*0.24 + 2 *30}, font_path)
+local highScore_global_text_5 =sys.new_freetype({r=255,g=255,b=255},20,{x= appSurface:get_width()*0.715, y= appSurface:get_height()*0.24 + 3 *30}, font_path)
+local highScore_global_text_6 =sys.new_freetype({r=255,g=255,b=255},20,{x= appSurface:get_width()*0.715, y= appSurface:get_height()*0.24 + 4 *30}, font_path)
+local highScore_global_text_7 =sys.new_freetype({r=255,g=255,b=255},20,{x= appSurface:get_width()*0.715, y= appSurface:get_height()*0.24 + 5 *30}, font_path)
 
 local highScore_global_text = {
   highScore_global_text_3,
@@ -57,8 +57,8 @@ local highScore_global_text = {
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 function highScoreMenu.loadMenu()
-  highScoreSurface = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
-  highScoreSurface:clear({r=7, g = 19, b=77}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
+  highScoreSurface = gfx.new_surface(appSurface:get_width(),appSurface:get_height()*2.0/3.0)
+  highScoreSurface:clear({r=7, g = 19, b=77}, {x =appSurface:get_width()*0.05, y = appSurface:get_height()*0.05, w= appSurface:get_width() *0.9, h = appSurface:get_height()* 0.55 })
   local scores = {}
   if(highScoreMenu.current_game == 1) then
     scores = highScoreMenu.loadScores("pacman", nil)
@@ -69,7 +69,7 @@ function highScoreMenu.loadMenu()
   highScoreMenu.loadGlobalScore(scores)
   highScoreMenu.loadStatus()
   highScoreMenu.loadGameMenu()
-  screen:copyfrom(highScoreSurface, nil)
+  appSurface:copyfrom(highScoreSurface, nil)
   gfx.update()
   --for testing, prints bytes of memory used for each transaction
   --ADLogger.trace(collectgarbage("count")*1024)
@@ -99,7 +99,7 @@ function highScoreMenu.registerKey(key, state)
         else 
          highScoreMenu.current_game = 1
         end
-        highScoreMenu.loadMenu(highScoreMenu.current_screen)
+        highScoreMenu.loadMenu(highScoreMenu.current_appSurface)
       elseif key == "down" then
         current_menu = "mainMenu"
       elseif key =="exit" then
@@ -133,9 +133,9 @@ function highScoreMenu.loadLocalScore(scores)
   local color = {r=255, g=255, b=255}
   local margin = 1
   local local_score = nil
-  highScoreSurface:clear({r=7, g=19, b=77, a=240},{x =screen:get_width()*0.075, y= screen:get_height()*0.094, w= screen:get_width()*0.23,h=screen:get_height()*0.48})
-  highScoreMenu.drawBorder(screen:get_width()*0.075,screen:get_height()*0.094, screen:get_width()*0.23,screen:get_height()*0.48, margin, color)
-  --highScoreMenu.writeWord("Local HighScore",{r=255,g=255,b=255},24,{x =screen:get_width()*0.09, y= screen:get_height()*0.12},Screen)
+  highScoreSurface:clear({r=7, g=19, b=77, a=240},{x =appSurface:get_width()*0.075, y= appSurface:get_height()*0.094, w= appSurface:get_width()*0.23,h=appSurface:get_height()*0.48})
+  highScoreMenu.drawBorder(appSurface:get_width()*0.075,appSurface:get_height()*0.094, appSurface:get_width()*0.23,appSurface:get_height()*0.48, margin, color)
+  --highScoreMenu.writeWord("Local HighScore",{r=255,g=255,b=255},24,{x =appSurface:get_width()*0.09, y= appSurface:get_height()*0.12},Screen)
   highScore_local_text_1:draw_over_surface(highScoreSurface,"Local HighScore")
   highScore_local_text_2:draw_over_surface(highScoreSurface,"PlayerName" .. " : " .. "Score")
   for k,v in pairs(scores) do
@@ -172,15 +172,15 @@ end
 function highScoreMenu.loadGlobalScore(scores)
   local color = {r=255, g=255, b=255}
   local margin = 1
-  highScoreSurface:clear({r=7, g=19, b=77, a=240}, {x = screen:get_width()*0.7, y = screen:get_height()*0.094, w = screen:get_width()*0.23,h =screen:get_height()*0.48})
-  highScoreMenu.drawBorder(screen:get_width()*0.7,screen:get_height()*0.094, screen:get_width()*0.23,screen:get_height()*0.48, margin, color)
-  --highScoreMenu.writeWord("Global HighScore",{r=255,g=255,b=255},24,{x = screen:get_width()*0.715, y = screen:get_height()*0.12},Screen)
-  --highScoreMenu.writeWord("PlayerName" .. " : " .. "Score",{r=255,g=255,b=255},20,{x = screen:get_width()*0.715, y= screen:get_height()*0.2},Screen)
+  highScoreSurface:clear({r=7, g=19, b=77, a=240}, {x = appSurface:get_width()*0.7, y = appSurface:get_height()*0.094, w = appSurface:get_width()*0.23,h =appSurface:get_height()*0.48})
+  highScoreMenu.drawBorder(appSurface:get_width()*0.7,appSurface:get_height()*0.094, appSurface:get_width()*0.23,appSurface:get_height()*0.48, margin, color)
+  --highScoreMenu.writeWord("Global HighScore",{r=255,g=255,b=255},24,{x = appSurface:get_width()*0.715, y = appSurface:get_height()*0.12},Screen)
+  --highScoreMenu.writeWord("PlayerName" .. " : " .. "Score",{r=255,g=255,b=255},20,{x = appSurface:get_width()*0.715, y= appSurface:get_height()*0.2},Screen)
   highScore_global_text_1:draw_over_surface(highScoreSurface,"Global HighScore")
   highScore_global_text_2:draw_over_surface(highScoreSurface,"PlayerName" .. " : " .. "Score")
   for k,v in pairs(scores) do
     ADLogger.trace(k .. ". " .. v.playerName .. " " .. v.score)
-    --highScoreMenu.writeWord(v.playerName .. " : " .. v.score,{r=255,g=255,b=255},20,{x= screen:get_width()*0.715, y= screen:get_height()*0.24 + k *30},Screen)
+    --highScoreMenu.writeWord(v.playerName .. " : " .. v.score,{r=255,g=255,b=255},20,{x= appSurface:get_width()*0.715, y= appSurface:get_height()*0.24 + k *30},Screen)
     highScore_global_text[k]:draw_over_surface(highScoreSurface,v.playerName .. " : " .. v.score)
   end
 end
@@ -194,9 +194,9 @@ end
 function highScoreMenu.loadStatus()
   local color = {r=255, g=255, b=255}
   local margin = 1
-  highScoreSurface:clear({r=7, g=19, b=77, a=240},{x =screen:get_width()*0.335, y= screen:get_height()*0.272, w= screen:get_width()*0.33,h=screen:get_height()*0.3})
-  highScoreMenu.drawBorder(screen:get_width()*0.335, screen:get_height()*0.272,screen:get_width()*0.33, screen:get_height()*0.3, margin, color)
-  highScoreMenu.writeWord("Status",{r=255,g=255,b=255},24,{x = screen:get_width()*0.375, y = screen:get_height()*0.30})
+  highScoreSurface:clear({r=7, g=19, b=77, a=240},{x =appSurface:get_width()*0.335, y= appSurface:get_height()*0.272, w= appSurface:get_width()*0.33,h=appSurface:get_height()*0.3})
+  highScoreMenu.drawBorder(appSurface:get_width()*0.335, appSurface:get_height()*0.272,appSurface:get_width()*0.33, appSurface:get_height()*0.3, margin, color)
+  highScoreMenu.writeWord("Status",{r=255,g=255,b=255},24,{x = appSurface:get_width()*0.375, y = appSurface:get_height()*0.30})
 end
 
 --------------------------------------------------------------------
@@ -206,19 +206,19 @@ end
 --------------------------------------------------------------------
 function highScoreMenu.loadGameMenu()
   local bg = gfx.loadpng(datapath .. '/menu-arrow-left.png')
-  highScoreSurface:copyfrom(bg, nil, {x =screen:get_width()*0.32, y= screen:get_height()*0.13})
+  highScoreSurface:copyfrom(bg, nil, {x =appSurface:get_width()*0.32, y= appSurface:get_height()*0.13})
   bg:destroy()
   local bg = gfx.loadpng(datapath .. '/menu-arrow-right.png')
-  highScoreSurface:copyfrom(bg, nil, {x =screen:get_width()*0.65, y= screen:get_height()*0.13})
+  highScoreSurface:copyfrom(bg, nil, {x =appSurface:get_width()*0.65, y= appSurface:get_height()*0.13})
   bg:destroy()
   local color = {r=255, g=255, b=255}
   local margin = 1
-  highScoreSurface:clear({r=7, g=19, b=77, a=240},{x =screen:get_width()*0.38, y= screen:get_height()*0.11, w= screen:get_width()*0.25,h=screen:get_height()*0.10})
-  highScoreMenu.drawBorder(screen:get_width()*0.38, screen:get_height()*0.11,screen:get_width()*0.25, screen:get_height()*0.10, margin, color)
+  highScoreSurface:clear({r=7, g=19, b=77, a=240},{x =appSurface:get_width()*0.38, y= appSurface:get_height()*0.11, w= appSurface:get_width()*0.25,h=appSurface:get_height()*0.10})
+  highScoreMenu.drawBorder(appSurface:get_width()*0.38, appSurface:get_height()*0.11,appSurface:get_width()*0.25, appSurface:get_height()*0.10, margin, color)
   if(highScoreMenu.current_game == 1) then
-    highScoreMenu.writeWord("PACMAN",{r=255,g=255,b=255},36,{x = screen:get_width()*0.45, y = screen:get_height()*0.12})
+    highScoreMenu.writeWord("PACMAN",{r=255,g=255,b=255},36,{x = appSurface:get_width()*0.45, y = appSurface:get_height()*0.12})
   elseif(highScoreMenu.current_game == 2) then
-   highScoreMenu.writeWord("2048",{r=255,g=255,b=255},36,{x = screen:get_width()*0.45, y = screen:get_height()*0.12})
+   highScoreMenu.writeWord("2048",{r=255,g=255,b=255},36,{x = appSurface:get_width()*0.45, y = appSurface:get_height()*0.12})
   end
 end
 

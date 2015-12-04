@@ -13,18 +13,17 @@ local font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 --@param model - instantiates the model for the multiplayermenu
 function multiplayermenu.loadMenu()
   ADLogger.trace("Booting")
-  collectgarbage("stop")
+  --collectgarbage("stop")
   model = model:new()
   a = model:fetchPath()
-  multiMenu = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
-  multiMenu:clear({r=7, g = 19, b=77, a = 25}, {x =screen:get_width()/20, y = screen:get_height()/20, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
+  multiMenu = gfx.new_surface(appScreen:get_width(),appScreen:get_height()*2.0/3.0)
+  multiMenu:clear({r=7, g = 19, b=77}, {x =appScreen:get_width()/20, y = appScreen:get_height()/20, w= appScreen:get_width() *0.9, h = appScreen:get_height()* 0.56 })
   multiplayermenu.loadGameMenu()
   multiplayermenu.loadRecentResults(model:fetchResults())
   multiplayermenu.loadCurrentPlayers(0)
   
   --gfx.update()
-
-  screen:copyfrom(multiMenu, nil)
+  appScreen:copyfrom(multiMenu, nil)
   gfx.update()
   
   --collectgarbage("stop")
@@ -102,7 +101,7 @@ function multiplayermenu.loadRecentResults(recentRes)
   btnsec:draw_over_surface(multiMenu,score2)
   btnthird:draw_over_surface(multiMenu,score3)
   
-  screen:copyfrom(multiMenu, nil)
+  appScreen:copyfrom(multiMenu, nil)
   gfx.update()
 end
 
@@ -153,9 +152,9 @@ function multiplayermenu.reloadRecent()
   btntva:draw_over_surface(multiMenu,score2)
   btntre:draw_over_surface(multiMenu,score3)
   --collectgarbage("stop")
-  screen:copyfrom(multiMenu, nil)
+  appScreen:copyfrom(multiMenu, nil)
   
-  ADLogger.trace("Memory usage after multi-gameswitch load " .. collectgarbage("count"))
+  --ADLogger.trace("Memory usage after multi-gameswitch load " .. collectgarbage("count"))
   --ADLogger.trace("Memory usage after multi-gameswitch load 2 " .. gfx.get_memory_use()) 
   
   gfx:update()
@@ -188,11 +187,12 @@ end
 
 --starts the selected game
 function multiplayermenu.start()
-    
     activeView = a[tempActive]["name"]
     current_menu = "none"
-    local commence = assert(loadfile(root_path..a[tempActive]["start"]))
     multiMenu:destroy()
+    local commence = assert(loadfile(root_path..a[tempActive]["start"]))
+    ADLogger.trace(getMemoryUsage("ram"))
+    ADLogger.trace(getMemoryUsage("gfx"))
     commence()
 end
 
@@ -211,7 +211,7 @@ function multiplayermenu.loadGameMenu()
   multiMenu:copyfrom(bg, nil, {x=((multiMenu:get_width())/2)-150, y= multiMenu:get_height()/20+20})
   bg:destroy()
   
-  screen:copyfrom(multiMenu, nil)
+  appScreen:copyfrom(multiMenu, nil)
   gfx.update()
 end
 
@@ -229,6 +229,7 @@ function multiplayermenu:next()
     end
 
     tempActive = activeGame
+    ADLogger.trace(tempActive)
     --reloads the images with the new paths
     local bg = gfx.loadjpeg(a[prev]["path"] .. 'background-small.jpg')
     multiMenu:copyfrom(bg, nil, {x=((multiMenu:get_width())/2)-350, y= multiMenu:get_height()/20+37})
@@ -240,9 +241,12 @@ function multiplayermenu:next()
     multiMenu:copyfrom(bg, nil, {x=((multiMenu:get_width())/2)-150, y= multiMenu:get_height()/20+20})
     bg:destroy()
     
-    screen:copyfrom(multiMenu, nil)
+    appScreen:copyfrom(multiMenu, nil)
     --collectgarbage()
     multiplayermenu.reloadRecent()
+    
+    ADLogger.trace(getMemoryUsage("gfx"))
+    ADLogger.trace(getMemoryUsage("ram"))
     activeGame=next
 end
 
@@ -259,7 +263,7 @@ function multiplayermenu:prev()
       next = 1
     end
     tempActive = activeGame
-    
+     ADLogger.trace(tempActive)
     --reloads the images with the new paths
     local bg = gfx.loadjpeg(a[prev]["path"] .. 'background-small.jpg')
     multiMenu:copyfrom(bg, nil, {x=((multiMenu:get_width())/2)-350, y= multiMenu:get_height()/20+37})
@@ -272,8 +276,11 @@ function multiplayermenu:prev()
     bg:destroy()
     --collectgarbage()
     
-    screen:copyfrom(multiMenu, nil)
+    appScreen:copyfrom(multiMenu, nil)
     multiplayermenu.reloadRecent()
+    
+    ADLogger.trace(getMemoryUsage("gfx"))
+    ADLogger.trace(getMemoryUsage("ram"))
     activeGame=prev
 end
 

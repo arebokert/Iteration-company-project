@@ -3,7 +3,7 @@ smodel = require "model.singleplayermenu.singleplayermenu"
 singlePlayerMenu = {}
 
 local activeGame = nil
---local ab = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)'
+--local ab = gfx.new_surface(appSurface:get_width(),appSurface:get_height()*2.0/3.0)'
 ab = nil
 local a = {}
 local tempActive = nil
@@ -18,16 +18,16 @@ function singlePlayerMenu.loadMenu()
   ADLogger.trace("Finished reading file")
   a = smodel:fetchPath()
   ADLogger.trace("Finished fetching paths")
-  ab = gfx.new_surface(screen:get_width(),screen:get_height()*2.0/3.0)
-  ab:clear({r=7, g = 19, b=77}, {x =screen:get_width()/20, y = screen:get_height()/20, w= screen:get_width() *0.9, h = screen:get_height()* 0.56 })
+  ab = gfx.new_surface(appSurface:get_width(),appSurface:get_height()*2.0/3.0)
+  ab:clear({r=7, g = 19, b=77}, {x =appSurface:get_width()/20, y = appSurface:get_height()/20, w= appSurface:get_width() *0.9, h = appSurface:get_height()* 0.56 })
   ADLogger.trace("Created surface")
   
   singlePlayerMenu.loadGameMenu()
   --gfx.update()
-  --screen:clear({r=7, g = 19, b=77, a = 20}, {x =screen:get_width()*0.05, y = screen:get_height()*0.05, w= screen:get_width() *0.9, h = screen:get_height()* 0.55 })
+  --appSurface:clear({r=7, g = 19, b=77, a = 20}, {x =appSurface:get_width()*0.05, y = appSurface:get_height()*0.05, w= appSurface:get_width() *0.9, h = appSurface:get_height()* 0.55 })
   ADLogger.trace("Reached GFX-update singleplayer")
   gfx.update()
-  screen:copyfrom(ab, nil)
+  appSurface:copyfrom(ab, nil)
   gfx.update()
   --ADLogger.trace(collectgarbage("count")*1024)
   --collectgarbage()
@@ -49,10 +49,10 @@ end
 --@param margin - the margin (thickness) of the line
 --@param color - the color of the line
 function singlePlayerMenu.drawBorder(startX, startY, width, height, margin, color)
-  screen:clear(color, {x = startX, y = startY, w = width, h = margin})
-  screen:clear(color, {x = startX, y = startY, w = margin, h = height})
-  screen:clear(color, {x = startX, y = startY+height, w = width+margin, h = margin})
-  screen:clear(color, {x = startX+width, y = startY, w = margin, h = height+margin})
+  appSurface:clear(color, {x = startX, y = startY, w = width, h = margin})
+  appSurface:clear(color, {x = startX, y = startY, w = margin, h = height})
+  appSurface:clear(color, {x = startX, y = startY+height, w = width+margin, h = margin})
+  appSurface:clear(color, {x = startX+width, y = startY, w = margin, h = height+margin})
 end
 
 --starts the selected game
@@ -72,10 +72,15 @@ function singlePlayerMenu.start()
     
     --temporary, hard-coded gamestart
     ab:destroy()
+    appSurface:destroy()
+    activeView = a[tempActive]["name"]
+    current_menu = "none"
     if a[tempActive]["name"] == "pacman" then
       gamehandler.loadPacman()
-    elseif a[tempActive]["name"] == "2048" then
-      game.startGame()
+    elseif a[tempActive]["name"] == "multiplayer2048" then
+      activeView = "2048"
+      ADLogger.trace(tempActive)
+      game2048.startGame()
     else
       sys.stop()
     end
@@ -99,7 +104,7 @@ function singlePlayerMenu.loadGameMenu()
   ab:copyfrom(bg, nil, {x=((ab:get_width())/2)-150, y= ab:get_height()/20+60})
   bg:destroy()
   ADLogger.trace("third loaded")
-  screen:copyfrom(ab, nil)
+  appSurface:copyfrom(ab, nil)
 
   ADLogger.trace("Memory usage after single-gameswitch load " .. collectgarbage("count"))
   --ADLogger.trace("Memory usage after single-gameswitch load 2 " .. gfx.get_memory_use()) 
@@ -120,6 +125,7 @@ function singlePlayerMenu:next()
     end
 
     tempActive = activeGame
+    ADLogger.trace(tempActive)
     --reloads the images with the new paths
     local bg = gfx.loadjpeg(a[prev]["path"] .. 'background-small.jpg')
     ab:copyfrom(bg, nil, {x=((ab:get_width())/2)-350, y= ab:get_height()/20+77})
@@ -131,7 +137,7 @@ function singlePlayerMenu:next()
     ab:copyfrom(bg, nil, {x=((ab:get_width())/2)-150, y= ab:get_height()/20+60})
     bg:destroy()
     
-    screen:copyfrom(ab, nil)
+    appSurface:copyfrom(ab, nil)
     --collectgarbage()
     --singlePlayerMenu.reloadRecent()
     gfx.update()
@@ -151,7 +157,7 @@ function singlePlayerMenu:prev()
       next = 1
     end
     tempActive = activeGame
-    
+    ADLogger.trace(tempActive)
     --reloads the images with the new paths
     local bg = gfx.loadjpeg(a[prev]["path"] .. 'background-small.jpg')
     ab:copyfrom(bg, nil, {x=((ab:get_width())/2)-350, y= ab:get_height()/20+77})
@@ -164,7 +170,7 @@ function singlePlayerMenu:prev()
     bg:destroy()
     --collectgarbage()
     
-    screen:copyfrom(ab, nil)
+    appSurface:copyfrom(ab, nil)
     --singlePlayerMenu.reloadRecent()
     gfx.update()
     activeGame=prev

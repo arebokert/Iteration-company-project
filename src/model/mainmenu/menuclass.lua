@@ -47,11 +47,11 @@ function Menu:setActive(a)
         activeButton:destroy()
     end
 
-    -- Updating the new container on the screen
+    -- Updating the new container on the appSurface
     if self.containerPos then
-        screen:copyfrom(self.container, nil, self.containerPos)
+        appSurface:copyfrom(self.container, nil, self.containerPos)
     else
-        screen:copyfrom(self.container, nil)
+        appSurface:copyfrom(self.container, nil)
     end
     
     gfx.update()
@@ -94,7 +94,7 @@ function Menu:printSub(container)
     self.container = container
     width = container:get_width()
     height = container:get_height()
-    screen:copyfrom(container, nil, self.containerPos)
+    appSurface:copyfrom(container, nil, self.containerPos)
 end
 
 function Menu:print(container, startx, starty, m)
@@ -126,11 +126,11 @@ function Menu:print(container, startx, starty, m)
         --collectgarbage()
     end
 
-    -- Updating the new container on the screen
+    -- Updating the new container on the appSurface
     if self.containerPos then
-        screen:copyfrom(container, nil, self.containerPos)
+        appSurface:copyfrom(container, nil, self.containerPos)
     else
-        screen:copyfrom(container, nil )
+        appSurface:copyfrom(container, nil)
     end
 end
 

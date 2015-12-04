@@ -1,8 +1,16 @@
 Boxes_multiplayer = require("model.games.2048.box_multiplayer")
 Boxes_competitor = require("model.games.2048.box_competitor")
 InGameMenu = require("model.commongame.ingamemenuclass")
+nh = require("network.NetworkHandler")
+local JSON = assert(loadfile "model/highscore/JSON.lua")()
 Game_multiplayer = {current = 0}
 menuView = nil
+
+local call = false
+PLAYER_UPDATE = 1
+PLAYER_QUIT = 2
+PLAYER_SAME = 3
+PLAYER_LOSE = 4
 
 function Game_multiplayer.registerKey(key, state)
     if state == "down" then
@@ -126,26 +134,116 @@ function Game_multiplayer.loadComBoxes(temp_screen)
 end
 
 
-function Game_multiplayer.sendData()
-
+--------------------------------------------------------------------
+--function: sendUpdatedBox
+--@param sendFlag - Player status flag to be sent.
+--@return - Answer from server.
+--description: Will send data to server.
+--last modified Dec 03, 2015
+--------------------------------------------------------------------
+function Game_multiplayer.sendUpdatedBox(sendFlag)
+  local mac = nh.getMAC()
+  local id = 1
+  local localSendFlag = sendFlag
+  local request = JSON:encode({
+    flag = localSendFlag,
+    mac = mac,
+    playerid = id,
+    box = Boxes_multiplayer.box_table,
+    score = Boxes_multiplayer.current_score
+    })
+  return nh.sendJSON(JObj, "4096MultiPlayerSubmit")
 end
 
--- get the data from server and then change the data of box_table and current_score
-local current_flag = 0
-function Game_multiplayer.getData()
-   Boxes_competitor.box_table[current_flag] = 2
-   Boxes_competitor.current_score = 100
-   current_flag = current_flag +1
+
+--------------------------------------------------------------------
+--function: getCompetitorData
+--@return - Returns the opponents flag, box_table and score as a 
+--  JSON object.
+--description: Request opponent data from server.
+--last modified Dec 03, 2015
+--------------------------------------------------------------------
+function Game_multiplayer.getCompetitorData()
+  local mac = nh.getMAC()
+  local id = 1
+  local request = JSON:encode({
+    mac = mac,
+    playerid = id
+    })
+  return nh.sendJSON(JObj, "4096MultiPlayerRequest")
+  -- TODO: Add timeout function for server request.
 end
 
+
+--------------------------------------------------------------------
+--function: setCompetitorData
+--@param JSONObject - Data in JSON object form.
+--@return - True if game continues. False if game needs to end.
+--description: Update data for competitor with received data.
+--last modified Dec 03, 2015
+--------------------------------------------------------------------
+function Game_multiplayer.setCompetitorData(JSONObject)
+  jo = JSON:decode(JSONObject)
+
+  -- Check flag status
+  if jo.flag == PLAYER_UPDATE then
+    -- Update competitors box.
+    Boxes_competitor.box_table = jo.box
+    Boxes_competitor.current_score = jo.score
+  elseif jo.flag == PLAYER_QUIT then
+    -- Other player quit the game. End game.
+    return false
+
+  elseif jo.flag == PLAYER_SAME then
+    -- Other player won. Continue playing until full box.
+    Boxes_competitor.box_table = jo.box
+    Boxes_competitor.current_score = jo.score
+    -- TODO: Maybe change color of competitors box?
+    return true
+
+  elseif jo.flag == PLAYER_LOSE then
+    -- Other player lost. Continue playing until full box.
+    Boxes_competitor.box_table = jo.box
+    Boxes_competitor.current_score = jo.score
+    -- TODO: Maybe change color of competitors box?
+    return true
+  end
+  return true  
+end
+
+--------------------------------------------------------------------
+--function: queryTimer
+--@return - 
+--description: Starts a timer that calls function callback
+--last modified Dec 03, 2015
+--------------------------------------------------------------------
 function Game_multiplayer.queryTimer()
- GameTimer_2048 = sys.new_timer(1000, "callback_2048") -- starts a timer that calls function callback
+ GameTimer_2048 = sys.new_timer(1000, "callback_2048") 
  GameTimer_2048:start()
 end
 
+-- Callback function used to get competitor data.
 callback_2048 = function (timer)
-  Game_multiplayer.getData()
+  ADLogger.trace(getMemoryUsage("ram"))
+  -- Request opponent data from server.
+  ADLogger.trace(tostring(call))
+  if call then
+    return
+  end
+  call = true
+  ADLogger.trace(tostring(call))
+  local competitor_Json = Game_multiplayer.getCompetitorData()
+  -- TODO: Do not allow more than 1 request at the same time. Server 
+  --  might be slow at times, but multible requests should not be sent.
+
+  -- Use data recovered.
+  Game_multiplayer.setCompetitorData(competitor_Json)
+  -- TODO: Add if statement. If return value ofprevious call is 
+  --  false, game should end.
+
+  -- Refresh competitor side of GUI.
   Boxes_competitor.refresh()
+  call = false
 end
 
 function Game_multiplayer.startMultiGame()
