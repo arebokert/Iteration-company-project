@@ -14,23 +14,28 @@ TEST_SCHEMA = 'test.schema'
 
 
 # SUPPORT METHODS
+
 def dict_factory(cursor, row):
     d = {}
     if row is None:
         return d
-    for idx,col in enumerate(cursor.description):
+    for idx, col in enumerate(cursor.description):
         d[col[0]] = row[idx]
     return d
+
 
 def log(func_name, msg):
     print 'MSG:     DATABASE_HANDLER:    ' + func_name + '   :   ' + msg
     return True
 
+
 def log_error(func_name, msg):
     print 'ERROR:   DATABASE_HANDLER:    ' + func_name + '   :   ' + msg
     return True
 
+
 # DATABASE HANDLING
+
 def init_db():
     with app.app_context():
         db = get_db()
@@ -43,6 +48,7 @@ def init_db():
             db.commit()
     return True
 
+
 def get_db():
     with app.app_context():
         db = None
@@ -54,8 +60,10 @@ def get_db():
             db = g.db = connect_db()
     return db
 
+
 def connect_db():
     return sqlite3.connect(DATABASE)
+
 
 def close_db():
     """Close database."""
@@ -64,18 +72,21 @@ def close_db():
         db.close()
     return None
 
+
 def get_db_cursor():
     return get_db().cursor()
+
 
 def persist_db():
     get_db().commit()
     return None
 
+
 # USER HANDLING
 # DATABASE TABLE user_list
+
 def add_user(mac, playerid):
     """Add new user to database.
-
     Args:
         mac: MAC address of player. To differentiate between units.
         playerid: User specific ID to seperate player from other players
@@ -94,8 +105,9 @@ def add_user(mac, playerid):
     c = get_db()
     try:
         c.execute("INSERT INTO user_list (mac"
-            ", user_id) VALUES (?,?)"
-            , (mac, playerid,))
+                  ", user_id)"
+                  " VALUES (?,?)"
+                  , (mac, playerid,))
 
         gid = c.cursor().lastrowid
         c.commit()
@@ -106,41 +118,8 @@ def add_user(mac, playerid):
         return -1
     return gid
 
-def remove_user(mac, playerid):
-    #LowPrio
-    #TODO(azuja469): Implement SQL statements to remove all rows with
-    # Foreign keys that are connected to the user being removed.
-    """Remove user from database.
-
-    Args:
-        mac: MAC address of player. To differentiate between units.
-        playerid: User specific ID to seperate player from other players
-            using the same unit.
-
-    Returns:
-        Will return a boolean to describe if the user could be removed from
-        the database or not.
-
-    Raises:
-        Will NOT raise an error.
-
-    History (date user: text):
-        2015-12-03
-    """
-    #TODO: ensure that azuja469 won't crash gitlab with this code
-
-    c = get_db()
-    try:
-        c.execute("DELETE FROM user_list WHERE mac <> ? AND playerid <> ?", 'mac', 'playerid')
-        c.commit()
-    except:
-        get_db().rollback()
-        raise
-    return True
-
 def get_user(mac, playerid):
     """Get user information from database.
-
     Args:
         mac: MAC address of player. To differentiate between units.
         playerid: Local id of player.
@@ -149,9 +128,9 @@ def get_user(mac, playerid):
         If the user is not found, the integer value -1 will be returned.
     Raises:
         Will NOT raise an error.
-
     History (date user: text):
         2015-12-03 bjowi227: Corrected return variable.
+        2015-12-04 bjowi227: Updated exception handling.
     """
 
     cursor = get_db_cursor()
@@ -162,11 +141,12 @@ def get_user(mac, playerid):
                        " AND user_id = ?", (mac, playerid,))
         cfo = cursor.fetchone()
     except sqlite3.Error as e:
-        print 'Database error: ' + e.args[0]
+        log_error('get_user', e.args[0])
         cfo = None
     if cfo is None:
         return -1
     return cfo[0]
+
 
 def get_unit_user(global_id):
     """Get user information from database.
@@ -186,6 +166,7 @@ def get_unit_user(global_id):
 
     History (date user: text):
         2015-12-03 bjowi227: Created first version of function.
+        2015-12-04 bjowi227: Updated exception handling.
     """
 
     cursor = get_db_cursor()
@@ -193,10 +174,11 @@ def get_unit_user(global_id):
         cursor.execute("SELECT mac"
                        ", user_id"
                        " FROM user_list"
-                       " WHERE global_id = ?", (global_id,))
+                       " WHERE global_id = ?"
+                       , (global_id,))
         cfo = cursor.fetchone()
     except sqlite3.Error as e:
-        print 'Database error: ' + e.args[0]
+        log_error('get_unit_user', e.args[0])
         cfo = None
     if cfo is None:
         return {'mac': None
@@ -205,42 +187,39 @@ def get_unit_user(global_id):
 
 # GAME HANDLING
 # DATABASE TABLE games
+
 def add_game(gamename):
     """ Add a new game to the games table.
-
     Args:
-        gamename: Name of game that is to be added
-
+        gamename: Name of game that is to be added.
     Returns:
         Boolean value true if game could be added, otherwise false.
-
     Raises:
-
+        Nothing.
     History (date user: text):
-        2015-12-03
+        2015-12-04 bjowi227: Updated comments and exception handling.
     """
     c = get_db()
     try:
         c.execute("INSERT INTO games (gamename)"
-            " VALUES (?)"
-            , (gamename,))
+                  " VALUES (?)"
+                  , (gamename,))
         c.commit()
-    except:
+    except sqlite3.Error as e:
         get_db().rollback()
+        log_error('add_game', e.args[0])
         return False
     return True
 
+
 def game_exists(gamename):
     """ Check if a game exists in the database.
-
     Args:
         gamename: Name of game that is explored.
-
     Returns:
         Boolean value true if game exists, otherwise false.
-
     Raises:
-
+        Nothing.
     History (date user: text):
         2015-12-04 bjowi227: Changed return statement to be faster.
     """
@@ -251,7 +230,7 @@ def game_exists(gamename):
                        " WHERE gamename = ?", (gamename,))
         cfo = cursor.fetchone()
     except sqlite3.Error as e:
-        print 'Database error: ' + e.args[0]
+        log_error('game_exists', e.args[0])
         cfo = None
     #if cfo is None:
     #    return False
@@ -261,23 +240,22 @@ def game_exists(gamename):
 # MATCH HANDLING
 # DATABASE TABLE matches
 # DATABASE TABLE round
+
 def get_match_history(gamename, mac, playerid, number_of_matches):
     """ Get history of the most recent matches for a player.
-
     Args:
         gamename: Specific game that the action is related to.
         mac: MAC-address for the player.
         playerid: An integer that specifies id for player of a set-top-box.
         number_of_matches: An integer that describes the number of matches
             that is desired to be retreived, e.g. 10 or 3.
-
     Returns:
         A dict containing the top X match_id.
-
     Raises:
-
+        Nothing.
     History (date user: text):
         2015-12-03 bjowi227: Updated SQL query and return part.
+        2015-12-04 bjowi227: Updated exception handling.
     """
 
     if isinstance( number_of_matches, int ):
@@ -304,7 +282,7 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
                        " LIMIT ?", (gamename, global_id, nom,))
         cfa = cursor.fetchall()
     except sqlite3.Error as e:
-        print 'Database error: ' + e.args[0]
+        log_error('get_match_history', e.args[0])
         cfa = None
     if cfa is None:
         return {'match_id':None
@@ -315,6 +293,7 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
         result.append(dict_factory(cursor, row))
     return result
 
+
 def create_match(gamename, mac, playerid):
     """ create new row in matches and add player one 
 
@@ -323,11 +302,12 @@ def create_match(gamename, mac, playerid):
         mac: MAC-address for the player.
         playerid: An integer that specifies id for player of a set-top-box.
 
-    Returns: id of the match as an integer
-
+    Returns:
+        Id of the match as an integer.
+        Integer value -1 if player could not be inserted.
 
     Raises:
-        Generic python error.
+        Nothing.
 
     History (date user: text):
         2015-12-03 bjowi227: Changed name to create_match. Fixed INSERT query.
@@ -345,17 +325,18 @@ def create_match(gamename, mac, playerid):
             ", player_one_id)"
             " VALUES (?,?)"
             , (gamename, global_id,))
-        lastid = c.cursor().lastrowid
+        last_id = c.cursor().lastrowid
         c.commit()
-    except:
+    except sqlite3.Error as e:
         get_db().rollback()
-        raise
+        log_error('create_match', e.args[0])
+        return -1
 
-    return lastid
+    return last_id
 
-def insert_player_two(gamename, mac, playerid, match_id,):
 
-   """ insert player two into an exisitng match 
+def insert_player_two(gamename, mac, playerid, match_id):
+    """ insert player two into an exisitng match
 
     Args:
         gamename: Specific game that the action is related to.
@@ -363,7 +344,9 @@ def insert_player_two(gamename, mac, playerid, match_id,):
         playerid: An integer that specifies id for player of a set-top-box.
         match_id: An integer that specifies id for the match that the player shall be inserted in
 
-    Returns: id of the match as an integer
+    Returns:
+        Id of the match as an integer.
+        Integer value -1 if player could not be inserted.
 
 
     Raises:
@@ -371,19 +354,20 @@ def insert_player_two(gamename, mac, playerid, match_id,):
     History (date user: text):
         2015-12-03 bjowi227: Added commit.
     """
-   gid = get_user(mac, playerid)
-   c = get_db()
-   try:
-       c.execute(
-           "UPDATE matches "
-           " SET player_two_id = ?"
-           " WHERE match_id = ?"
-           , (gid, match_id,))
-       c.commit()
-   except:
-       get_db().rollback()
-       raise
-   return match_id
+    gid = get_user(mac, playerid)
+    c = get_db()
+    try:
+        c.execute("UPDATE matches "
+            " SET player_two_id = ?"
+            " WHERE match_id = ?"
+            , (gid, match_id,))
+        c.commit()
+    except sqlite3.Error as e:
+        get_db().rollback()
+        log_error('insert_player_two', e.args[0])
+        return -1
+    return match_id
+
 
 def add_match(gamename, mac, playerid):
     """ Create new match with first player or add a new player to a currently
@@ -395,7 +379,8 @@ def add_match(gamename, mac, playerid):
         playerid: An integer that specifies id for player of a set-top-box.
 
     Returns:
-
+        Integer value -1 if match could not be added.
+        Otherwise match_id as integer value.
 
     Raises:
 
@@ -411,9 +396,9 @@ def add_match(gamename, mac, playerid):
                        " WHERE player_two_id is null")
         
         cfo = cursor.fetchone()
-    except:
-        get_db().rollback()
-        raise
+    except sqlite3.Error as e:
+        log_error('add_match', e.args[0])
+        return -1
 
     # If cfo is None, a new row will have to be created to keep the new match.
     if cfo is None:
@@ -421,46 +406,55 @@ def add_match(gamename, mac, playerid):
     else:
         return insert_player_two(gamename, mac, playerid, cfo.match_id)
 
-def check_if_player_one(playerid, mac, match_id, gamename): 
-    """
+
+def get_user_in_match(match_id, player_no):
+    """ Gets the global_id of player one or two of a match.
     Args:
-        gamename: Specific game that the action is related to.
-        mac: MAC-address for the player.
-        playerid: An integer that specifies id for player of a set-top-box.
+        match_id: Specified match being searched in.
+        player_no: Specify player one or player two.
 
     Returns:
-
+        Integer value -1 if input is incorrect.
+        Integer value -2 if match did not exist.
+        Integer value 0 if no player was specified in selected slot.
 
     Raises:
-
+        Nothing.
     History (date user: text):
-        2015-12-04 bjowi227: Changed return statements.
+        2015-12-04 bjowi227: Replaced check_if_player_one with this function.
     """
-    global_id = get_user(mac, playerid)
-    if global_id == -1:
-        global_id = add_user(mac, playerid)
-
     cursor = get_db_cursor()
     try:
-        cursor.execute("SELECT matches.player_one_id, matches.player_two_id, round.player_one_score"
-                       ", round.player_two_score, round.match_id, round.game_number"
-                       " FROM matches"
-                       " INNER JOIN round"
-                       " ON round.match_id=matches.match_id"
-                       " WHERE matches.gamename = ?"
-                       " AND matches.match_id = ?"
-                       , (gamename, match_id,))
-        cfa = cursor.fetchall()
+        if player_no == 1:
+            cursor.execute('SELECT player_one_id'
+                           ' FROM matches'
+                           ' WHERE match_id = ?'
+                           , (match_id,))
+            cfo = cursor.fetchone()
+            log('get_matchplayer', 'Query result: ' + cfo)
+        elif player_no == 2:
+            cursor.execute('SELECT player_two_id'
+                           ' FROM matches'
+                           ' WHERE match_id = ?'
+                           , (match_id,))
+            cfo = cursor.fetchone()
+            log('get_matchplayer', 'Query result: ' + cfo)
+        else:
+        log_error('get_matchplayer', 'Incorrect input of player_no. Must be integer 1 or 2.')
+        return -1
     except sqlite3.Error as e:
-        print 'Database error: ' + e.args[0]
-        cfa = None
+        log_error('get_matchplayer', e.args[0])
+        cfo = None
 
-    if cfa[0].player_one_id == global_id:
-        return True
+    if cfo is None:
+        return -2
+    elif cfo[0] is None:
+        return 0
     else:
-        return False
+        return cfo[0]
 
-def get_matchplayer_by_global(match_id, global_id):
+
+def get_matchplayer(match_id, global_id):
     """ Get the value telling if the player is player one or two in a match.
     Args:
         match_id: Specified match being searched in.
@@ -484,7 +478,7 @@ def get_matchplayer_by_global(match_id, global_id):
                        " WHERE match_id = ?", (match_id,))
         cfo = cursor.fetchone()
     except sqlite3.Error as e:
-        print 'Database error: ' + e.args[0]
+        log_error('get_matchplayer', e.args[0])
         cfo = None
     if cfo is None:
         return -1
@@ -494,6 +488,7 @@ def get_matchplayer_by_global(match_id, global_id):
         return 2
     else:
         return 0
+
 
 def get_matchplayer_by_unit(match_id, mac, playerid):
     """ Get the value telling if the player is player one or two in a match.
@@ -516,7 +511,8 @@ def get_matchplayer_by_unit(match_id, mac, playerid):
     if global_id == -1:
         return -1
     else:
-        return get_matchplayer_by_global(match_id, global_id)
+        return get_matchplayer(match_id, global_id)
+
 
 def update_round_score(score, match_id, game_number, field_name):
     """ Update score in specified tuple.
@@ -532,12 +528,12 @@ def update_round_score(score, match_id, game_number, field_name):
         False if the field_name parameter was not correct.
 
     Raises:
-        Generic python exception if there is database error.
+        Nothing.
 
     History (date user: text):
         2015-12-04 bjowi227: Created.
     """
-    #Check if field_name is correct. If not, return false.
+    # Check if field_name is correct. If not, return false.
     accepted_types = ['player_one_score'
                       , 'player_two_score']
     if field_name not in accepted_types:
@@ -550,12 +546,13 @@ def update_round_score(score, match_id, game_number, field_name):
             " WHERE match_id = ?"
             " AND game_number = ?"
             , (score, match_id, game_number,))
-    except sqlite3.Error, e:
-        print 'Database error: ' + e.args[0]
+    except sqlite3.Error as e:
         get_db().rollback()
-        raise
+        log_error('update_round_score', e.args[0])
+        return False
 
     return True
+
 
 def insert_round_score(score, match_id, game_number, field_name):
     """ Insert score into specified database tuple.
@@ -571,13 +568,13 @@ def insert_round_score(score, match_id, game_number, field_name):
         False if the field_name parameter was not correct.
 
     Raises:
-        Generic python exception if there is database error.
+        Nothing
 
     History (date user: text):
         2015-12-04 bjowi227: Changed comments and SQL query.
     """
 
-    #Check if field_name is correct. If not, return false.
+    # Check if field_name is correct. If not, return false.
     accepted_types = ['player_one_score'
                       , 'player_two_score']
     if field_name not in accepted_types:
@@ -588,15 +585,16 @@ def insert_round_score(score, match_id, game_number, field_name):
         c.execute(
             "INSERT INTO round (match_id"
             ", game_number"
-            ", '+ field_name +')"
+            ", " + field_name + ")"
             " VALUES (?,?,?)"
-            , (match_id, game_number ,score,))
-    except sqlite3.Error, e:
-        print 'Database error: ' + e.args[0]
+            , (match_id, game_number, score,))
+    except sqlite3.Error as e:
         get_db().rollback()
-        raise
+        log_error('insert_round_score', e.args[0])
+        return False
 
     return True
+
 
 def add_round_score(gamename, match_id, mac, playerid, score):
     """ Add game score to a round.
@@ -648,13 +646,13 @@ def add_round_score(gamename, match_id, mac, playerid, score):
         log_error('add_round_score', 'Match was not found. {match_id=' + match_id + '}')
         return False
 
-    #Check the latest round player by the players.
+    # Check the latest round player by the players.
     p1r = -1
     p2r = -1
     for row in cfa:
-        if row[2] != None:
+        if row[2] is not None:
             p1r = row[5]
-        if row[3] != None:
+        if row[3] is not None:
             p2r = row[5]
 
     if cfa[0][0] == global_id:
@@ -676,7 +674,8 @@ def add_round_score(gamename, match_id, mac, playerid, score):
         log('add_round_score', 'Updating round with player score.')
         log('add_round_score', '{score=' + score + ', match_id=' + match_id)
         log('add_round_score', ', rn=' + rn + 'field_name=' + field_name + '}')
-        return update_round_scores(score, match_id, rn, field_name)
+        return update_round_score(score, match_id, rn, field_name)
+
 
 def get_number_of_rounds(gamename, match_id):
     """ Get the number of completed rounds of a match.
@@ -705,12 +704,13 @@ def get_number_of_rounds(gamename, match_id):
                        " AND player_two_score not null"
                        , (match_id,))
         cfo = cursor.fetchone()
-    except:
-        get_db().rollback()
-        raise
-    if cfo is None
+    except sqlite3.Error as e:
+        log_error('get_number_of_rounds', e.args[0])
+        cfo = None
+    if cfo is None:
         return 0
     return cfo[0]
+
 
 def get_match_score(gamename, match):
     """ Get the scores of all games of a match.
@@ -733,14 +733,14 @@ def get_match_score(gamename, match):
     try:
         #TODO: Implement check of gamename aswell, will require JOIN
         cursor.execute("SELECT game_number"
-                        ", player_one_score"
-                        ", player_two_score"
-                        " FROM round"
-                        " WHERE match_id = ?"
-                        , (match,))
+                       ", player_one_score"
+                       ", player_two_score"
+                       " FROM round"
+                       " WHERE match_id = ?"
+                       , (match,))
         cfa = cursor.fetchall()
     except sqlite3.Error as e:
-        print 'Database error: ' + e.args[0]
+        log_error('get_match_score', e.args[0])
         cfa = None
     if cfa is None:
         return {'game_number': None
@@ -750,6 +750,7 @@ def get_match_score(gamename, match):
     for row in cfa:
         result.append(dict_factory(cursor, row))
     return result
+
 
 def get_match_total_score(gamename, match_id):
     """ Get the sum of scores for each player in a match.
@@ -770,20 +771,56 @@ def get_match_total_score(gamename, match_id):
     cursor = get_db_cursor()
     try:    
         cursor.execute("SELECT Sum(player_one_score)"
-                        " , Sum(player_two_score)"
-                        " FROM round"
-                        " WHERE match_id = ?"
-                        , (match_id,))
+                       ", Sum(player_two_score)"
+                       " FROM round"
+                       " WHERE match_id = ?"
+                       , (match_id,))
         cfo = cursor.fetchone()
     except sqlite3.Error as e:
-        print 'Database error: ' + e.args[0]
+        log_error('get_match_total_score', e.args[0])
         cfo = None
     if cfo is None:
-        return {'plauer_one_score': None
+        return {'player_one_score': None
                 , 'player_two_score': None}
     return dict_factory(cursor, cfo)
 
-def set_winner(gamename, match_id, mac, playerid):
+
+def set_winner(gamename, match_id, global_id):
+    """ Set the winner of a specified match.
+
+    This function does not actually calculate if the selection of winner is
+    correct or not.
+
+    Args:
+        gamename: Specific game that the action is related to.
+        match: Integer that is describes the ID of a match.
+        global_id: global_id of player that is to be set to winner.
+
+    Returns:
+        Boolean value True if table was updated, otherwise False.
+
+    Raises:
+
+    History (date user: text):
+        2015-12-04 bjowi227: Implemented
+    """
+    c = get_db()
+    try:
+        c.execute(
+            "UPDATE matches "
+            " SET winner = ?"
+            " WHERE match_id = ?"
+            " AND gamename = ?"
+            , (global_id, match_id, gamename,))
+    except sqlite3.Error as e:
+        get_db().rollback()
+        log_error('set_winner', e.args[0])
+        raise
+
+    return True
+
+
+def set_winner_by_unit(gamename, match_id, mac, playerid):
     """ Set the winner of a specified match.
 
     This function does not actually calculate if the selection of winner is
@@ -802,27 +839,15 @@ def set_winner(gamename, match_id, mac, playerid):
 
     History (date user: text):
         2015-12-03 bjowi227: Fixed SQL query to check the correct tuples.
+        2015-12-04 bjowi227: Changed name and separated query to another function.
         
     """
 
     global_id = get_user(mac, playerid)
     if global_id == -1:
         return False
+    return set_winner(gamename, match_id, global_id)
 
-    c = get_db()
-    try:
-        c.execute(
-            "UPDATE matches "
-            " SET winner = ?"
-            " WHERE match_id = ?"
-            " AND gamename = ?"
-            , (global_id, match_id, gamename,))
-    except sqlite3.Error as e:
-        get_db().rollback()
-        print 'Database error: ' + e.args[0]
-        raise
-
-    return True
 
 def get_winner(gamename, match_id):
     """ Get the winner of a specified match.
@@ -850,12 +875,14 @@ def get_winner(gamename, match_id):
             " AND gamename = ?"
             , (match_id, gamename,))
         cfo = cursor.fetchone()
-    except:
-        print 'Database error: ' + e.args[0]
+    except sqlite3.Error as e:
+        get_db().rollback()
+        log_error('get_winner', e.args[0])
         cfo = None
     if cfo is None:
         return {'winner': None}
     return cfo[0]
+
 
 def quit_match(gamename, match_id, mac, playerid):
     """ Delete match with corresponding rounds.
@@ -872,90 +899,57 @@ def quit_match(gamename, match_id, mac, playerid):
     Raises:
 
     History (date user: text):
-        2015-12-04 bjowi227:
+        2015-12-04 bjowi227: Created new support functions to shorten code.
     """
+    # Get if the player who quit is player one or two of match.
     player_quitting = get_matchplayer_by_unit(match_id, mac, playerid)
-    player_one_quitting = check_if_player_one(playerid, mac, match_id, gamename)
 
-    if player_one_quitting == True:
-        cursor = get_db_cursor()
-        try:
-            cursor.execute("SELECT player_two_id"
-                       " FROM matches"
-                       " WHERE match_id = ?"
-                       " AND gamename = ?", (match_id, gamename,))
-            cfo1 = cursor.fetchone()
-        except sqlite3.Error as e:
-            print 'Database error: ' + e.args[0]
-            cfo1 = None
-        if cfo1 is None:
-            return -1
-        return cfo1[0] #Is this one needed??
-
-        cursor = get_db_cursor()
-        try:
-            cursor.execute("SELECT mac, user_id"
-                       " FROM user_list"
-                       " WHERE global_id = ?", (cfo1[0],))
-            cfo2 = cursor.fetchone()
-        except sqlite3.Error as e:
-            print 'Database error: ' + e.args[0]
-            cfo2 = None
-        if cfo2 is None:
-            return -1
-        return cfo[0] #Is this one needed??
-
-        return set_winner(gamename, match_id, cfo2[0], cfo2[1])
+    if player_quitting == -1:
+        log_error('quit_match', 'Match not found.')
+        return False
+    elif player_quitting == 0:
+        log_error('quit_match', 'Player not found in match.')
+        return False
+    elif player_quitting == 1:
+        # Quitting player was player one. Player two will be winner.
+        winning_player = get_user_in_match(match_id, 2)
+    elif player_quitting == 2:
+        # Quitting player was player two. Player one will be winner.
+        winning_player = get_user_in_match(match_id, 1)
     else:
-        cursor = get_db_cursor()
-        try:
-            cursor.execute("SELECT player_one_id"
-                       " FROM matches"
-                       " WHERE match_id = ?"
-                       " AND gamename = ?", (match_id, gamename,))
-            cfo1 = cursor.fetchone()
-        except sqlite3.Error as e:
-            print 'Database error: ' + e.args[0]
-            cfo1 = None
-        if cfo1 is None:
-            return -1
-        return cfo1[0] #Is this one needed??
+        log_error('quit_match', 'Something went wrong.')
+        return False
 
-        cursor = get_db_cursor()
-        try:
-            cursor.execute("SELECT mac, user_id"
-                       " FROM user_list"
-                       " WHERE global_id = ?", (cfo1[0],))
-            cfo2 = cursor.fetchone()
-        except sqlite3.Error as e:
-            print 'Database error: ' + e.args[0]
-            cfo2 = None
-        if cfo2 is None:
-            return -1
-        return cfo[0] #Is this one needed??
+    if winning_player == 0:
+        #There was no opponent; the player had not been matched to anyone.
+        #TODO: Add function to delete the match and any round that might have been played.
+        return False
+    elif winning_player > 0:
+        return set_winner(gamename, match_id, winning_player)
+    else:
+        # Other error messages should have been checked for earlier.
+        log_error('quit_match', 'Something went wrong.')
+        return False
 
-        return set_winner(gamename, match_id, cfo2[0], cfo2[1])
 
 # HIGHSCORE HANDLING
 # DATABASE TABLE high_scores
+
 def add_highscore(gamename, mac, playerid, score):
     """ Add highscore for specified player.
-
     Args:
         gamename: Specific game that the action is related to.
         mac: MAC-address for the player.
         playerid: An integer that specifies id for player of a set-top-box.
         score: Score to be saved.
-
     Returns:
         An integer value depending on the score;
         -1: Error
         1: Nothing out of the ordinary
         2: Top 10 local
         3: Top 10 global
-
     Raises:
-
+        Nothing.
     History (date user: text):
         2015-12-04 bjowi227: Approved.
     """
@@ -970,17 +964,18 @@ def add_highscore(gamename, mac, playerid, score):
     c = get_db()
     try:
         c.execute("INSERT INTO high_scores (gamename"
-            ", player_id"
-            ", score)"
-            " VALUES (?,?,?)"
-            , (gamename, global_id, score,))
+                  ", player_id"
+                  ", score)"
+                  " VALUES (?,?,?)"
+                  , (gamename, global_id, score,))
         c.commit()
     except sqlite3.Error as e:
         get_db().rollback()
-        print 'Database error: ' + e.args[0]
+        log_error('add_highscore', e.args[0])
         return -1
     #TODO: Add calculation if score was global or local top 10.
     return 1
+
 
 def get_highscore_by_player(gamename, mac, playerid, number_of_results):
     """ Get highscore related to specific player.
@@ -1009,8 +1004,8 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
 
     cursor = get_db_cursor()
     try:
-        cursor.execute("SELECT user_list.user_id"
-                       ", high_scores.score"
+        cursor.execute("SELECT user_list.user_id AS user_id"
+                       ", high_scores.score AS score"
                        " FROM high_scores"
                        " LEFT JOIN user_list"
                        " ON high_scores.player_id=user_list.global_id"
@@ -1022,7 +1017,7 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
                        , (gamename, mac, playerid, nor,))
         cfa = cursor.fetchall()
     except sqlite3.Error as e:
-        print 'Database error: ' + e.args[0]
+        log_error('get_highscore_by_player', e.args[0])
         cfa = None
     if cfa is None:
         return {'user_id': None
@@ -1031,6 +1026,7 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
     for row in cfa:
         result.append(dict_factory(cursor, row))
     return result
+
 
 def get_highscore_by_box(gamename, mac, number_of_scores):
     """ Get all highscores for players of a specific set-top-box.
@@ -1070,7 +1066,7 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
                        , (gamename, mac, nor,))
         cfa = cursor.fetchall()
     except sqlite3.Error as e:
-        print 'Database error: ' + e.args[0]
+        log_error('get_highscore_by_box', e.args[0])
         cfa = None
     if cfa is None:
         return {'user_id': None
@@ -1079,6 +1075,7 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
     for row in cfa:
         result.append(dict_factory(cursor, row))
     return result  
+
 
 def get_global_highscore(gamename, number_of_scores):
     """ Get the top number of scores for specific game. Not depedent 
@@ -1117,7 +1114,7 @@ def get_global_highscore(gamename, number_of_scores):
                        , (gamename, nor,))
         cfa = cursor.fetchall()
     except sqlite3.Error as e:
-        print 'Database error: ' + e.args[0]
+        log_error('get_global_highscore', e.args[0])
         cfa = None
     if cfa is None:
         return {'mac': None
