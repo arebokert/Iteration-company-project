@@ -290,7 +290,7 @@ def get_user(mac, playerid):
         cfo = None
     if cfo is None:
         return -1
-    return cfo.global_id
+    return cfo[0]
 
 def get_unit_user(global_id):
     """Get user information from database.
@@ -364,7 +364,7 @@ def game_exists(gamename):
     Raises:
 
     History (date user: text):
-        2015-12-03
+        2015-12-04 bjowi227: Changed return statement to be faster.
     """
     cursor = get_db_cursor()
     try:
@@ -375,9 +375,10 @@ def game_exists(gamename):
     except sqlite3.Error as e:
         print 'Database error: ' + e.args[0]
         cfo = None
-    if cfo is None:
-        return False
-    return True
+    #if cfo is None:
+    #    return False
+    #return True
+    return cfo is not None
 
 
 # MATCH HANDLING
@@ -447,9 +448,11 @@ def create_match(gamename, mac, playerid):
 
 
     Raises:
+        Generic python error.
 
     History (date user: text):
         2015-12-03 bjowi227: Changed name to create_match. Fixed INSERT query.
+        2015-12-04 bjowi227: Corrected execute statement.
     """
 
     global_id = get_user(mac, playerid)
@@ -458,7 +461,7 @@ def create_match(gamename, mac, playerid):
 
     c = get_db()
     try:
-        cursor.execute(
+        c.execute(
             "INSERT INTO matches (gamename"
             ", player_one_id)"
             " VALUES (?,?)"
@@ -651,9 +654,10 @@ def add_round_score(gamename, match_id, mac, playerid, score):
 
 
 def insert_round_score(score, match_id, game_number, field_name):
-    #TODO(bjowi): get this function to work. implement so that this functions know if the player
-    #is player 1 or player 2.  
-    """ cretate or update round table with score
+    #TODO(bjowi): get this function to work. implement so that this
+    # functions know if the player
+    # is player 1 or player 2.
+    """ Create or update round table with score
     #Comments not up to date.
     Args:
         gamename: Specific game that the action is related to.
@@ -666,7 +670,7 @@ def insert_round_score(score, match_id, game_number, field_name):
     Raises:
 
     History (date user: text):
-        2015-12-03
+        2015-12-04 bjowi227:
     """
     c = get_db()
     try:
@@ -678,7 +682,8 @@ def insert_round_score(score, match_id, game_number, field_name):
             , (match_id, game_number, score,))
     except:
         get_db().rollback()
-        raise 
+        raise
+    return True
 
 
 def get_number_of_rounds(gamename, match_id):
@@ -694,13 +699,12 @@ def get_number_of_rounds(gamename, match_id):
     Raises:
 
     History (date user: text):
-        2015-12-03
+        2015-12-04 bjowi227: Made minor corrections.
     """
-    #TODO(erida995): Implement function. 
-    #IS THIS OKAY??? Really not sure /erida995
 
     cursor = get_db_cursor()
-    try:    
+    try:
+        #TODO: Implement check of gamename aswell, will require JOIN
         cursor.execute("SELECT Count(match_id) AS result"
                        " FROM round"
                        " WHERE match_id = ?"
@@ -711,7 +715,9 @@ def get_number_of_rounds(gamename, match_id):
     except:
         get_db().rollback()
         raise
-    return cfo.result
+    if cfo is None
+        return 0
+    return cfo[0]
 
 
 def get_match_score(gamename, match):
@@ -728,12 +734,31 @@ def get_match_score(gamename, match):
     Raises:
 
     History (date user: text):
-        2015-12-03
+        2015-12-04 bjowi227: Created function.
         
     """
 
-    #TODO(bjowi): Implement function. Write correct comments.
-
+    cursor = get_db_cursor()
+    try:
+        #TODO: Implement check of gamename aswell, will require JOIN
+        cursor.execute("SELECT game_number"
+                        ", player_one_score"
+                        ", player_two_score"
+                        " FROM round"
+                        " WHERE match_id = ?"
+                        , (match,))
+        cfa = cursor.fetchall()
+    except sqlite3.Error as e:
+        print 'Database error: ' + e.args[0]
+        cfa = None
+    if cfa is None:
+        return {'game_number': None
+                , 'plauer_one_score': None
+                , 'player_two_score': None}
+    result = []
+    for row in cfa:
+        result.append(dict_factory(cursor, row))
+    return result
 
 
 def get_match_total_score(gamename, match_id):
@@ -821,11 +846,8 @@ def get_winner(gamename, match_id):
     Raises:
 
     History (date user: text):
-        2015-12-03
+        2015-12-04 bjowi227: Made minor corrections. Approved.
     """
-
-    #TODO (bjowi): Check that this is implementet correctly
-    #especially the usage of "winner" and the "?"
 
     cursor = get_db_cursor()
     try:    
@@ -836,12 +858,12 @@ def get_winner(gamename, match_id):
             " AND gamename = ?"
             , (match_id, gamename,))
         cfo = cursor.fetchone()
-
     except:
-        get_db().rollback()
-        raise
-
-    return cfo.winner
+        print 'Database error: ' + e.args[0]
+        cfo = None
+    if cfo is None:
+        return {'winner': None}
+    return cfo[0]
 
 # HIGHSCORE HANDLING
 
@@ -864,7 +886,7 @@ def add_highscore(gamename, mac, playerid, score):
     Raises:
 
     History (date user: text):
-        2015-12-03
+        2015-12-04 bjowi227: Approved.
     """
 
     if not game_exists(gamename):
@@ -888,7 +910,6 @@ def add_highscore(gamename, mac, playerid, score):
     #TODO: Add calculation if score was global or local top 10.
     return 1
 
-
 def get_highscore_by_player(gamename, mac, playerid, number_of_results):
     """ Get highscore related to specific player.
 
@@ -907,7 +928,7 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
     Raises:
 
     History (date user: text):
-        2015-12-03
+        2015-12-04 bjowi227: Approved.
     """
     if isinstance( number_of_results, int ):
         nor = number_of_results
@@ -956,7 +977,7 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
     Raises:
 
     History (date user: text):
-        2015-12-03
+        2015-12-04 bjowi227: Approved
     """
     if isinstance( number_of_scores, int ):
         nor = number_of_scores
@@ -965,8 +986,8 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
 
     cursor = get_db_cursor()
     try:
-        cursor.execute("SELECT user_list.user_id"
-                       ", high_scores.score"
+        cursor.execute("SELECT user_list.user_id AS user_id"
+                       ", high_scores.score AS score"
                        " FROM high_scores"
                        " LEFT JOIN user_list"
                        " ON high_scores.player_id=user_list.global_id"
@@ -1002,7 +1023,7 @@ def get_global_highscore(gamename, number_of_scores):
     Raises:
 
     History (date user: text):
-        2015-12-03
+        2015-12-04 bjowi227: Approved
     """
 
     if isinstance( number_of_scores, int ):
@@ -1012,9 +1033,9 @@ def get_global_highscore(gamename, number_of_scores):
 
     cursor = get_db_cursor()
     try:
-        cursor.execute("SELECT user_list.mac"
-                       ", user_list.user_id"
-                       ", high_scores.score"
+        cursor.execute("SELECT user_list.mac AS mac"
+                       ", user_list.user_id AS user_id"
+                       ", high_scores.score AS score"
                        " FROM high_scores"
                        " LEFT JOIN user_list"
                        " ON high_scores.player_id=user_list.global_id"
