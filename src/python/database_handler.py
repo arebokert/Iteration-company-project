@@ -115,6 +115,7 @@ def add_user(mac, playerid):
         get_db().rollback()
         raise
     if gid is None:
+        log_error('add_user', 'Could not find last row id. gid=' + gid)
         return -1
     return gid
 
@@ -961,6 +962,11 @@ def add_highscore(gamename, mac, playerid, score):
     global_id = get_user(mac, playerid)
     if global_id == -1:
         global_id = add_user(mac, playerid)
+        if global_id == -1:
+            global_id = get_user(mac, playerid)
+                if global_id == -1:
+                    log_error('add_highscore', 'Something went wrong.')
+                    return -1
 
     c = get_db()
     try:
