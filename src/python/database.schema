@@ -1,8 +1,9 @@
+PRAGMA FOREIGN_KEY = ON;
+
 CREATE TABLE IF NOT EXISTS user_list(
-	global_id INTEGER AUTO_INCREMENT,
+	global_id INTEGER PRIMARY KEY AUTOINCREMENT,
 	mac TEXT,
-	user_id INTEGER,
-	PRIMARY KEY (global_id)
+	user_id INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS games(
@@ -10,13 +11,12 @@ CREATE TABLE IF NOT EXISTS games(
 );
 
 CREATE TABLE IF NOT EXISTS matches(
-	match_id INTEGER AUTO_INCREMENT,
+	match_id INTEGER PRIMARY KEY AUTOINCREMENT,
 	gamename TEXT not null references games(gamename),
 	start_time DATETIME not null DEFAULT (DATETIME('now')),
 	player_one_id INTEGER not null references user_list(global_id),
 	player_two_id INTEGER references user_list(global_id),
-	winner INTEGER DEFAULT 0,
-	PRIMARY KEY (match_id)
+	winner INTEGER DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS round(
@@ -28,9 +28,8 @@ CREATE TABLE IF NOT EXISTS round(
 );
 
 CREATE TABLE IF NOT EXISTS high_scores(
-	game_id INTEGER AUTO_INCREMENT,
+	game_id INTEGER PRIMARY KEY AUTOINCREMENT,
 	gamename TEXT not null references games(gamename),
 	player_id INTEGER not null references user_list(global_id),
-	score INTEGER not null,
-	PRIMARY KEY (game_id)
+	score INTEGER not null
 );
