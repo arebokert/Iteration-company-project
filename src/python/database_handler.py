@@ -440,8 +440,8 @@ def get_user_in_match(match_id, player_no):
             cfo = cursor.fetchone()
             log('get_matchplayer', 'Query result: ' + cfo)
         else:
-        log_error('get_matchplayer', 'Incorrect input of player_no. Must be integer 1 or 2.')
-        return -1
+            log_error('get_matchplayer', 'Incorrect input of player_no. Must be integer 1 or 2.')
+            return -1
     except sqlite3.Error as e:
         log_error('get_matchplayer', e.args[0])
         cfo = None
