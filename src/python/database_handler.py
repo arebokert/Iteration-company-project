@@ -422,6 +422,7 @@ def get_user_in_match(match_id, player_no):
         Nothing.
     History (date user: text):
         2015-12-04 bjowi227: Replaced check_if_player_one with this function.
+        2015-12-06 bjowi227: Fixed indentation and comments.
     """
     cursor = get_db_cursor()
     try:
@@ -431,19 +432,19 @@ def get_user_in_match(match_id, player_no):
                            ' WHERE match_id = ?'
                            , (match_id,))
             cfo = cursor.fetchone()
-            log('get_matchplayer', 'Query result: ' + cfo)
+            log('get_user_in_match', 'Query result: ' + cfo)
         elif player_no == 2:
             cursor.execute('SELECT player_two_id'
                            ' FROM matches'
                            ' WHERE match_id = ?'
                            , (match_id,))
             cfo = cursor.fetchone()
-            log('get_matchplayer', 'Query result: ' + cfo)
+            log('get_user_in_match', 'Query result: ' + cfo)
         else:
-            log_error('get_matchplayer', 'Incorrect input of player_no. Must be integer 1 or 2.')
+            log_error('get_user_in_match', 'Incorrect input of player_no. Must be integer 1 or 2.')
             return -1
     except sqlite3.Error as e:
-        log_error('get_matchplayer', e.args[0])
+        log_error('get_user_in_match', e.args[0])
         cfo = None
 
     if cfo is None:
@@ -996,11 +997,16 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
 
     History (date user: text):
         2015-12-04 bjowi227: Approved.
+        2015-12-05 bjowi227: Changed query to be done using global_id.
     """
     if isinstance( number_of_results, int ):
         nor = number_of_results
     else:
         nor = 10
+
+    global_id = get_user(mac, playerid)
+    if global_id == -1:
+        global_id = add_user(mac, playerid)
 
     cursor = get_db_cursor()
     try:
@@ -1010,11 +1016,10 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
                        " LEFT JOIN user_list"
                        " ON high_scores.player_id=user_list.global_id"
                        " WHERE high_scores.gamename = ?"
-                       " AND user_list.mac = ?"
-                       " AND user_list.user_id = ?"
+                       " AND user_list.global_id"
                        " ORDER BY score DESC"
                        " LIMIT ?"
-                       , (gamename, mac, playerid, nor,))
+                       , (gamename, global_id, nor,))
         cfa = cursor.fetchall()
     except sqlite3.Error as e:
         log_error('get_highscore_by_player', e.args[0])
