@@ -101,6 +101,7 @@ def add_user(mac, playerid):
 
     History (date user: text):
         2015-12-04 bjowi227: Approved.
+        2015-12-05 bjowi227: Fixed so that gid will return correct value.
     """
     c = get_db()
     try:
@@ -109,14 +110,14 @@ def add_user(mac, playerid):
                   " VALUES (?,?)"
                   , (mac, playerid,))
 
-        gid = c.cursor().lastrowid
+        gid = get_user(mac, playerid)
         c.commit()
-    except:
+    except sqlite3.Error as e:
         get_db().rollback()
-        raise
+        log_error('add_highscore', e.args[0])
+        return -1
     if gid is None:
-        msg = 'Could not find last row id. gid=' + gid
-        log_error('add_user', msg)
+        log_error('add_user', 'Could not find last row id.')
         return -1
     return gid
 
@@ -955,6 +956,7 @@ def add_highscore(gamename, mac, playerid, score):
         Nothing.
     History (date user: text):
         2015-12-04 bjowi227: Approved.
+        2015-12-05 bjowi227: Added controls of global_id.
     """
 
     if not game_exists(gamename):
