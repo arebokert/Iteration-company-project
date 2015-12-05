@@ -959,11 +959,11 @@ def add_highscore(gamename, mac, playerid, score):
     if not game_exists(gamename):
         add_game(gamename)
 
-    global_id = get_user(mac, playerid)
+    global_id = get_user(mac, playerid):
     if global_id == -1:
-        global_id = add_user(mac, playerid)
+        global_id = add_user(mac, playerid):
         if global_id == -1:
-            global_id = get_user(mac, playerid)
+            global_id = get_user(mac, playerid):
                 if global_id == -1:
                     log_error('add_highscore', 'Something went wrong.')
                     return -1
