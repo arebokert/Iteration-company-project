@@ -115,7 +115,8 @@ def add_user(mac, playerid):
         get_db().rollback()
         raise
     if gid is None:
-        log_error('add_user', 'Could not find last row id. gid=' + gid)
+        msg = 'Could not find last row id. gid=' + gid
+        log_error('add_user', msg)
         return -1
     return gid
 
