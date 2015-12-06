@@ -1,3 +1,5 @@
+require "model/highscore/highscorehandler"
+
 -- The score class. 
 Score = {}
 
@@ -37,7 +39,9 @@ end
 -- This function should be called when a user has won a game, or reached game over condition
 -- The score should then be saved in the database. Probably only if it's a new highscore though, so
 -- it needs to check current high score..
-function Score.saveScore()
+function Score.submitHighScore(gameName)
+   local response = HighscoreHandler:submitGlobalHighscore(gameName, 1, 10) 
+   dump(response)
 end
 
 -- TODO

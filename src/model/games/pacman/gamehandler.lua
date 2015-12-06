@@ -155,7 +155,9 @@ ADLogger.trace(collectgarbage("count")*1024)
     end
     Gamehandler.checkVictory()
   elseif gameStatus == false and gameplan:getLives() < 1 then
+    -- Game over
     gameTimer:stop()
+    Score.submitHighScore("Pacman")
     InGameMenu.gameOver('views/pacman/data/gameover.png', Score:getScore())
     menuView = "gameOverMenu"
     menuoption = 0
@@ -168,6 +170,7 @@ end
 function Gamehandler.checkVictory()
     if noDotsRemaining == 0 then  
       gameTimer:stop()
+      Score.submitHighScore("Pacman")
       gameStatus = false
       InGameMenu.gameOver('views/pacman/data/victory.png', Score:getScore())
       menuView = "gameOverMenu"

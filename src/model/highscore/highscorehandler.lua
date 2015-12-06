@@ -1,7 +1,7 @@
 -- This has caused some problems. If this causes your problem to crash, remove the "model/highscore" on below 2 rows
-local JSON = assert(loadfile(root_path.."JSON.lua"))()
+local JSON = assert(loadfile(root_path .. "model/highscore/JSON.lua"))()
 require "model/highscore/highscore"
-local NETWORK = assert(loadfile("network/NetworkHandler.lua"))()
+local NETWORK = assert(loadfile(root_path .. "network/NetworkHandler.lua"))()
 
 
 -- The highscore object, highscoretable is the number of "active" highscores and fullHighscoreTable is all the highscores. 
@@ -45,14 +45,14 @@ end
 function HighscoreHandler:submitGlobalHighscore(gameName, playerID, score)
   local macAddress = "00-00-00-00-00-00-00-E0" -- Temporary hardcoded mac address
   
-  local request = JSON:encode({
+  local json = JSON:encode({
     macAddress = macAddress,
     gameName = gameName,
     playerID = playerID,
     score = score
   })
   
-  return NETWORK:sendJSON(request, "SendScore") -- Temporary send code
+  return NH.sendJSON(json, "SendScore") -- Temporary send code
   
 end
 
@@ -68,7 +68,7 @@ function HighscoreHandler:getGlobalHighscore(gameName, numberOfHighscores)
     numberOfHighscores = numberOfHighscores
   })
   
-  return NETWORK:sendJSON(request, "RequestReadGlobalScore")
+  return NH.sendJSON(request, "RequestReadGlobalScore")
   
 end
 
