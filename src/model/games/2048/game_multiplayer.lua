@@ -11,7 +11,7 @@ local call = false
 PLAYER_UPDATE = 1
 PLAYER_QUIT = 2
 PLAYER_SAME = 3
-PLAYER_LOSE = 4
+PLAYER_FULL = 4
 
 function Game_multiplayer.registerKey(key, state)
     if state == "down" then
@@ -194,16 +194,11 @@ function Game_multiplayer.setCompetitorData(JSONObject)
   elseif jo.flag == PLAYER_QUIT then
     -- Other player quit the game. End game.
     return false
-
   elseif jo.flag == PLAYER_SAME then
     -- Other player won. Continue playing until full box.
-    Boxes_competitor.box_table = jo.box
-    Boxes_competitor.current_score = jo.score
-    -- TODO: Maybe change color of competitors box?
     return true
-
-  elseif jo.flag == PLAYER_LOSE then
-    -- Other player lost. Continue playing until full box.
+  elseif jo.flag == PLAYER_FULL then
+    -- Other player has full box. Continue playing until full box.
     Boxes_competitor.box_table = jo.box
     Boxes_competitor.current_score = jo.score
     -- TODO: Maybe change color of competitors box?
@@ -234,8 +229,6 @@ callback_2048 = function (timer)
   call = true
   ADLogger.trace(tostring(call))
   local competitor_Json = Game_multiplayer.getCompetitorData()
-  -- TODO: Do not allow more than 1 request at the same time. Server 
-  --  might be slow at times, but multible requests should not be sent.
 
   -- Use data recovered.
   Game_multiplayer.setCompetitorData(competitor_Json)

@@ -15,6 +15,7 @@ def submit_box(jsonObj):
     Raises:
     History (date user: text):
         2015-12-03 bjowi227: Created.
+        2015-12-06 bjowi227: Implemented function.
     """
     data = json.loads(jsonObj)
     # Get player information
@@ -72,10 +73,10 @@ def request_box(jsonObj):
             flag == 2.
         The value 4 for flag will be sent only once. It will be followed
             by flag == 2 or flag == 3 (if the opponent left).
-
     Raises:
     History (date user: text):
         2015-12-03 bjowi227: Created.
+        2015-12-06 bjowi227: Implemented function.
     """
     data = json.loads(jsonObj)
     # Get player information
@@ -88,6 +89,7 @@ def request_box(jsonObj):
         # No match was found or match was found but has ended, create new match.
         match = dbh.start_new_4096_match(data['mac'], data['playerid'])
 
+    op_box = []
     # Get opponent id
     pn = dbh.get_matchplayer(match, player)
     if pn == 1:
@@ -95,10 +97,9 @@ def request_box(jsonObj):
     elif pn == 2:
         op_id = dbh.get_user_in_match(match, 1)
     else:
-        print "Something went wrong in getting score for 4096."
-        return False
+        print "Opponent could not be found."
+        return jsonify({"flag":3, "box":op_box, "score":0})
 
-    op_box = []
     # Check the flag of the opponent.
     status_flag = dbh.get_4096_flag(match, op_id)
     if status_flag == 1:
