@@ -6,29 +6,24 @@ local resulttable = nil
 local activeGame = nil
 local a = {}
 local tempActive = 2
+local first_treverse = nil
 multiMenu = nil
 local font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 
 --loads the view for the multiplayer menu
 --@param model - instantiates the model for the multiplayermenu
 function multiplayermenu.loadMenu()
-  ADLogger.trace("Booting")
-  --collectgarbage("stop")
+  first_treverse = true
   model = model:new()
   a = model:fetchPath()
-  multiMenu = gfx.new_surface(appScreen:get_width(),appScreen:get_height()*2.0/3.0)
-  multiMenu:clear({r=7, g = 19, b=77}, {x =appScreen:get_width()/20, y = appScreen:get_height()/20, w= appScreen:get_width() *0.9, h = appScreen:get_height()* 0.56 })
+  multiMenu = gfx.new_surface(appSurface:get_width(),appSurface:get_height()*2.0/3.0)
+  multiMenu:clear({r=7, g = 19, b=77, a = 50}, {x =appSurface:get_width()/20, y = appSurface:get_height()/20, w= appSurface:get_width() *0.9, h = appSurface:get_height()* 0.56 })
   multiplayermenu.loadGameMenu()
   multiplayermenu.loadRecentResults(model:fetchResults())
   multiplayermenu.loadCurrentPlayers(0)
   
-  --gfx.update()
-  appScreen:copyfrom(multiMenu, nil)
+  appSurface:copyfrom(multiMenu, nil)
   gfx.update()
-  
-  --collectgarbage("stop")
-  --collectgarbage()
-  --collectgarbage("stop")
 end
 
 --prints a word on a selected surface
@@ -40,18 +35,14 @@ end
 --function multiplayermenu.writeWord(word, color, size, position)
 function multiplayermenu.writeWord(word, btn)
   ADLogger.trace(root_path)
-  --font_path = root_path .. datapath .. "/font/Gidole-Regular.otf"
   ADLogger.trace(font_path)
   word = word or  "hello world" 
-  --ADLogger.trace(size)
-  --start_btn = sys.new_freetype(color, size, position,font_path)
-  --btn:draw_over_surface(multiMenu,word)
 end
 
 --loads the most recent results
 --@param recentRes - array from where to read recent results
 function multiplayermenu.loadRecentResults(recentRes)
-  
+  multiMenu:clear()
   resulttable = recentRes
   local wincol = {r=0, g=155, b=0}
   local losecol = {r=155, g=0, b=0}
@@ -90,24 +81,17 @@ function multiplayermenu.loadRecentResults(recentRes)
     multiMenu:clear(losecol, {x = ((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5, y = ((multiMenu:get_height())/2)*1.6, w = ((multiMenu:get_width())/10)*3, h = 50})
   end
   
-  --multiplayermenu.writeWord(score1,{r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= (multiMenu:get_height())/2+8})
-  --multiplayermenu.writeWord(score2,{r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= ((multiMenu:get_height())/2)*1.3+8})
-  --multiplayermenu.writeWord(score3,{r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= ((multiMenu:get_height())/2)*1.6+8})
-  --multiplayermenu.writeWord(score1, btnfirst)
-  --multiplayermenu.writeWord(score2, btnsec)
-  --multiplayermenu.writeWord(score3, btnthird)
-  
   btnfirst:draw_over_surface(multiMenu,score1)
   btnsec:draw_over_surface(multiMenu,score2)
   btnthird:draw_over_surface(multiMenu,score3)
-  
-  appScreen:copyfrom(multiMenu, nil)
+
+  appSurface:copyfrom(multiMenu, nil)
   gfx.update()
 end
 
 --reloads the most recent results
 function multiplayermenu.reloadRecent()
-  
+  multiMenu:clear()
   local btnett = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= (multiMenu:get_height())/2+8}, font_path)
   local btntva = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= ((multiMenu:get_height())/2)*1.3+8}, font_path)
   local btntre = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= ((multiMenu:get_height())/2)*1.6+8}, font_path)
@@ -144,35 +128,13 @@ function multiplayermenu.reloadRecent()
     multiMenu:clear(losecol, {x = ((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5, y = ((multiMenu:get_height())/2)*1.6, w = ((multiMenu:get_width())/10)*3, h = 50})
   end
   
-  --multiplayermenu.writeWord(score1,{r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= (multiMenu:get_height())/2+8})
-  --multiplayermenu.writeWord(score2,{r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= ((multiMenu:get_height())/2)*1.3+8})
-  --multiplayermenu.writeWord(score3,{r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= ((multiMenu:get_height())/2)*1.6+8})
-  
   btnett:draw_over_surface(multiMenu,score1)
   btntva:draw_over_surface(multiMenu,score2)
   btntre:draw_over_surface(multiMenu,score3)
-  --collectgarbage("stop")
-  appScreen:copyfrom(multiMenu, nil)
   
-  --ADLogger.trace("Memory usage after multi-gameswitch load " .. collectgarbage("count"))
-  --ADLogger.trace("Memory usage after multi-gameswitch load 2 " .. gfx.get_memory_use()) 
-  
-  gfx:update()
-end
+  appSurface:copyfrom(multiMenu, nil)
 
---prints a border with selected parameters
---@param Screen - the surface on which to print the menu
---@param startX - top line (pixels)
---@param startY - leftmost line (pixels)
---@param width - the width of the border (box)
---@param height - the height of the border (box)
---@param margin - the margin (thickness) of the line
---@param color - the color of the line
-function multiplayermenu.drawBorder(startX, startY, width, height, margin, color)
-  multiMenu:clear(color, {x = startX, y = startY, w = width, h = margin})
-  multiMenu:clear(color, {x = startX, y = startY, w = margin, h = height})
-  multiMenu:clear(color, {x = startX, y = startY+height, w = width+margin, h = margin})
-  multiMenu:clear(color, {x = startX+width, y = startY, w = margin, h = height+margin})
+  gfx:update()
 end
 
 --loads the current players
@@ -181,8 +143,6 @@ function multiplayermenu.loadCurrentPlayers(players)
   local color = {r=20, g=10, b=0}
   margin = 5
   currentplayers = players or 0
-  --multiplayermenu.drawBorder(multiMenu, ((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)+multiMenu:get_width()/5, (multiMenu:get_height())/2, multiMenu:get_width()/10*3, 50, margin, color)
-  --multiplayermenu.writeWord(currentplayers,{r = 100, g = 0, b =100},35,{x=(((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)+multiMenu:get_width()/5)+25, y= ((multiMenu:get_height())/2)*1.02},multiMenu)
 end
 
 --starts the selected game
@@ -211,13 +171,19 @@ function multiplayermenu.loadGameMenu()
   multiMenu:copyfrom(bg, nil, {x=((multiMenu:get_width())/2)-150, y= multiMenu:get_height()/20+20})
   bg:destroy()
   
-  appScreen:copyfrom(multiMenu, nil)
+  appSurface:copyfrom(multiMenu, nil)
   gfx.update()
 end
 
 --Called upon hitting the "right"-key/button.
 --treverses the carousel
 function multiplayermenu:next()
+
+    if first_treverse then
+        activeGame = activeGame + 1
+    end
+
+    multiMenu:clear()
     local next = activeGame + 1
     local prev = activeGame - 1
     
@@ -241,7 +207,10 @@ function multiplayermenu:next()
     multiMenu:copyfrom(bg, nil, {x=((multiMenu:get_width())/2)-150, y= multiMenu:get_height()/20+20})
     bg:destroy()
     
-    appScreen:copyfrom(multiMenu, nil)
+    first_treverse = false
+    
+    appSurface:copyfrom(multiMenu, nil)
+    gfx.update()
     --collectgarbage()
     multiplayermenu.reloadRecent()
     
@@ -253,6 +222,13 @@ end
 --Called upon hitting the "left"-key/button.
 --treverses the carousel
 function multiplayermenu:prev()
+    
+    if first_treverse then
+        activeGame = activeGame - 1
+    end
+    
+    multiMenu:clear()
+    
     local next = activeGame + 1
     local prev = activeGame - 1
 
@@ -274,9 +250,11 @@ function multiplayermenu:prev()
     local bg = gfx.loadjpeg(a[activeGame]["path"] .. 'background.jpg')
     multiMenu:copyfrom(bg, nil, {x=((multiMenu:get_width())/2)-150, y= multiMenu:get_height()/20+20})
     bg:destroy()
-    --collectgarbage()
     
-    appScreen:copyfrom(multiMenu, nil)
+    first_treverse = false
+    
+    appSurface:copyfrom(multiMenu, nil)
+    gfx.update()
     multiplayermenu.reloadRecent()
     
     ADLogger.trace(getMemoryUsage("gfx"))

@@ -3,56 +3,32 @@ smodel = require "model.singleplayermenu.singleplayermenu"
 singlePlayerMenu = {}
 
 local activeGame = nil
---local ab = gfx.new_surface(appSurface:get_width(),appSurface:get_height()*2.0/3.0)'
 ab = nil
 local a = {}
 local tempActive = nil
 local font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
+local first_treverse = nil
 
 --loads the view for the multiplayer menu
 --@param model - instantiates the model for the singlePlayerMenu
 function singlePlayerMenu.loadMenu()
   ADLogger.trace("Loading singleplayer")
-  --collectgarbage("stop")
+
+  first_treverse = true
+
   smodel = smodel:new()
   ADLogger.trace("Finished reading file")
   a = smodel:fetchPath()
   ADLogger.trace("Finished fetching paths")
   ab = gfx.new_surface(appSurface:get_width(),appSurface:get_height()*2.0/3.0)
-  ab:clear({r=7, g = 19, b=77}, {x =appSurface:get_width()/20, y = appSurface:get_height()/20, w= appSurface:get_width() *0.9, h = appSurface:get_height()* 0.56 })
+  ab:clear({r=7, g = 19, b=77, a = 50}, {x =appSurface:get_width()/20, y = appSurface:get_height()/20, w= appSurface:get_width() *0.9, h = appSurface:get_height()* 0.56 })
   ADLogger.trace("Created surface")
   
   singlePlayerMenu.loadGameMenu()
-  --gfx.update()
-  --appSurface:clear({r=7, g = 19, b=77, a = 20}, {x =appSurface:get_width()*0.05, y = appSurface:get_height()*0.05, w= appSurface:get_width() *0.9, h = appSurface:get_height()* 0.55 })
   ADLogger.trace("Reached GFX-update singleplayer")
   gfx.update()
   appSurface:copyfrom(ab, nil)
   gfx.update()
-  --ADLogger.trace(collectgarbage("count")*1024)
-  --collectgarbage()
-  --collectgarbage("stop")
-  --for testing, prints bytes of memory used for each transaction
-  --ADLogger.trace(collectgarbage("count")*1024)
-  
-  --collectgarbage("stop")
-  --collectgarbage()
-  --collectgarbage("stop")
-end
-
---prints a border with selected parameters
---@param Screen - the surface on which to print the menu
---@param startX - top line (pixels)
---@param startY - leftmost line (pixels)
---@param width - the width of the border (box)
---@param height - the height of the border (box)
---@param margin - the margin (thickness) of the line
---@param color - the color of the line
-function singlePlayerMenu.drawBorder(startX, startY, width, height, margin, color)
-  appSurface:clear(color, {x = startX, y = startY, w = width, h = margin})
-  appSurface:clear(color, {x = startX, y = startY, w = margin, h = height})
-  appSurface:clear(color, {x = startX, y = startY+height, w = width+margin, h = margin})
-  appSurface:clear(color, {x = startX+width, y = startY, w = margin, h = height+margin})
 end
 
 --starts the selected game
@@ -76,30 +52,32 @@ end
 function singlePlayerMenu.loadGameMenu()
   tempActive = 2
   activeGame = tempActive
-  ADLogger.trace("set variable "..activeGame)
+
   ADLogger.trace(gfx.get_memory_use())
   local bg = gfx.loadjpeg(a[activeGame-1]["path"] .. 'background-small.jpg')
   ab:copyfrom(bg, nil, {x=((ab:get_width())/2)-350, y= ab:get_height()/20+77})
   bg:destroy()
-  ADLogger.trace(gfx.get_memory_use())
+
   local bg = gfx.loadjpeg(a[activeGame+1]["path"] .. 'background-small.jpg')
   ab:copyfrom(bg, nil, {x=((ab:get_width())/2)+100, y= ab:get_height()/20+77})
   bg:destroy()
-  ADLogger.trace("second loaded")
+
   local bg = gfx.loadjpeg(a[activeGame]["path"] .. 'background.jpg')
   ab:copyfrom(bg, nil, {x=((ab:get_width())/2)-150, y= ab:get_height()/20+60})
   bg:destroy()
-  ADLogger.trace("third loaded")
-  appSurface:copyfrom(ab, nil)
 
-  ADLogger.trace("Memory usage after single-gameswitch load " .. collectgarbage("count"))
-  --ADLogger.trace("Memory usage after single-gameswitch load 2 " .. gfx.get_memory_use()) 
-  gfx.update()
+  appSurface:copyfrom(ab, nil)
 end
 
 --Called upon hitting the "right"-key/button.
 --treverses the carousel
 function singlePlayerMenu:next()
+    
+    if first_treverse then
+      activeGame = activeGame + 1
+    end
+    
+    ab:clear()
     local next = activeGame + 1
     local prev = activeGame - 1
     
@@ -109,8 +87,9 @@ function singlePlayerMenu:next()
     if activeGame==1 then
       prev = smodel:getSize()
     end
-
+      
     tempActive = activeGame
+      
     ADLogger.trace(tempActive)
     --reloads the images with the new paths
     local bg = gfx.loadjpeg(a[prev]["path"] .. 'background-small.jpg')
@@ -124,15 +103,21 @@ function singlePlayerMenu:next()
     bg:destroy()
     
     appSurface:copyfrom(ab, nil)
-    --collectgarbage()
-    --singlePlayerMenu.reloadRecent()
     gfx.update()
+    
+    first_treverse = false
     activeGame=next
 end
 
 --Called upon hitting the "left"-key/button.
 --treverses the carousel
 function singlePlayerMenu:prev()
+
+    if first_treverse then
+        activeGame = activeGame - 1
+    end
+
+    ab:clear()
     local next = activeGame + 1
     local prev = activeGame - 1
 
@@ -154,10 +139,10 @@ function singlePlayerMenu:prev()
     local bg = gfx.loadjpeg(a[activeGame]["path"] .. 'background.jpg')
     ab:copyfrom(bg, nil, {x=((ab:get_width())/2)-150, y= ab:get_height()/20+60})
     bg:destroy()
-    --collectgarbage()
+    
+    first_treverse = false
     
     appSurface:copyfrom(ab, nil)
-    --singlePlayerMenu.reloadRecent()
     gfx.update()
     activeGame=prev
 end

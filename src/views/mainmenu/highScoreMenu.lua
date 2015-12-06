@@ -24,6 +24,7 @@ local highScore_local_text_6 =sys.new_freetype({r=255,g=255,b=255},20,{x= appSur
 local highScore_local_text_7 =sys.new_freetype({r=255,g=255,b=255},20,{x= appSurface:get_width()*0.09, y= appSurface:get_height()*0.24 + 5 *30}, font_path)
 
 highScoreSurface = nil
+local recursive_calls = 0
 
 local highScore_local_text = {
   highScore_local_text_3,
@@ -57,8 +58,13 @@ local highScore_global_text = {
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 function highScoreMenu.loadMenu()
+  if recursive_calls == 0 then
   highScoreSurface = gfx.new_surface(appSurface:get_width(),appSurface:get_height()*2.0/3.0)
-  highScoreSurface:clear({r=7, g = 19, b=77}, {x =appSurface:get_width()*0.05, y = appSurface:get_height()*0.05, w= appSurface:get_width() *0.9, h = appSurface:get_height()* 0.55 })
+  highScoreSurface:clear({r=7, g = 19, b=77, a = 50}, {x =appSurface:get_width()*0.05, y = appSurface:get_height()*0.05, w= appSurface:get_width() *0.9, h = appSurface:get_height()* 0.55 })
+  else
+  highScoreSurface:clear()
+  end
+  
   local scores = {}
   if(highScoreMenu.current_game == 1) then
     scores = highScoreMenu.loadScores("pacman", nil)
@@ -71,12 +77,6 @@ function highScoreMenu.loadMenu()
   highScoreMenu.loadGameMenu()
   appSurface:copyfrom(highScoreSurface, nil)
   gfx.update()
-  --for testing, prints bytes of memory used for each transaction
-  --ADLogger.trace(collectgarbage("count")*1024)
-  --collectgarbage()
-  collectgarbage("stop")
-  --ADLogger.trace(collectgarbage("count")*1024)
-  --collectgarbage()
 end
 
 --------------------------------------------------------------------
@@ -93,14 +93,18 @@ function highScoreMenu.registerKey(key, state)
         else 
           highScoreMenu.current_game = highScoreMenu.total_games
         end
+        recursive_calls = 1
+        highScoreMenu.loadMenu(highScoreMenu.current_screen)
       elseif key == "right" then
         if highScoreMenu.current_game ~= highScoreMenu.total_games then
          highScoreMenu.current_game = highScoreMenu.current_game +1
         else 
          highScoreMenu.current_game = 1
         end
-        highScoreMenu.loadMenu(highScoreMenu.current_appSurface)
+        recursive_calls = 1
+        highScoreMenu.loadMenu(highScoreMenu.current_screen)
       elseif key == "down" then
+        recursive_calls = 0
         current_menu = "mainMenu"
       elseif key =="exit" then
         current_menu = "mainMenu"

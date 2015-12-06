@@ -38,11 +38,10 @@ function onKey(key, state)
       tvmode = true
       gfx.update()
       
-      --collectgarbage()
+
       if activeView == "pacman" then
         gamehandler.pacmanOnKey("pause")
       end
-      --collectgarbage("stop")
     end
     
     if state == "down" or state == "repeat" then
@@ -75,6 +74,7 @@ function onKey(key, state)
           --activeMenu = mainMenu
       elseif activeView == "pacman" then
           gamehandler.loadPacman()
+          --gameplan:reprintMap()
       else
           --collectgarbage()
           --collectgarbage("stop")

@@ -134,4 +134,10 @@ function Menu:print(container, startx, starty, m)
     end
 end
 
+function Menu:destroyContainer()
+    if self.container then
+      self.container:destroy()
+    end
+end
+
 return Menu
