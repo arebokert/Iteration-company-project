@@ -1150,6 +1150,20 @@ def get_global_highscore(gamename, number_of_scores):
 
 # 4096 multiplayer
 def start_new_4096_match(mac, playerid):
+    """ Start a new match with the player in it.
+        Will create new match and new row in table fns_player_boxes which to
+        store information about box, score, and flag.
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+    Returns:
+        Integer value of the match_id that the player was added to.
+        If something went wrong the value -1 will be returned.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
     global_id = get_user_safe()
     mid = add_match('4096', mac, playerid)
 
@@ -1168,6 +1182,19 @@ def start_new_4096_match(mac, playerid):
 
 
 def set_4096_score(match_id, player_id, new_score):
+    """ Update, or set, the score tuple from fns_player_boxes table to
+        a new value.
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+        new_score: New value of the score to be set.
+    Returns:
+        Boolean value true if tuple could be updated. Otherwise false.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
     c = get_db()
     try:
         c.execute("UPDATE SET fns_player_boxes.score = ?"
@@ -1183,6 +1210,18 @@ def set_4096_score(match_id, player_id, new_score):
 
 
 def get_4096_score(match_id, player_id):
+    """ Get the score value for player.
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+    Returns:
+        Will return the value of the score if possible. If something went
+        wrong the value -1 will be returned.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
     cursor = get_db_cursor()
     try:
         cursor.execute( "SELECT score"
@@ -1200,6 +1239,19 @@ def get_4096_score(match_id, player_id):
 
 
 def update_4096_box(match_id, player_id, new_box):
+    """ Update, or set, the box tuples from fns_player_boxes table to
+        a new value.
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+        new_box: New value of box as an array with size 16.
+    Returns:
+        Boolean value true if tuples could be updated. Otherwise false.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
     c = get_db()
     try:
         c.execute("UPDATE SET fns_player_boxes.box_1_1 = ?"
@@ -1234,6 +1286,17 @@ def update_4096_box(match_id, player_id, new_box):
 
 
 def get_4096_box(match_id, player_id):
+    """ Get the box value of specified player
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+    Returns:
+        Will return the value of the box as an array.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
     c = get_db_cursor()
     try:
         c.execute("SELECT box_1_1"
@@ -1264,6 +1327,19 @@ def get_4096_box(match_id, player_id):
 
 
 def update_4096_flag(match_id, player_id, new_flag):
+    """ Update, or set, the status_flag tuple from fns_player_boxes table to
+        a new value.
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+        new_flag: New value of the flag.
+    Returns:
+        Boolean value true if tuple could be updated. Otherwise false.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
     c = get_db()
     try:
         c.execute("UPDATE SET fns_player_boxes.status_flag = ?"
@@ -1279,6 +1355,18 @@ def update_4096_flag(match_id, player_id, new_flag):
 
 
 def get_4096_flag(match_id, player_id):
+    """ Get the status flag value for player.
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+    Returns:
+        Will return the value of the flag if possible. If something went
+        wrong the value -1 will be returned.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
     cursor = get_db_cursor()
     try:
         cursor.execute( "SELECT status_flag"
