@@ -19,6 +19,9 @@ function appSurface:createScreen()
 end
 
 function appSurface:destroy()
+    showmenu.destroyContainer()
+    mainMenu:destroyContainer()
+        
     appScreen:destroy()
     screen:clear()
     appSurface:createScreen()

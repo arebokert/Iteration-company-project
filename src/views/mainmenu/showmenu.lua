@@ -90,29 +90,18 @@ function showmenu.loadMainMenu()
         button = datapath .. '/exit-normal.png',
         button_marked = datapath .. '/exit-selected.png'
     }
-    --collectgarbage()
+ 
     _G.mainMenu = Menu:new()
     mainMenu:setOptions(options)
-    ADLogger.trace("Usage end mainMenu before gfx: " .. getMemoryUsage("gfx"))
-    if not mainMenuContainer then
-      mainMenuContainer = gfx.new_surface(appSurface:get_width(), appSurface:get_height()/3.0)
-    end
-    ADLogger.trace("Usage end mainMenu before gfx: " .. getMemoryUsage("gfx"))
+    mainMenuContainer = gfx.new_surface(appSurface:get_width(), appSurface:get_height()/3.0)
     mainMenuContainer:clear( {g=0, r=0, b=255, a=25} )
-    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     _G.current_menu = "mainMenu"
-    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     mainMenu.containerPos = {x = 0, y=appSurface:get_height()-mainMenuContainer:get_height()}
 
     mainMenu:print(mainMenuContainer, mainMenuContainer:get_height()/2, 60, 120)
-    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     _G.activeMenu = mainMenu
-    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     mainMenu:setActive(1)
-    ADLogger.trace("Usage end mainMenu before gfx: " .. gfx.get_memory_use())
     gfx.update()
-    ADLogger.trace("Usage end mainMenu after gfx: " .. gfx.get_memory_use())
-    --collectgarbage("stop")
 end
 
 
@@ -131,25 +120,17 @@ function showmenu.loadMenu(subMenuFlag)
         ab:destroy()
         ADLogger.trace("Destroyed")
       end
-      ADLogger.trace("Memory usage after 1 garbage load " .. collectgarbage("count"))
-      --gfx.get_memory_use() won't work on the emulator, but helps keep track of gfx-mem
-      --usage while getting logs from the box.
-      --ADLogger.trace("Memory usage after 1 garbage load 2 " .. gfx.get_memory_use())
       if highScoreSurface then
         ADLogger.trace("Destroy 2!!!!!!!")
         highScoreSurface:destroy()
         ADLogger.trace("Destroyed")
       end
-      ADLogger.trace("Memory usage after 2 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 2 garbage load 2 " .. gfx.get_memory_use())
   
       if multiMenu then
         ADLogger.trace("Destroy 3!!!!!!!")
         multiMenu:destroy()
         ADLogger.trace("Destroyed")
       end
-      ADLogger.trace("Memory usage after 3 garbage load " .. collectgarbage("count"))
-      --ADLogger.trace("Memory usage after 3 garbage load 2 " .. gfx.get_memory_use()) 
       
       highScoreMenu.loadMenu()
       
@@ -163,8 +144,6 @@ function showmenu.loadMenu(subMenuFlag)
       
   elseif(subMenuFlag == "exit") then
       appSurface:destroyMenu() 
-      --collectgarbage()
-      --collectgarbage("stop")
   end
 end
 
@@ -206,6 +185,12 @@ function showmenu.mainMenuKeyEvents(key, state)
     singlePlayerMenu.registerKey(key,state)
     elseif current_menu == "multiPlayerMenu" then
     multiPlayerMenu.registerKey(key, state)
+    end
+end
+
+function showmenu.destroyContainer()
+    if mainMenuContainer then
+      mainMenuContainer:destroy()
     end
 end
 
