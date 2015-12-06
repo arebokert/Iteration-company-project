@@ -2,7 +2,8 @@ Boxes_multiplayer = require("model.games.2048.box_multiplayer")
 Boxes_competitor = require("model.games.2048.box_competitor")
 InGameMenu = require("model.commongame.ingamemenuclass")
 nh = require("network.NetworkHandler")
-local JSON = assert(loadfile "model/highscore/JSON.lua")()
+local JSON = assert(loadfile(root_path.."model/highscore/JSON.lua"))()
+
 Game_multiplayer = {current = 0}
 menuView = nil
 

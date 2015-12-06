@@ -1,5 +1,5 @@
 -- This has caused some problems. If this causes your problem to crash, remove the "model/highscore" on below 2 rows
-local JSON = assert(loadfile "model/highscore/JSON.lua")()
+local JSON = assert(loadfile(root_path.."model.highscore.JSON.lua"))()
 require "model/highscore/highscore"
 
 -- The highscore object, highscoretable is the number of "active" highscores and fullHighscoreTable is all the highscores. 
