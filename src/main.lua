@@ -30,7 +30,7 @@ function onKey(key, state)
     if key=="3" and state == "down" then 
       ADLogger.trace("TV-Screen loaded!")
       appSurface:destroy()
-    
+      highScoreMenu.resetRecursive()
       local bg = gfx.loadpng(datapath .. '/TV-PH-full.png')
      
       appSurface:copyfrom(bg, nil)

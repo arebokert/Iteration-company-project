@@ -249,5 +249,9 @@ function highScoreMenu.loadScores(GameName, scoreType)
   return highScores.highscoreTable
 end
 
+function highScoreMenu.resetRecursive()
+    recursive_calls = 0
+end
+
 return highScoreMenu
 
