@@ -57,6 +57,9 @@ function Menu:setActive(a)
     gfx.update()
 end
 
+function Menu:getActive()
+  return self.active
+end
 
 function Menu:next()
     local next = self.active + 1
