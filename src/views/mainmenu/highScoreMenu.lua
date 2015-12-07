@@ -71,7 +71,7 @@ function highScoreMenu.loadMenu()
   if(highScoreMenu.current_game == 1) then
     scores = highScoreMenu.loadScores("Pacman", nil)
  elseif highScoreMenu.current_game == 2 then
-    scores = highScoreMenu.loadScores("4096",nil)
+    scores = highScoreMenu.loadScores("4096", nil)
  end
   highScoreMenu.loadLocalScore(scores)
   highScoreMenu.loadGlobalScore(scores)
@@ -237,7 +237,16 @@ end
 function highScoreMenu.loadScores(GameName, scoreType)
  
   local highScores = {}
-  highScores.highscoreTable = JSON:decode(HighscoreHandler:getGlobalHighscore(GameName, 5))
+  if hasInternet then
+    if HighscoreHandler:getGlobalHighscore(GameName, 5) == nil then
+      highScores.highscoreTable = {{mac = "MAC", score = "Failed", user_id = "Server Connection"}}
+    else  
+      highScores.highscoreTable = JSON:decode(HighscoreHandler:getGlobalHighscore(GameName, 5))
+    end  
+  else
+    highScores.highscoreTable = {{mac = "MAC", score = "Connection", user_id = "No Internet"}}
+  end    
+  
   return highScores.highscoreTable
 end
 

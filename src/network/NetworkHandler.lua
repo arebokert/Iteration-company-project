@@ -54,7 +54,7 @@ function NH.sendJSON(JSONObject, request)
         else
             -- Connect to the server
             connection = socket.tcp()
-            connection:settimeout(1000)
+            connection:settimeout(1)
             assert(connection:connect(HOST, PORT), "Connection failed!")
             -- Concatenates the operation with the JSONObject
             object = requestPrefix .. JSONObject
