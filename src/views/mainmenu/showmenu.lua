@@ -162,6 +162,9 @@ function showmenu.registerKey(key,state)
     elseif key == "ok"   then
         mainMenu:action()
     elseif key == "up"  then
+      if mainMenu:getActive()==4 then
+        return
+      end
         mainMenu:action()
     elseif key == "exit" then
         sys.stop()
