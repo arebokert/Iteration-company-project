@@ -1,3 +1,5 @@
+local JSON = assert(loadfile(root_path .. "model/highscore/JSON.lua"))()
+
 --------------------------------------------------------------------
 --class: highScoreMenu                                      --------
 --description: load the submenu highScoreMenu of the application ---
@@ -67,9 +69,9 @@ function highScoreMenu.loadMenu()
   
   local scores = {}
   if(highScoreMenu.current_game == 1) then
-    scores = highScoreMenu.loadScores("pacman", nil)
+    scores = highScoreMenu.loadScores("Pacman", nil)
  elseif highScoreMenu.current_game == 2 then
-    scores = highScoreMenu.loadScores("2048",nil)
+    scores = highScoreMenu.loadScores("4096",nil)
  end
   highScoreMenu.loadLocalScore(scores)
   highScoreMenu.loadGlobalScore(scores)
@@ -140,11 +142,11 @@ function highScoreMenu.loadLocalScore(scores)
   highScoreSurface:clear({r=7, g=19, b=77, a=240},{x =appSurface:get_width()*0.075, y= appSurface:get_height()*0.094, w= appSurface:get_width()*0.23,h=appSurface:get_height()*0.48})
   highScoreMenu.drawBorder(appSurface:get_width()*0.075,appSurface:get_height()*0.094, appSurface:get_width()*0.23,appSurface:get_height()*0.48, margin, color)
   --highScoreMenu.writeWord("Local HighScore",{r=255,g=255,b=255},24,{x =appSurface:get_width()*0.09, y= appSurface:get_height()*0.12},Screen)
-  highScore_local_text_1:draw_over_surface(highScoreSurface,"Local HighScore")
+  highScore_local_text_1:draw_over_surface(highScoreSurface,"My HighScore")
   highScore_local_text_2:draw_over_surface(highScoreSurface,"PlayerName" .. " : " .. "Score")
   for k,v in pairs(scores) do
-    ADLogger.trace(k .. ". " .. v.playerName .. " " .. v.score)
-    highScore_local_text[k]:draw_over_surface(highScoreSurface,v.playerName .. " : " .. v.score)
+    ADLogger.trace(k .. ". " .. v.user_id .. " " .. v.score)
+    highScore_local_text[k]:draw_over_surface(highScoreSurface,v.user_id .. " : " .. v.score)
   end 
 end
 --------------------------------------------------------------------
@@ -183,9 +185,9 @@ function highScoreMenu.loadGlobalScore(scores)
   highScore_global_text_1:draw_over_surface(highScoreSurface,"Global HighScore")
   highScore_global_text_2:draw_over_surface(highScoreSurface,"PlayerName" .. " : " .. "Score")
   for k,v in pairs(scores) do
-    ADLogger.trace(k .. ". " .. v.playerName .. " " .. v.score)
+    ADLogger.trace(k .. ". " .. v.user_id .. " " .. v.score)
     --highScoreMenu.writeWord(v.playerName .. " : " .. v.score,{r=255,g=255,b=255},20,{x= appSurface:get_width()*0.715, y= appSurface:get_height()*0.24 + k *30},Screen)
-    highScore_global_text[k]:draw_over_surface(highScoreSurface,v.playerName .. " : " .. v.score)
+    highScore_global_text[k]:draw_over_surface(highScoreSurface,v.user_id .. " : " .. v.score)
   end
 end
 
@@ -220,9 +222,9 @@ function highScoreMenu.loadGameMenu()
   highScoreSurface:clear({r=7, g=19, b=77, a=240},{x =appSurface:get_width()*0.38, y= appSurface:get_height()*0.11, w= appSurface:get_width()*0.25,h=appSurface:get_height()*0.10})
   highScoreMenu.drawBorder(appSurface:get_width()*0.38, appSurface:get_height()*0.11,appSurface:get_width()*0.25, appSurface:get_height()*0.10, margin, color)
   if(highScoreMenu.current_game == 1) then
-    highScoreMenu.writeWord("PACMAN",{r=255,g=255,b=255},36,{x = appSurface:get_width()*0.45, y = appSurface:get_height()*0.12})
+    highScoreMenu.writeWord("MunchingMartin",{r=255,g=255,b=255},36,{x = appSurface:get_width()*0.42, y = appSurface:get_height()*0.13})
   elseif(highScoreMenu.current_game == 2) then
-   highScoreMenu.writeWord("2048",{r=255,g=255,b=255},36,{x = appSurface:get_width()*0.45, y = appSurface:get_height()*0.12})
+   highScoreMenu.writeWord("4096",{r=255,g=255,b=255},36,{x = appSurface:get_width()*0.47, y = appSurface:get_height()*0.13})
   end
 end
 
@@ -233,19 +235,9 @@ end
 --------------------------------------------------------------------
 -- if the highScoreMenu failed, repalce the code with the commited one, and commit on the code from local highScores = HighscoreHandler...... to return
 function highScoreMenu.loadScores(GameName, scoreType)
-  --if(scoreType =="global") then
-  
-  --elseif(scoreType == "local") then
-  
-  --end
-  --ADLogger.trace(GameName)
-  --local highScores = HighscoreHandler:new(GameName, 5, 1)   -- 1 means global
-  --for k,v in pairs(highScores.highscoreTable) do
-   -- ADLogger.trace(k .. ". " .. v.playerName .. " " .. v.score)
-  --end
-  --return highScores.highscoreTable
-  local highScores = {};
-    highScores.highscoreTable = {{playerName="abs",score=1000},{playerName="POX",score=1000},{playerName="aaaa",score=1020},{playerName="ggg",score=1300},{playerName="PeeeX",score=160}}
+ 
+  local highScores = {}
+  highScores.highscoreTable = JSON:decode(HighscoreHandler:getGlobalHighscore(GameName, 5))
   return highScores.highscoreTable
 end
 

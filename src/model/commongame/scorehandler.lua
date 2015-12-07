@@ -41,8 +41,9 @@ end
 -- The score should then be saved in the database. Probably only if it's a new highscore though, so
 -- it needs to check current high score..
 function Score.submitHighScore()
-    local playerID = 3
+    local playerID = "Tomas"
    local response = HighscoreHandler:submitGlobalHighscore(game, playerID, scoreCount) 
+   dump(response)
 end
 
 -- TODO
