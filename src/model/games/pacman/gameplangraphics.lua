@@ -55,7 +55,6 @@ end
 
 function GameplanGraphics.loadSprites()
   sprites = {}
-  sprites
 end
 
 -- 
