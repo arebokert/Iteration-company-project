@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS high_scores(
 	score INTEGER not null
 );
 
-CREATE TABLE IF NOT EXIST fns_player_boxes(
+CREATE TABLE IF NOT EXISTS fns_player_boxes(
     match_id INTEGER references matches(match_id),
     player_id INTEGER references user_list(global_id),
     status_flag INTEGER NOT NULL DEFAULT 3,
