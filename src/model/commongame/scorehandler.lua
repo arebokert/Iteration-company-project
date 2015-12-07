@@ -36,14 +36,17 @@ function Score.printScore()
    score_text:draw_over_surface(screen,word)
 end
 
--- TODO
+--
 -- This function should be called when a user has won a game, or reached game over condition
--- The score should then be saved in the database. Probably only if it's a new highscore though, so
--- it needs to check current high score..
+-- The score is then saved in the database
+-- 
+-- 
 function Score.submitHighScore()
-    local playerID = "Tomas"
-   local response = HighscoreHandler:submitGlobalHighscore(game, playerID, scoreCount) 
-   dump(response)
+   local playerID = "TestPlayer"
+   if hasInternet then
+      local response = HighscoreHandler:submitGlobalHighscore(game, playerID, scoreCount) 
+      dump(response)
+   end 
 end
 
 -- TODO
