@@ -5,7 +5,7 @@
 --------------------------------------------------------------------
 local Boxes = {
   current_score = 0, 
-  tag = {},   -- end game tag
+  tag = {left =0, right =0, bottom = 0, top = 0},   -- end game tag
   current_zero = 16,  -- default 16 numbers = 0
   box_table = {       -- default numbers in the table
                0,0,0,0,
@@ -41,8 +41,13 @@ function Boxes.init(each_square, box_start_x, box_start_y,flag)
 end
 
 function Boxes.clear()
+  Boxes.current_zero = 16
+  Boxes.current_score = 0
   for j = 1, 16 do  
     Boxes.box_table[j] = 0
+  end
+  for i = 1, 4 do 
+    Boxes.tag[i] = 0
   end
 end
 
@@ -140,6 +145,24 @@ function Boxes.addRandomNumber()
    end
 end
 
+-- when win the 2048..
+
+function Boxes.winGame()
+  for i = 1, 16 do
+    if(Boxes.box_table[i] == 2048) then
+      screen2048:clear({r=50,g=50,b=30})
+      local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=500,y=420},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
+      score:draw_over_surface(screen2048,"You Win")
+      screen:copyfrom(screen2048,nil)
+      gfx.update()
+      current_menu = "2048_win"
+      Boxes.clear()
+     
+    end
+  end
+end
+
+
 --------------------------------------------------------------------
 --function: endGame                                         --------
 --description: weather the game end of not                  --------
@@ -164,6 +187,17 @@ end
 --------------------------------------------------------------------
 function Boxes.moveLeft()
   for i =0, 3 do
+  -- move all the cells to the left, so no zero in between the cells.
+     local count = 1 -- number of >= 0 
+     for j =1, 4 do
+       if(Boxes.box_table[j+i*4] ~= 0) then
+         Boxes.box_table[count+i*4] = Boxes.box_table[j+i*4]      
+         if(count ~= j) then 
+          Boxes.box_table[j+i*4] = 0
+         end
+         count = count + 1
+       end
+     end
   --add first and then go left
    if(Boxes.box_table[1+i*4]~= 0 and Boxes.box_table[1+i*4] == Boxes.box_table[2+i*4]) then
       Boxes.box_table[1+i*4] = Boxes.box_table[1+i*4] *2
@@ -213,6 +247,17 @@ end
 --------------------------------------------------------------------
 function Boxes.moveRight()
   for i =0, 3 do
+    -- move all the cells to the right, so no zero in between the cells.
+   local count = 4 -- number of >= 0 
+   for j =4, 1, -1 do
+     if(Boxes.box_table[j+i*4] ~= 0) then
+       Boxes.box_table[count+i*4] = Boxes.box_table[j+i*4]
+       if(count ~= j) then
+         Boxes.box_table[j+i*4] = 0
+       end
+       count = count - 1
+     end
+   end
   --add first and then go left
    if(Boxes.box_table[4+i*4]~= 0 and Boxes.box_table[4+i*4] == Boxes.box_table[3+i*4]) then
       Boxes.box_table[4+i*4] = Boxes.box_table[4+i*4] *2
@@ -262,6 +307,17 @@ end
 --------------------------------------------------------------------
 function Boxes.moveTop()
   for i =1, 4 do
+   -- move all the cells to the top, so no zero in between the cells.
+   local count = 0 -- number of >= 0 
+   for j =0, 3 do
+     if(Boxes.box_table[i+j*4] ~= 0) then
+       Boxes.box_table[i+count*4] = Boxes.box_table[i+j*4]
+       if(count ~= j) then
+          Boxes.box_table[i+j*4] = 0
+       end
+       count = count + 1
+     end
+   end
   --add first and then go left
   if(Boxes.box_table[i]~= 0 and Boxes.box_table[i] == Boxes.box_table[i+4]) then
       Boxes.box_table[i] = Boxes.box_table[i] *2
@@ -310,6 +366,17 @@ end
 --------------------------------------------------------------------
 function Boxes.moveBottom()
   for i =1, 4 do
+  -- move all the cells to the bottom, so no zero in between the cells.
+   local count = 3 -- number of >= 0 
+     for j =3,0,-1 do
+       if(Boxes.box_table[i+j*4] ~= 0) then
+         Boxes.box_table[i+count*4] = Boxes.box_table[i+j*4]
+         if(count ~= j) then
+           Boxes.box_table[i+j*4] = 0
+         end
+         count = count - 1
+       end
+     end
     if(Boxes.box_table[i+3*4] ~= 0 and Boxes.box_table[i+3*4] == Boxes.box_table[i+2*4]) then
         Boxes.box_table[i+3*4] = Boxes.box_table[i+3*4] *2
         Boxes.box_table[i+2*4] = 0

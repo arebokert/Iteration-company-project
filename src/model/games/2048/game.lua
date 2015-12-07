@@ -55,6 +55,14 @@ function Game.registerKey(key, state)
           end
        end
     end
+    if current_menu =="2048_win" then
+       if state == "down" then
+          if key == "exit" then
+       current_menu = "mainmenu"
+             activeView = "menu"
+          end
+       end
+    end
 end
 
 -- 5px between each square
