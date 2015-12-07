@@ -96,9 +96,10 @@ def request_box(jsonObj):
         op_id = dbh.get_user_in_match(match, 2)
     elif pn == 2:
         op_id = dbh.get_user_in_match(match, 1)
-    else:
+
+    if op_id != 1 or op != 2:
         print "Opponent could not be found."
-        return jsonify({"flag":3, "box":op_box, "score":0})
+        return jsonify({"flag": 3, "box": op_box, "score": 0})
 
     # Check the flag of the opponent.
     status_flag = dbh.get_4096_flag(match, op_id)
@@ -119,4 +120,4 @@ def request_box(jsonObj):
         op_score = dbh.get_4096_score(match, op_id)
         dbh.update_4096_flag(match, op_id, 3)
 
-    return jsonify({"flag":status_flag, "box":op_box, "score":op_score})
+    return jsonify({"flag": status_flag, "box": op_box, "score": op_score})

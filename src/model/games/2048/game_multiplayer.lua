@@ -187,20 +187,20 @@ function Game_multiplayer.setCompetitorData(JSONObject)
   jo = JSON:decode(JSONObject)
 
   -- Check flag status
-  if jo.flag == PLAYER_UPDATE then
+  if jo["flag"] == PLAYER_UPDATE then
     -- Update competitors box.
-    Boxes_competitor.box_table = jo.box
-    Boxes_competitor.current_score = jo.score
-  elseif jo.flag == PLAYER_QUIT then
+    Boxes_competitor.box_table = jo["box"]
+    Boxes_competitor.current_score = jo["score"]
+  elseif jo["flag"] == PLAYER_QUIT then
     -- Other player quit the game. End game.
     return false
-  elseif jo.flag == PLAYER_SAME then
+  elseif jo["flag"] == PLAYER_SAME then
     -- Other player won. Continue playing until full box.
     return true
-  elseif jo.flag == PLAYER_FULL then
+  elseif jo["flag"] == PLAYER_FULL then
     -- Other player has full box. Continue playing until full box.
-    Boxes_competitor.box_table = jo.box
-    Boxes_competitor.current_score = jo.score
+    Boxes_competitor.box_table = jo["box"]
+    Boxes_competitor.current_score = jo["score"]
     -- TODO: Maybe change color of competitors box?
     return true
   end
