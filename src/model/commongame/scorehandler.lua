@@ -10,6 +10,7 @@ local size = 20
 local color = {r = 255, g = 255, b =255 }
 local pos = {x=100,y=20}
 local score_text = sys.new_freetype(color, size, pos, font_path)
+local game = ""
 
 -- This is a black box to cover the old score
 local w = gfx.new_surface(1280, 58)
@@ -39,15 +40,20 @@ end
 -- This function should be called when a user has won a game, or reached game over condition
 -- The score should then be saved in the database. Probably only if it's a new highscore though, so
 -- it needs to check current high score..
-function Score.submitHighScore(gameName)
-   local response = HighscoreHandler:submitGlobalHighscore(gameName, 1, 10) 
-   dump(response)
+function Score.submitHighScore()
+    local playerID = 3
+   local response = HighscoreHandler:submitGlobalHighscore(game, playerID, scoreCount) 
 end
 
 -- TODO
 -- This function should return the highscore of the game (globally, or personally?)
 -- @return: Highscore
 function Score.retrieveHighscore()
+end
+
+
+function Score.setGame(setgame)
+  game = setgame
 end
 
 -- 
