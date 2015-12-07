@@ -151,6 +151,14 @@ def get_user(mac, playerid):
     return cfo[0]
 
 
+def get_user_safe(mac, playerid):
+    global_id = get_user(mac, playerid)
+    if global_id == -1:
+        return add_user()
+    else:
+        return global_id
+
+
 def get_unit_user(global_id):
     """Get user information from database.
 
@@ -1137,4 +1145,239 @@ def get_global_highscore(gamename, number_of_scores):
     result = []
     for row in cfa:
         result.append(dict_factory(cursor, row))
-    return result 
+    return result
+
+
+# 4096 multiplayer
+def start_new_4096_match(mac, playerid):
+    """ Start a new match with the player in it.
+        Will create new match and new row in table fns_player_boxes which to
+        store information about box, score, and flag.
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+    Returns:
+        Integer value of the match_id that the player was added to.
+        If something went wrong the value -1 will be returned.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
+    global_id = get_user_safe()
+    mid = add_match('4096', mac, playerid)
+
+    c = get_db()
+    try:
+        c.execute("INSERT INTO fns_player_boxes (match_id"
+                  ", player_id)"
+                  " VALUES (?,?)"
+                  , (mid, global_id,))
+        c.commit()
+    except sqlite3.Error as e:
+        get_db().rollback()
+        log_error('start_new_4096_match', e.args[0])
+        return -1
+    return mid
+
+
+def set_4096_score(match_id, player_id, new_score):
+    """ Update, or set, the score tuple from fns_player_boxes table to
+        a new value.
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+        new_score: New value of the score to be set.
+    Returns:
+        Boolean value true if tuple could be updated. Otherwise false.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
+    c = get_db()
+    try:
+        c.execute("UPDATE SET fns_player_boxes.score = ?"
+                  " WHERE fns_player_boxes.match_id = ?"
+                  " AND fns_player_boxes.player_id = ?"
+                  , (new_score, match_id, player_id,))
+        c.commit()
+    except sqlite3.Error as e:
+        log_error('set_4096_score', e.args[0])
+        get_db().rollback()
+        return False
+    return True
+
+
+def get_4096_score(match_id, player_id):
+    """ Get the score value for player.
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+    Returns:
+        Will return the value of the score if possible. If something went
+        wrong the value -1 will be returned.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
+    cursor = get_db_cursor()
+    try:
+        cursor.execute( "SELECT score"
+                        " FROM fns_player_boxes"
+                        " WHERE match_id = ?"
+                        " AND player_id = ?"
+                        , (match_id, player_id,))
+        cfo = cursor.fetchone()
+    except sqlite3.Error as e:
+        log_error('get_4096_flag', e.args[0])
+        cfo = None
+    if cfo is None:
+        return -1
+    return cfo[0]
+
+
+def update_4096_box(match_id, player_id, new_box):
+    """ Update, or set, the box tuples from fns_player_boxes table to
+        a new value.
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+        new_box: New value of box as an array with size 16.
+    Returns:
+        Boolean value true if tuples could be updated. Otherwise false.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
+    c = get_db()
+    try:
+        c.execute("UPDATE SET fns_player_boxes.box_1_1 = ?"
+                  ", fns_player_boxes.box_1_2 = ?"
+                  ", fns_player_boxes.box_1_3 = ?"
+                  ", fns_player_boxes.box_1_4 = ?"
+                  ", fns_player_boxes.box_2_1 = ?"
+                  ", fns_player_boxes.box_2_2 = ?"
+                  ", fns_player_boxes.box_2_3 = ?"
+                  ", fns_player_boxes.box_2_4 = ?"
+                  ", fns_player_boxes.box_3_1 = ?"
+                  ", fns_player_boxes.box_3_2 = ?"
+                  ", fns_player_boxes.box_3_3 = ?"
+                  ", fns_player_boxes.box_3_4 = ?"
+                  ", fns_player_boxes.box_4_1 = ?"
+                  ", fns_player_boxes.box_4_2 = ?"
+                  ", fns_player_boxes.box_4_3 = ?"
+                  ", fns_player_boxes.box_4_4 = ?"
+                  " WHERE fns_player_boxes.match_id = ?"
+                  " AND fns_player_boxes.player_id = ?"
+                  , (new_box[0], new_box[1], new_box[2], new_box[3]
+                     , new_box[4], new_box[5], new_box[6], new_box[7]
+                     , new_box[8], new_box[9], new_box[10], new_box[11]
+                     , new_box[12], new_box[13], new_box[14], new_box[15]
+                     , match_id, player_id,))
+        c.commit()
+    except sqlite3.Error as e:
+        log_error('update_4096_box', e.args[0])
+        get_db().rollback()
+        return False
+    return True
+
+
+def get_4096_box(match_id, player_id):
+    """ Get the box value of specified player
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+    Returns:
+        Will return the value of the box as an array.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
+    c = get_db_cursor()
+    try:
+        c.execute("SELECT box_1_1"
+                  ", box_1_2"
+                  ", box_1_3"
+                  ", box_1_4"
+                  ", box_2_1"
+                  ", box_2_2"
+                  ", box_2_3"
+                  ", box_2_4"
+                  ", box_3_1"
+                  ", box_3_2"
+                  ", box_3_3"
+                  ", box_3_4"
+                  ", box_4_1"
+                  ", box_4_2"
+                  ", box_4_3"
+                  ", box_4_4"
+                  " FROM fns_player_boxes"
+                  " WHERE fns_player_boxes.match_id = ?"
+                  " AND fns_player_boxes.player_id = ?"
+                  , (match_id, player_id,))
+        cfo = c.fetchone()
+    except sqlite3.Error as e:
+        log_error('update_4096_box', e.args[0])
+        cfo = None
+    return dict_factory(c, cfo)
+
+
+def update_4096_flag(match_id, player_id, new_flag):
+    """ Update, or set, the status_flag tuple from fns_player_boxes table to
+        a new value.
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+        new_flag: New value of the flag.
+    Returns:
+        Boolean value true if tuple could be updated. Otherwise false.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
+    c = get_db()
+    try:
+        c.execute("UPDATE SET fns_player_boxes.status_flag = ?"
+                  " WHERE fns_player_boxes.match_id = ?"
+                  " AND fns_player_boxes.player_id = ?"
+                  , (new_flag, match_id, player_id,))
+        c.commit()
+    except sqlite3.Error as e:
+        log_error('update_4096_flag', e.args[0])
+        get_db().rollback()
+        return False
+    return True
+
+
+def get_4096_flag(match_id, player_id):
+    """ Get the status flag value for player.
+    Args:
+        match_id: Related match.
+        player_id: Global_id of the player.
+    Returns:
+        Will return the value of the flag if possible. If something went
+        wrong the value -1 will be returned.
+    Raises:
+        Nothing.
+    History (date user: text):
+        2015-12-06 bjowi227: Created function.
+    """
+    cursor = get_db_cursor()
+    try:
+        cursor.execute( "SELECT status_flag"
+                        " FROM fns_player_boxes"
+                        " WHERE match_id = ?"
+                        " AND player_id = ?"
+                        , (match_id, player_id,))
+        cfo = cursor.fetchone()
+    except sqlite3.Error as e:
+        log_error('get_4096_flag', e.args[0])
+        cfo = None
+    if cfo is None:
+        return -1
+    return cfo[0]

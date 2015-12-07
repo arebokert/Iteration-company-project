@@ -33,3 +33,27 @@ CREATE TABLE IF NOT EXISTS high_scores(
 	player_id INTEGER not null references user_list(global_id),
 	score INTEGER not null
 );
+
+CREATE TABLE IF NOT EXIST fns_player_boxes(
+    match_id INTEGER references matches(match_id),
+    player_id INTEGER references user_list(global_id),
+    status_flag INTEGER NOT NULL DEFAULT 3,
+    score INTEGER NOT NULL DEFAULT 0,
+    box_1_1 INTEGER NOT NULL DEFAULT 0,
+    box_1_2 INTEGER NOT NULL DEFAULT 0,
+    box_1_3 INTEGER NOT NULL DEFAULT 0,
+    box_1_4 INTEGER NOT NULL DEFAULT 0,
+    box_2_1 INTEGER NOT NULL DEFAULT 0,
+    box_2_2 INTEGER NOT NULL DEFAULT 0,
+    box_2_3 INTEGER NOT NULL DEFAULT 0,
+    box_2_4 INTEGER NOT NULL DEFAULT 0,
+    box_3_1 INTEGER NOT NULL DEFAULT 0,
+    box_3_2 INTEGER NOT NULL DEFAULT 0,
+    box_3_3 INTEGER NOT NULL DEFAULT 0,
+    box_3_4 INTEGER NOT NULL DEFAULT 0,
+    box_4_1 INTEGER NOT NULL DEFAULT 0,
+    box_4_2 INTEGER NOT NULL DEFAULT 0,
+    box_4_3 INTEGER NOT NULL DEFAULT 0,
+    box_4_4 INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (match_id, player_id)
+);
