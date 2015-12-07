@@ -11,12 +11,10 @@ menuView = nil
 -- Load a game of pacman 
 --
 function Gamehandler.loadPacman(width, height)
-ADLogger.trace("Number load 1")
   -- Set the background for the view. 
   local pacmanbg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
   screen:copyfrom(pacmanbg, nil)
   pacmanbg:destroy()
-  ADLogger.trace("Number load 2")
   -- Default values for width and height! 
   if width == nil then 
     width = 600
@@ -25,11 +23,9 @@ ADLogger.trace("Number load 1")
   if height == nil then
     height = 400
   end
-  ADLogger.trace("Number load 3")
   -- Display the map on a container
   Gamehandler.container = gfx.new_surface(width, height)
   Gamehandler.containerPos = {x = 300, y = 150}
-    ADLogger.trace("Number load 4")
   -- Initiate pacman 
   Gamehandler.startPacman()
   --ADLogger.trace(collectgarbage("count")*1024)
@@ -39,26 +35,19 @@ end
 -- Generates all needed objects, and calls the needed functions fto be able to play the game
 function Gamehandler.startPacman()
   -- Initiate gameplan 
-  ADLogger.trace("Number start 1")
   gameplan = Gameplan:new()
-  ADLogger.trace("Number start 2")
   
   -- Choose map to load 
   local map = 'map2.txt'  
-  ADLogger.trace("Number start 3")
   if gameplan:loadMap(map) == false then
     -- Return false if the map is not found. 
     return false
   end 
-  ADLogger.trace("Number start 4")
   
   gameplan:resetLives()
-  ADLogger.trace("Number start 5")
   Score.resetScore()
-  ADLogger.trace("Number start 6")
-  
+  Score.setGame("Pacman")
   gameplan:displayMap(Gamehandler.container, Gamehandler.containerPos)
-  ADLogger.trace("Number start 7")
   -- Gamestatus ? 
   gameStatus = true
 end
@@ -68,29 +57,22 @@ end
 --      - True: No collision
 --      - False: Collision - deduct one life and check if game over
 function Gamehandler.refresh()
-ADLogger.trace("Number start 1")
 ADLogger.trace(collectgarbage("count")*1024)
 
   if gameStatus == true then
-  ADLogger.trace("Number start 2")
     gameStatus = gameplan:refresh()
-    ADLogger.trace("Number start 3")
     if gameStatus == false then      
-    ADLogger.trace("Number start 4")
       if gameplan:getLives() > 0 then
-      ADLogger.trace("Number start 5")
         gameplan:reloadPlayerPos()
       end
     end
-    ADLogger.trace("Number start 6")
     Gamehandler.checkVictory()
   elseif gameStatus == false and gameplan:getLives() < 1 then
     gameTimer:stop()
-    Score.submitHighScore("Pacman")
+    Score.submitHighScore()
     InGameMenu.gameOver('views/pacman/data/gameover.png', Score:getScore())
     menuView = "gameOverMenu"
     menuoption = 0
-    ADLogger.trace("Number start 8")
   end
 end
 
@@ -100,7 +82,7 @@ end
 function Gamehandler.checkVictory()
     if noDotsRemaining == 0 then  
       gameTimer:stop()
-      Score.submitHighScore("Pacman")
+      Score.submitHighScore()
       gameStatus = false
       InGameMenu.gameOver('views/pacman/data/victory.png', Score:getScore())
       menuView = "gameOverMenu"
@@ -156,7 +138,7 @@ function Gamehandler.pacmanOnKey(key)
       if key == "ok" then
         menuView = nil
         if menuoption == 0 then
-          gameplan:reprintMap()
+          gameplan:reprintMap(Gamehandler.container)
           gameStatus = true
           if gameTimer then
             gameTimer:start()

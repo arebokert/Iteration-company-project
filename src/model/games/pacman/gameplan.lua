@@ -11,6 +11,9 @@ require("model.games.pacman.player")
 lives = 4
 -- The step that the players will take in pixels
 step = 5
+-- The text for number of lives
+lives_text = sys.new_freetype({r=255,g=255,b=255},20, {x=100, y=680},font_path)
+
 
 -- Define a shortcut function for testing
 function dump(...)
@@ -117,7 +120,18 @@ function Gameplan:loadBackgroundObjects(blockSize, dotSize)
 end   
 
 
-function Gameplan:reprintMap()
+function Gameplan:reprintMap(container)
+local pacmanbg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
+screen:copyfrom(pacmanbg, nil)
+pacmanbg:destroy()
+
+local xlivestext = "x " .. lives
+local life = gfx.loadpng('views/pacman/data/pacmanright0.png')
+life:premultiply()
+screen:copyfrom(life, nil, {x=70, y=680})
+life:destroy()
+lives_text:draw_over_surface(screen,xlivestext)
+
 local dotoffset = GameplanGraphics.yellowDotOffset(self.block, self.dotSize)
 for key, value in pairs(self.map) do
       --ADLogger.trace(collectgarbage("count")*1024)
@@ -143,7 +157,7 @@ for key, value in pairs(self.map) do
             end
         end
     end
-    Score.printScore("local")
+    Score.printScore()
     for k,player in pairs(self.players) do
       container:copyfrom(player.bg, nil, player:getPos())
     end
@@ -245,7 +259,7 @@ function Gameplan:displayMap(container, containerPos)
             self.logicalMap[key][i] = c
         end
     end
-    Score.printScore("local")
+    Score.printScore()
     self:updateLives()
     yellowdotmatrix = self:yellowDotStatus(self.map)
     screen:copyfrom(container, nil, self.containerpos)
@@ -269,8 +283,8 @@ function Gameplan:updateLives()
   local life = gfx.loadpng('views/pacman/data/pacmanright0.png')
   life:premultiply()
   screen:copyfrom(life, nil, {x=70, y=680})
+  life:destroy()
   screen:copyfrom(w,nil,{x=100, y=680})
-  lives_text = sys.new_freetype({r=255,g=255,b=255},20, {x=100, y=680},font_path)
   lives_text:draw_over_surface(screen,xlivestext)
   gfx.update()
   
@@ -491,12 +505,9 @@ end
 function Gameplan:refresh()
     ADLogger.trace("RAM usage: " .. getMemoryUsage("ram"))
     ADLogger.trace("GFX usage: " .. getMemoryUsage("gfx"))
-    ADLogger.trace("Number 1")
     for k,player in pairs(self.players) do
-        ADLogger.trace("Number 2")
         -- Checks whether the latent key press is a possible movement
         if player.type == "pacman" then
-        ADLogger.trace("Number 3")
             local old_dir = player.direction
             player.direction = player.latentdirection
             local check_pos = player:movement(self)
@@ -506,7 +517,6 @@ function Gameplan:refresh()
               player.direction = old_dir
             end  
         end
-       ADLogger.trace("Number 4")
         local new_pos = player:movement(self)
   
         -- New cell is an aisle, OK!
@@ -520,10 +530,8 @@ function Gameplan:refresh()
             elseif new_pos.x > self.container_width - self.block then
               new_pos.x = 0
             end  
-            ADLogger.trace("Number 5")
             
             player:setPos(new_pos.x, new_pos.y)
-            ADLogger.trace("Number 5.1")
             GameplanGraphics.updatePlayerGraphic(player)
             self:repaint(player, oldPos)
             
@@ -558,7 +566,7 @@ function Gameplan:refresh()
         end
     end
     
-    Score.printScore("local")
+    Score.printScore()
     local collision = self:checkPacmanCollision()
     if collision == true then
       self:updateLives()

@@ -40,8 +40,11 @@ function onKey(key, state)
       
 
       if activeView == "pacman" then
-        gamehandler.pacmanOnKey("pause")
-      end
+        if gameTimer then
+          gameTimer:stop()
+        end
+        gameStatus = false
+      end  
     end
     
     if state == "down" or state == "repeat" then
@@ -73,8 +76,11 @@ function onKey(key, state)
           showmenu.loadMainMenu()
           --activeMenu = mainMenu
       elseif activeView == "pacman" then
-          gamehandler.loadPacman()
-          --gameplan:reprintMap()
+          gameplan:reprintMap(Gamehandler.container)
+          gameStatus = true
+          if gameTimer then
+            gameTimer:start()
+          end  
       else
           --collectgarbage()
           --collectgarbage("stop")
