@@ -120,7 +120,7 @@ function Boxes.showMove()
     end
   end
   Boxes.showScore() 
-  screen:copyfrom(screen_player,{x=0,y=0})
+  screen:copyfrom(screen_player,nil)
   gfx.update() 
 end
 
