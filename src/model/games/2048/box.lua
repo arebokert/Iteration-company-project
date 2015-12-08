@@ -143,7 +143,7 @@ end
 
 function Boxes.winGame()
   for i = 1, 16 do
-    if(Boxes.box_table[i] == 16) then
+    if(Boxes.box_table[i] == 2048) then
       screen2048:clear({r=0,g=43,b=44})
       local score = sys.new_freetype({g=255,r=255,b=255}, 70, {x=500,y=220},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
       score:draw_over_surface(screen2048,"YOU WIN")
@@ -169,6 +169,7 @@ function Boxes.endGame()
     local score = sys.new_freetype({g=255,r=255,b=255}, 70, {x=500,y=220},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
     score:draw_over_surface(screen2048,"GAME OVER")
     gfx.update()
+    Score.submitHighScore()
     menuView = "2048_game_over"
     Boxes.clear()
   end

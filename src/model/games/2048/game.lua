@@ -94,6 +94,7 @@ end
 
 function Game.startGame()
  Game.showGamePage(0)
+ Score.setGame("4096")
  --Game.multiplayer()
 end
 

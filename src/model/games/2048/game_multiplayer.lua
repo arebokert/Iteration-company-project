@@ -38,13 +38,18 @@ function Game_multiplayer.registerKey(key, state)
       elseif menuView == nil then
         if key == "up" then   --move every number to top
           Boxes_multiplayer.moveTop()
+            sendUpdatedBox(1)
         elseif key == "down" then
           Boxes_multiplayer.moveBottom()
+            sendUpdatedBox(1)
         elseif key == "left" then
           Boxes_multiplayer.moveLeft()
+            sendUpdatedBox(1)
         elseif key == "right" then
           Boxes_multiplayer.moveRight()
+            sendUpdatedBox(1)
         elseif key == "exit" then
+            sendUpdatedBox(2)
           activeView = "menu"
           current_menu = "mainMenu"
           GameTimer_2048:stop()
@@ -174,7 +179,7 @@ function Game_multiplayer.getCompetitorData()
     mac = mac,
     playerid = id
     })
-  return nh.sendJSON(JObj, "4096MultiPlayerRequest")
+  return nh.sendJSON(request, "4096MultiPlayerRequest")
   -- TODO: Add timeout function for server request.
 end
 
@@ -187,6 +192,9 @@ end
 --last modified Dec 03, 2015
 --------------------------------------------------------------------
 function Game_multiplayer.setCompetitorData(JSONObject)
+  if JSONObject == nil then
+    return true
+  end
   jo = JSON:decode(JSONObject)
 
   -- Check flag status

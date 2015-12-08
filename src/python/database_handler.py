@@ -154,7 +154,7 @@ def get_user(mac, playerid):
 def get_user_safe(mac, playerid):
     global_id = get_user(mac, playerid)
     if global_id == -1:
-        return add_user()
+        return add_user(mac, playerid)
     else:
         return global_id
 
@@ -1164,7 +1164,7 @@ def start_new_4096_match(mac, playerid):
     History (date user: text):
         2015-12-06 bjowi227: Created function.
     """
-    global_id = get_user_safe()
+    global_id = get_user_safe(mac, playerid)
     mid = add_match('4096', mac, playerid)
 
     c = get_db()

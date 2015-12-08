@@ -36,6 +36,7 @@ end
 function Gamehandler.startPacman()
   -- Initiate gameplan 
   gameplan = Gameplan:new()
+  GameplanGraphics.loadSprites()
   
   -- Choose map to load 
   local map = 'map2.txt'  
