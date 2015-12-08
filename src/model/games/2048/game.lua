@@ -45,23 +45,18 @@ function Game.registerKey(key, state)
           InGameMenu.loadPauseMenu()
           menuView = "pauseMenu"
         end
-      end
-    end
-    if current_menu =="2048_game_over" then
-       if state == "down" then
-          if key == "exit" then
-	     current_menu = "mainmenu"
-             activeView = "menu"
-          end
+     elseif menuView == "2048_game_over" then 
+       if key == "exit" then
+          current_menu = "mainmenu"
+          activeView = "menu"
+          menuView = nil
+          Score.resetScore()
+           Boxes.clear()
+          showmenu.loadMainMenu()
+       else 
+          ADLogger.trace("still in game over")
        end
-    end
-    if current_menu =="2048_win" then
-       if state == "down" then
-          if key == "exit" then
-       current_menu = "mainmenu"
-             activeView = "menu"
-          end
-       end
+     end
     end
 end
 

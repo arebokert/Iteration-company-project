@@ -155,7 +155,7 @@ function Boxes.winGame()
       score:draw_over_surface(screen2048,"You Win")
       screen:copyfrom(screen2048,nil)
       gfx.update()
-      current_menu = "2048_win"
+      menuView = "2048_win"
       Boxes.clear()
      
     end
@@ -176,7 +176,7 @@ function Boxes.endGame()
     local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=500,y=420},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
     score:draw_over_surface(screen_player,"GAME OVER")
     gfx.update()
-    current_menu = "2048_game_over"
+     menuView = "2048_game_over"
   end
 end
 
