@@ -27,7 +27,7 @@ def submit_box(jsonObj):
         match = dbh.start_new_4096_match(data['mac'], data['playerid'])
     else:
         match = response[0]
-        if match is None or response[1] is not None:
+        if match is None or response[2] is not None:
             # No match was found or match was found but has ended, create new match.
             match = dbh.start_new_4096_match(data['mac'], data['playerid'])
 
@@ -91,7 +91,7 @@ def request_box(jsonObj):
         match = dbh.start_new_4096_match(data['mac'], data['playerid'])
     else:
         match = response[0]
-        if match is None or response[1] is not None:
+        if match is None or response[2] is not None:
             # No match was found or match was found but has ended, create new match.
             match = dbh.start_new_4096_match(data['mac'], data['playerid'])
 
