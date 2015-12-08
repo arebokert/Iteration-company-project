@@ -170,6 +170,7 @@ function Boxes.endGame()
     local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=500,y=420},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
     score:draw_over_surface(screen2048,"GAME OVER")
     gfx.update()
+    Score.submitHighScore()
     menuView = "2048_game_over"
     Boxes.clear()
   end
