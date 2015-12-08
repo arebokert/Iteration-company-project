@@ -38,13 +38,18 @@ function Game_multiplayer.registerKey(key, state)
       elseif menuView == nil then
         if key == "up" then   --move every number to top
           Boxes_multiplayer.moveTop()
+            sendUpdatedBox(1)
         elseif key == "down" then
           Boxes_multiplayer.moveBottom()
+            sendUpdatedBox(1)
         elseif key == "left" then
           Boxes_multiplayer.moveLeft()
+            sendUpdatedBox(1)
         elseif key == "right" then
           Boxes_multiplayer.moveRight()
+            sendUpdatedBox(1)
         elseif key == "exit" then
+            sendUpdatedBox(2)
           activeView = "menu"
           current_menu = "mainMenu"
           GameTimer_2048:stop()
