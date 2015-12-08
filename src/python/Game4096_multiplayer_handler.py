@@ -23,10 +23,13 @@ def submit_box(jsonObj):
 
     # Get match, or create new match.
     response = dbh.get_match_history("4096", data['mac'], data['playerid'], 1)
-    match = response['match_id']
-    if match is None or response['winner'] is not None:
-        # No match was found or match was found but has ended, create new match.
+    if len(response) == 0:
         match = dbh.start_new_4096_match(data['mac'], data['playerid'])
+    else:
+        match = response[0]
+        if match is None or response[1] is not None:
+            # No match was found or match was found but has ended, create new match.
+            match = dbh.start_new_4096_match(data['mac'], data['playerid'])
 
     if data['flag'] == 1:
         # Normal move update. Update box.
@@ -84,10 +87,13 @@ def request_box(jsonObj):
 
     # Get match, or create new match.
     response = dbh.get_match_history("4096", data['mac'], data['playerid'], 1)
-    match = response['match_id']
-    if match is None or response['winner'] is not None:
-        # No match was found or match was found but has ended, create new match.
+    if len(response) == 0:
         match = dbh.start_new_4096_match(data['mac'], data['playerid'])
+    else:
+        match = response[0]
+        if match is None or response[1] is not None:
+            # No match was found or match was found but has ended, create new match.
+            match = dbh.start_new_4096_match(data['mac'], data['playerid'])
 
     op_box = []
     # Get opponent id
