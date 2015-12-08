@@ -154,7 +154,7 @@ def get_user(mac, playerid):
 def get_user_safe(mac, playerid):
     global_id = get_user(mac, playerid)
     if global_id == -1:
-        return add_user()
+        return add_user(mac, playerid)
     else:
         return global_id
 

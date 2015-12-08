@@ -174,7 +174,7 @@ function Game_multiplayer.getCompetitorData()
     mac = mac,
     playerid = id
     })
-  return nh.sendJSON(JObj, "4096MultiPlayerRequest")
+  return nh.sendJSON(request, "4096MultiPlayerRequest")
   -- TODO: Add timeout function for server request.
 end
 
@@ -187,6 +187,9 @@ end
 --last modified Dec 03, 2015
 --------------------------------------------------------------------
 function Game_multiplayer.setCompetitorData(JSONObject)
+  if JSONObject == nil then
+    return true
+  end
   jo = JSON:decode(JSONObject)
 
   -- Check flag status
