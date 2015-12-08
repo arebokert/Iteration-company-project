@@ -1164,7 +1164,7 @@ def start_new_4096_match(mac, playerid):
     History (date user: text):
         2015-12-06 bjowi227: Created function.
     """
-    global_id = get_user_safe()
+    global_id = get_user_safe(mac, playerid)
     mid = add_match('4096', mac, playerid)
 
     c = get_db()
