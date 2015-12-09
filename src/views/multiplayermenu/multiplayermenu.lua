@@ -11,7 +11,7 @@ local first_treverse = nil
 multiMenu = nil
 local font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 
---dunction: loadMenu()
+--function: loadMenu()
 --Loads the view for the multiplayer menu
 --
 --
@@ -44,7 +44,7 @@ function multiplayermenu.loadRecentResults(recentRes)
   local btnsec = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= ((multiMenu:get_height())/2)*1.3+8}, font_path)
   local btnthird = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= ((multiMenu:get_height())/2)*1.6+8}, font_path)
   
-  --unpack the array
+  --unpack the array and print the 'latest' scores
   local score1 = resulttable[activeGame]["score1"]
   local score2 = resulttable[activeGame]["score2"]
   local score3 = resulttable[activeGame]["score3"]
@@ -81,7 +81,8 @@ function multiplayermenu.loadRecentResults(recentRes)
   gfx.update()
 end
 
---reloads the most recent results
+--Reloads the most recent results
+--Called upon while treversing the carousel, in order to appropriately update the scores.
 function multiplayermenu.reloadRecent()
   multiMenu:clear()
   local btnett = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= (multiMenu:get_height())/2+8}, font_path)
