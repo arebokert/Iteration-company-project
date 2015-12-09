@@ -3,6 +3,10 @@
 --description: load the 2048 each number box                --------
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
+--
+
+local score_font = sys.new_freetype({g=255,r=255,b=255}, 42, {x=250,y=35},root_path .."views/mainmenu/data/font/Gidole-Regular.otf")
+
 local Boxes_competitor = {
   current_score = 0, 
   tag = {},   -- end game tag
@@ -69,11 +73,12 @@ end
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
 function Boxes_competitor.showScore()
-  local score_font = sys.new_freetype({g=100,r=100,b=100}, 32, {x=screen_competitor:get_width()*0.4,y=screen_competitor:get_height()*0.1},root_path .."views/mainmenu/data/font/Gidole-Regular.otf")
-  score_font:draw_over_surface(screen_competitor,"Score:")
-  screen_competitor:clear({r=245,g=245,b=245}, {x=screen_competitor:get_width()*0.4 +100,y=screen_competitor:get_height()*0.1, w=50, h =50})
-  local score = sys.new_freetype({g=10,r=10,b=10}, 32, {x=screen_competitor:get_width()*0.4+100,y=screen_competitor:get_height()*0.1},root_path .. "views/mainmenu/data/font/Gidole-Regular.otf")
-  score:draw_over_surface(screen_competitor,Boxes_competitor.current_score)
+
+  local cover = gfx.new_surface(640,100)
+  cover:clear({r=0,g=0,b=0})
+  screen_competitor:copyfrom(cover,nil,{x=0,y=0})
+  score_font:draw_over_surface(screen_competitor,"Score: " .. Boxes_competitor.current_score)
+  
   
 end
 

@@ -98,7 +98,7 @@ function Game_multiplayer.showGamePage(flag)         --- if flag == 1 , resume
    Game_multiplayer.loadBoxes(left_screen)
    Game_multiplayer.loadComBoxes(right_screen)
    screen:copyfrom(left_screen,nil,{x=0,y=0})
-   screen:clear({r=0,g=0,b=100},{x=screen:get_width()*0.5, y= 0, w= 2, h = screen:get_height()})
+   screen:clear({r=0,g=0,b=0},{x=screen:get_width()*0.5, y= 0, w= 2, h = screen:get_height()})
    screen:copyfrom(right_screen,nil,{x=screen:get_width()*0.5,y=0})
    gfx.update()
 end
@@ -125,8 +125,11 @@ function Game_multiplayer.loadBoxes(temp_screen)
    end
    --local each_square = (height_2048 * 0.6 -25) *0.25
    --local centre_square = {x = width_2048*0.2, y = height_2048 * 0.1, w = width_2048 * 0.6, h = width_2048}
-   screen_player:clear({r=245,g=245,b=245})
-   screen_player:clear({r=0,g=205,b=204},centre_square)
+   local bg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
+   screen_player:copyfrom(bg, nil)
+   bg:destroy()
+  -- screen_competitor:clear({r=0,g=0,b=245})
+   screen_player:clear({r=118, g=18, b=36},centre_square)
    Boxes_multiplayer.init(each_square, box_start_x, box_start_y,0)
 end
 
@@ -152,8 +155,11 @@ function Game_multiplayer.loadComBoxes(temp_screen)
    end
    --local each_square = (height_2048 * 0.6 -25) *0.25
    --local centre_square = {x = width_2048*0.2, y = height_2048 * 0.1, w = width_2048 * 0.6, h = width_2048}
-   screen_competitor:clear({r=245,g=245,b=245})
-   screen_competitor:clear({r=0,g=205,b=204},centre_square)
+   local bg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
+   screen_competitor:copyfrom(bg, nil)
+   bg:destroy()
+  -- screen_competitor:clear({r=0,g=0,b=245})
+   screen_competitor:clear({r=118, g=18, b=36},centre_square)
    Boxes_competitor.init(each_square, box_start_x, box_start_y,0)
 end
 
