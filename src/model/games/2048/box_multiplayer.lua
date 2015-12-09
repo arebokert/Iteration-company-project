@@ -150,37 +150,50 @@ end
 
 -- when win the 2048..
 
-function Boxes.winGame()
+function Boxes.checkWinGame()
   for i = 1, 16 do
     if(Boxes.box_table[i] == 2048) then
-      screen2048:clear({r=50,g=50,b=30})
-      local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=500,y=420},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
-      score:draw_over_surface(screen2048,"You Win")
-      screen:copyfrom(screen2048,nil)
-      gfx.update()
-      menuView = "2048_win"
-      Boxes.clear()
-     
+      return true
     end
   end
+  return false
 end
 
+function Boxes.winGame()
+  screen2048:clear({r=50,g=50,b=30})
+  local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=500,y=420},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
+  score:draw_over_surface(screen2048,"You Win")
+  screen:copyfrom(screen2048,nil)
+  gfx.update()
+  menuView = "2048_win"
+  Boxes.clear()
+end
+
+
+--------------------------------------------------------------------
+--function: checkEndGame                                         --------
+--description: weather the game end of not                  --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
+function Boxes.checkEndGame() 
+  local result = Boxes.tag["left"] + Boxes.tag['right'] + Boxes.tag['top'] + Boxes.tag['bottom']
+  if(result == 4) then
+    return true
+  end
+end
 
 --------------------------------------------------------------------
 --function: endGame                                         --------
 --description: weather the game end of not                  --------
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
-function Boxes.endGame() 
-  local result = Boxes.tag["left"] + Boxes.tag['right'] + Boxes.tag['top'] + Boxes.tag['bottom']
-  if(result == 4) then
-    ADLogger.trace("Game Over")
-    screen_player:clear({r=50,g=20,b=30})
-    local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=500,y=420},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
-    score:draw_over_surface(screen_player,"GAME OVER")
-    gfx.update()
-     menuView = "2048_game_over"
-  end
+function Boxes.endGame(msg) 
+  ADLogger.trace(msg)
+  screen_player:clear({r=50,g=20,b=30})
+  local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=500,y=420},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
+  score:draw_over_surface(screen_player, msg)
+  gfx.update()
+   menuView = "2048_game_over"
 end
 
 --------------------------------------------------------------------

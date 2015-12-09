@@ -79,6 +79,15 @@ function Game_multiplayer.registerKey(key, state)
           menuView = "pauseMenu"
           GameTimer_2048:stop()
         end
+
+        if Boxes_multiplayer.checkWinGame() then
+          Game_multiplayer.sendUpdatedBox(5)
+          Boxes_multiplayer.winGame()
+        elseif Boxes_multiplayer.checkEndGame() then
+          Game_multiplayer.sendUpdatedBox(4)
+          Boxes_multiplayer.endGame("GAME OVER")
+        end
+
       elseif menuView == "2048_game_over" then 
        if key == "exit" then
           current_menu = "mainmenu"
@@ -276,7 +285,7 @@ function Game_multiplayer.setCompetitorData(JSONObject)
     Boxes_competitor.box_table = jo["box"]
     Boxes_competitor.current_score = jo["score"]
     -- TODO: Maybe change color of competitors box?
-    return true
+    return false
   end
   return true  
 end
@@ -305,7 +314,9 @@ callback_2048 = function (timer)
   local competitor_Json = Game_multiplayer.getCompetitorData()
 
   -- Use data recovered.
-  Game_multiplayer.setCompetitorData(competitor_Json)
+  if not Game_multiplayer.setCompetitorData(competitor_Json) then
+    Boxes_multiplayer.endGame("Opponent quit or lost")
+  end
   -- TODO: Add if statement. If return value ofprevious call is 
   --  false, game should end.
 
