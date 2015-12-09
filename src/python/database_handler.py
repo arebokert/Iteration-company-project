@@ -102,6 +102,7 @@ def add_user(mac, playerid):
     History (date user: text):
         2015-12-04 bjowi227: Approved.
         2015-12-05 bjowi227: Fixed so that gid will return correct value.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     c = get_db()
     try:
@@ -122,7 +123,7 @@ def add_user(mac, playerid):
     return gid
 
 def get_user(mac, playerid):
-    """Get user information from database.
+    """Get user information in form of global_id from database.
     Args:
         mac: MAC address of player. To differentiate between units.
         playerid: Local id of player.
@@ -134,6 +135,7 @@ def get_user(mac, playerid):
     History (date user: text):
         2015-12-03 bjowi227: Corrected return variable.
         2015-12-04 bjowi227: Updated exception handling.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
 
     cursor = get_db_cursor()
@@ -152,6 +154,19 @@ def get_user(mac, playerid):
 
 
 def get_user_safe(mac, playerid):
+    """Verifies that the global_id exists.
+    Args:
+        mac: MAC address of player. To differentiate between units.
+        playerid: Local id of player.
+    Returns:
+        If the global_id exists: The integer value of the global_id variable.
+        If the global_id doesn't exist, the function add_user is called.
+    Raises:
+        Will NOT raise an error.
+    History (date user: text):
+        2015-12-08 erida995 and azuja469: Created the comments.
+    """
+
     global_id = get_user(mac, playerid)
     if global_id == -1:
         return add_user()
@@ -160,7 +175,7 @@ def get_user_safe(mac, playerid):
 
 
 def get_unit_user(global_id):
-    """Get user information from database.
+    """Get user information in form of mac address and user_id from database.
 
     Args:
         global_id: Integer value corresponding to tuple global_id in
@@ -178,6 +193,7 @@ def get_unit_user(global_id):
     History (date user: text):
         2015-12-03 bjowi227: Created first version of function.
         2015-12-04 bjowi227: Updated exception handling.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
 
     cursor = get_db_cursor()
@@ -209,6 +225,7 @@ def add_game(gamename):
         Nothing.
     History (date user: text):
         2015-12-04 bjowi227: Updated comments and exception handling.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     c = get_db()
     try:
@@ -233,6 +250,7 @@ def game_exists(gamename):
         Nothing.
     History (date user: text):
         2015-12-04 bjowi227: Changed return statement to be faster.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     cursor = get_db_cursor()
     try:
@@ -253,7 +271,8 @@ def game_exists(gamename):
 # DATABASE TABLE round
 
 def get_match_history(gamename, mac, playerid, number_of_matches):
-    """ Get history of the most recent matches for a player.
+    """ Get history of the specified number of most recent matches 
+        for a player.
     Args:
         gamename: Specific game that the action is related to.
         mac: MAC-address for the player.
@@ -261,12 +280,13 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
         number_of_matches: An integer that describes the number of matches
             that is desired to be retreived, e.g. 10 or 3.
     Returns:
-        A dict containing the top X match_id.
+        A dict containing the specified number of most recent match_id.
     Raises:
         Nothing.
     History (date user: text):
         2015-12-03 bjowi227: Updated SQL query and return part.
         2015-12-04 bjowi227: Updated exception handling.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
 
     if isinstance( number_of_matches, int ):
@@ -306,7 +326,7 @@ def get_match_history(gamename, mac, playerid, number_of_matches):
 
 
 def create_match(gamename, mac, playerid):
-    """ create new row in matches and add player one 
+    """ create new row in the database table matches and add player one 
 
     Args:
         gamename: Specific game that the action is related to.
@@ -323,6 +343,7 @@ def create_match(gamename, mac, playerid):
     History (date user: text):
         2015-12-03 bjowi227: Changed name to create_match. Fixed INSERT query.
         2015-12-04 bjowi227: Corrected execute statement.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
 
     global_id = get_user(mac, playerid)
@@ -353,17 +374,19 @@ def insert_player_two(gamename, mac, playerid, match_id):
         gamename: Specific game that the action is related to.
         mac: MAC-address for the player.
         playerid: An integer that specifies id for player of a set-top-box.
-        match_id: An integer that specifies id for the match that the player shall be inserted in
+        match_id: An integer that specifies id for the match that the 
+        player shall be inserted in
 
     Returns:
         Id of the match as an integer.
         Integer value -1 if player could not be inserted.
 
-
     Raises:
+        Nothing
 
     History (date user: text):
         2015-12-03 bjowi227: Added commit.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     gid = get_user(mac, playerid)
     c = get_db()
@@ -394,9 +417,10 @@ def add_match(gamename, mac, playerid):
         Otherwise match_id as integer value.
 
     Raises:
+        Nothing
 
     History (date user: text):
-        2015-12-03
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     # Check for empty rows in matches
 
@@ -428,12 +452,15 @@ def get_user_in_match(match_id, player_no):
         Integer value -1 if input is incorrect.
         Integer value -2 if match did not exist.
         Integer value 0 if no player was specified in selected slot.
+        global_id if input is correct.
 
     Raises:
         Nothing.
+
     History (date user: text):
         2015-12-04 bjowi227: Replaced check_if_player_one with this function.
         2015-12-06 bjowi227: Fixed indentation and comments.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     cursor = get_db_cursor()
     try:
@@ -467,7 +494,8 @@ def get_user_in_match(match_id, player_no):
 
 
 def get_matchplayer(match_id, global_id):
-    """ Get the value telling if the player is player one or two in a match.
+    """ Get the value telling if the player is player one or two in a match
+        with global_id.
     Args:
         match_id: Specified match being searched in.
         global_id: Integer value corresponding to global_id tuple in user_list.
@@ -479,8 +507,10 @@ def get_matchplayer(match_id, global_id):
 
     Raises:
         Nothing.
+
     History (date user: text):
         2015-12-04 bjowi227: Replaced check_if_player_one with this function.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     cursor = get_db_cursor()
     try:
@@ -503,7 +533,8 @@ def get_matchplayer(match_id, global_id):
 
 
 def get_matchplayer_by_unit(match_id, mac, playerid):
-    """ Get the value telling if the player is player one or two in a match.
+    """ Get the value telling if the player is player one or two in a match
+        with playerid and mac-address.
     Args:
         match_id: Specified match being searched in.
         mac: MAC-address for the player.
@@ -516,8 +547,10 @@ def get_matchplayer_by_unit(match_id, mac, playerid):
 
     Raises:
         Nothing.
+
     History (date user: text):
         2015-12-04 bjowi227: Replaced check_if_player_one with this function.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     global_id = get_user(mac, playerid)
     if global_id == -1:
@@ -544,6 +577,7 @@ def update_round_score(score, match_id, game_number, field_name):
 
     History (date user: text):
         2015-12-04 bjowi227: Created.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     # Check if field_name is correct. If not, return false.
     accepted_types = ['player_one_score'
@@ -584,6 +618,7 @@ def insert_round_score(score, match_id, game_number, field_name):
 
     History (date user: text):
         2015-12-04 bjowi227: Changed comments and SQL query.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
 
     # Check if field_name is correct. If not, return false.
@@ -625,7 +660,9 @@ def add_round_score(gamename, match_id, mac, playerid, score):
     Raises:
 
     History (date user: text):
-        2015-12-04 bjowi227: Made changed to query. Change function call and added logs.
+        2015-12-04 bjowi227: Made changed to query. Change function call 
+        and added logs.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
 
     global_id = get_user(mac, playerid)
@@ -703,6 +740,7 @@ def get_number_of_rounds(gamename, match_id):
 
     History (date user: text):
         2015-12-04 bjowi227: Made minor corrections.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     if not game_exists(gamename):
         return -1
@@ -739,6 +777,7 @@ def get_match_score(gamename, match):
 
     History (date user: text):
         2015-12-04 bjowi227: Created function.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
         
     """
     cursor = get_db_cursor()
@@ -778,6 +817,7 @@ def get_match_total_score(gamename, match_id):
 
     History (date user: text):
         2015-12-04 bjowi227: Approved
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
 
     cursor = get_db_cursor()
@@ -815,6 +855,7 @@ def set_winner(gamename, match_id, global_id):
 
     History (date user: text):
         2015-12-04 bjowi227: Implemented
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     c = get_db()
     try:
@@ -852,6 +893,7 @@ def set_winner_by_unit(gamename, match_id, mac, playerid):
     History (date user: text):
         2015-12-03 bjowi227: Fixed SQL query to check the correct tuples.
         2015-12-04 bjowi227: Changed name and separated query to another function.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
         
     """
 
@@ -876,6 +918,7 @@ def get_winner(gamename, match_id):
 
     History (date user: text):
         2015-12-04 bjowi227: Made minor corrections. Approved.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
 
     cursor = get_db_cursor()
@@ -912,6 +955,7 @@ def quit_match(gamename, match_id, mac, playerid):
 
     History (date user: text):
         2015-12-04 bjowi227: Created new support functions to shorten code.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     # Get if the player who quit is player one or two of match.
     player_quitting = get_matchplayer_by_unit(match_id, mac, playerid)
@@ -965,6 +1009,7 @@ def add_highscore(gamename, mac, playerid, score):
     History (date user: text):
         2015-12-04 bjowi227: Approved.
         2015-12-05 bjowi227: Added controls of global_id.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
 
     if not game_exists(gamename):
@@ -1015,6 +1060,7 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
     History (date user: text):
         2015-12-04 bjowi227: Approved.
         2015-12-05 bjowi227: Changed query to be done using global_id.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     if isinstance( number_of_results, int ):
         nor = number_of_results
@@ -1051,7 +1097,8 @@ def get_highscore_by_player(gamename, mac, playerid, number_of_results):
 
 
 def get_highscore_by_box(gamename, mac, number_of_scores):
-    """ Get all highscores for players of a specific set-top-box.
+    """ Get selected amount of highscores for players of a specific 
+        set-top-box.
 
     Args:
         gamename: Specific game that the action is related to.
@@ -1068,6 +1115,7 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
 
     History (date user: text):
         2015-12-04 bjowi227: Approved
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     if isinstance( number_of_scores, int ):
         nor = number_of_scores
@@ -1100,8 +1148,8 @@ def get_highscore_by_box(gamename, mac, number_of_scores):
 
 
 def get_global_highscore(gamename, number_of_scores):
-    """ Get the top number of scores for specific game. Not depedent 
-    on player.
+    """ Get the specified amount of top scores for specific game. Not 
+        depedent on player.
 
     Args:
         gamename: Specific game that the action is related to.
@@ -1115,6 +1163,7 @@ def get_global_highscore(gamename, number_of_scores):
 
     History (date user: text):
         2015-12-04 bjowi227: Approved
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
 
     if isinstance( number_of_scores, int ):
@@ -1163,6 +1212,7 @@ def start_new_4096_match(mac, playerid):
         Nothing.
     History (date user: text):
         2015-12-06 bjowi227: Created function.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     global_id = get_user_safe()
     mid = add_match('4096', mac, playerid)
@@ -1194,6 +1244,7 @@ def set_4096_score(match_id, player_id, new_score):
         Nothing.
     History (date user: text):
         2015-12-06 bjowi227: Created function.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     c = get_db()
     try:
@@ -1221,6 +1272,7 @@ def get_4096_score(match_id, player_id):
         Nothing.
     History (date user: text):
         2015-12-06 bjowi227: Created function.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     cursor = get_db_cursor()
     try:
@@ -1251,6 +1303,7 @@ def update_4096_box(match_id, player_id, new_box):
         Nothing.
     History (date user: text):
         2015-12-06 bjowi227: Created function.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     c = get_db()
     try:
@@ -1296,6 +1349,7 @@ def get_4096_box(match_id, player_id):
         Nothing.
     History (date user: text):
         2015-12-06 bjowi227: Created function.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     c = get_db_cursor()
     try:
@@ -1339,6 +1393,7 @@ def update_4096_flag(match_id, player_id, new_flag):
         Nothing.
     History (date user: text):
         2015-12-06 bjowi227: Created function.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     c = get_db()
     try:
@@ -1366,6 +1421,7 @@ def get_4096_flag(match_id, player_id):
         Nothing.
     History (date user: text):
         2015-12-06 bjowi227: Created function.
+        2015-12-08 erida995 and azuja469: Commenting Approved.
     """
     cursor = get_db_cursor()
     try:
