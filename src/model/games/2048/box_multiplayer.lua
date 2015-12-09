@@ -261,7 +261,10 @@ function Boxes.moveLeft()
    end
   end
   if Boxes.current_zero ~= 0 then
+    Boxes.tag["top"] = 0
     Boxes.tag["left"] = 0
+    Boxes.tag["right"] = 0
+    Boxes.tag["bottom"] = 0
     Boxes.addRandomNumber()
     Boxes.showMove()
   else
@@ -320,7 +323,10 @@ function Boxes.moveRight()
    end
   end
   if Boxes.current_zero ~= 0 then
+    Boxes.tag["top"] = 0
+    Boxes.tag["left"] = 0
     Boxes.tag["right"] = 0
+    Boxes.tag["bottom"] = 0
     Boxes.addRandomNumber()
     Boxes.showMove()
   else
@@ -378,7 +384,10 @@ function Boxes.moveTop()
    end
   end
   if Boxes.current_zero ~= 0 then
-  Boxes.tag["top"] = 0
+    Boxes.tag["top"] = 0
+    Boxes.tag["left"] = 0
+    Boxes.tag["right"] = 0
+    Boxes.tag["bottom"] = 0
     Boxes.addRandomNumber()
     Boxes.showMove()
   else
@@ -435,6 +444,9 @@ function Boxes.moveBottom()
      end
   end
   if Boxes.current_zero ~= 0 then
+    Boxes.tag["top"] = 0
+    Boxes.tag["left"] = 0
+    Boxes.tag["right"] = 0
     Boxes.tag["bottom"] = 0
     Boxes.addRandomNumber()
     Boxes.showMove()
