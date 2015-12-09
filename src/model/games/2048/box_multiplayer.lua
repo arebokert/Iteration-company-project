@@ -21,6 +21,7 @@ local Boxes = {
   square_2048_margin = 0, -- set size of square box add margin
   box_start_x = 0,        -- start_x of box ( all the 16numbers)
   box_start_y = 0         -- start_y of box ( all the 16numbers) 
+  isGameEnded = false
 }
 
 --------------------------------------------------------------------
@@ -52,6 +53,7 @@ function Boxes.clear()
   for i = 1, 4 do 
     Boxes.tag[i] = 0
   end
+  Boxes.isGameEnded = false
 end
 
 --------------------------------------------------------------------
@@ -191,19 +193,22 @@ end
 --last modified Nov 22, 2015                                --------
 --------------------------------------------------------------------
 function Boxes.endGame(msg) 
-  ADLogger.trace(msg)
-  screen_player:clear({r=50,g=20,b=30})
-  local message = sys.new_freetype({g=255,r=255,b=255}, 70, {x=120,y=300},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
-  local score = sys.new_freetype({g=255,r=255,b=255}, 30, {x=240,y=380},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
-  message:draw_over_surface(screen_player, msg)
-  score:draw_over_surface(screen_player, "Score: " .. Boxes.current_score)
-  screen:copyfrom(screen_player,nil,{x=0,y=0})
-  gfx.update()
-   menuView = "2048_game_over"
-   Score.setGame("4096")
-   Score.resetScore()
-   Score.increaseScore(Boxes.current_score)
-   Score.submitHighScore()
+  if not Boxes.isGameEnded then
+    ADLogger.trace(msg)
+    screen_player:clear({r=50,g=20,b=30})
+    local message = sys.new_freetype({g=255,r=255,b=255}, 70, {x=120,y=300},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
+    local score = sys.new_freetype({g=255,r=255,b=255}, 30, {x=240,y=380},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
+    message:draw_over_surface(screen_player, msg)
+    score:draw_over_surface(screen_player, "Score: " .. Boxes.current_score)
+    screen:copyfrom(screen_player,nil,{x=0,y=0})
+    gfx.update()
+     menuView = "2048_game_over"
+     Score.setGame("4096")
+     Score.resetScore()
+     Score.increaseScore(Boxes.current_score)
+     Score.submitHighScore()
+     Boxes.isGameEnded = true
+  end
 end
 
 --------------------------------------------------------------------
