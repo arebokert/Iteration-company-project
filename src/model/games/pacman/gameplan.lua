@@ -1,7 +1,8 @@
----- Coords -----
----- Absolute position starts at (1,1)
----- Relative position starts at (0,0)
----- Cell grid position starts at (1,1)  
+-- ------------- Coords -----------------
+-- -- Absolute position starts at (1,1)
+-- -- Relative position starts at (0,0)
+-- -- Cell grid position starts at (1,1) 
+-- -------------------------------------- 
 font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 require("model.games.pacman.dumper")
 require("model.games.pacman.collisionhandler")
@@ -13,7 +14,6 @@ lives = 4
 step = 5
 -- The text for number of lives
 lives_text = sys.new_freetype({r=255,g=255,b=255},20, {x=100, y=680},font_path)
-
 
 -- Define a shortcut function for testing
 function dump(...)
@@ -36,6 +36,7 @@ end
 
 --
 -- Load the pacman map. 
+-- @map: Defined name of map-file, if not stated a standard map is chosen
 --
 function Gameplan:loadMap(map)
     -- If map is not specified, default is "map2.txt"
@@ -72,6 +73,7 @@ end
 
 -- 
 -- Function to add a player to a gameplan. 
+-- @player: The player to be added to gameplan array of players
 --
 function Gameplan:addPlayer(player)
     if self.players == nil then
@@ -82,15 +84,16 @@ end
 
 
 --
--- Set direction of Pacman. Obs! Hardcoded as player 1, needs to be adjusted. 
---
+-- Set direction of Pacman. Obs! Hardcoded as player 1. Make sure pacman is player 1, or rewrite this function 
+-- @dir: New direction of pacman. [Possible choices: "up","bottom","left","right"]
 function Gameplan:setPacmanDirection(dir)
     self.players[1].latentdirection = dir
 end
 
 
 -- Print a yellow dot to a cell
---@param cell: The cell-value in cell coordiantes
+-- @cell: The cell-value in cell coordiantes
+--
 function Gameplan:printYellowDot(cell)
     local dotoffset = GameplanGraphics.yellowDotOffset(self.block, self.dotSize)
     local dotpos = {x = (cell.x-1)*self.block + dotoffset, y = (cell.y-1)*self.block + dotoffset}--position of yellow dot
@@ -119,7 +122,10 @@ function Gameplan:loadBackgroundObjects(blockSize, dotSize)
   return background
 end   
 
-
+-- This function reprints the map with the current status.
+-- Should be utilized when you want to resume the game. At pause menu, or tv mode.
+-- @container: The container where the map is printed.
+--
 function Gameplan:reprintMap(container)
 local pacmanbg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
 screen:copyfrom(pacmanbg, nil)
@@ -205,7 +211,6 @@ function Gameplan:displayMap(container, containerPos)
                   container:copyfrom(bg["d"], nil, dotpos) 
                 end 
             elseif c == "D" then
-                --self:paintdoor({x=i, y=key})
                 container:copyfrom(bg["0"], nil, pos)
                 container:copyfrom(bg["D"], nil, pos)
             elseif c == "H" then   
@@ -217,9 +222,7 @@ function Gameplan:displayMap(container, containerPos)
                 -- Start position for pacman
                 pacman:setPos(pos.x, pos.y)
                 pacman.startPos = {x = pos.x, y = pos.y}
-                pacman.bg = gfx.new_surface(self.block,self.block)
-                --pacman.bg:clear({r=255,g=255,b=51})
-                
+                pacman.bg = gfx.new_surface(self.block,self.block)                  
                  -- pacman attributes to keep track of picture for animation
                 pacman.moveanim = 1
                 pacman.picture0 = 'views/pacman/data/pacmanright0.png'
@@ -267,12 +270,14 @@ function Gameplan:displayMap(container, containerPos)
     gfx.update()
 end
 
+-- This function helps to scale pictures
 function Gameplan:getDestRectangle(pos)
   local DestRect = {x = pos.x, y = pos.y, w = self.block, h = self.block}
   return DestRect
 end
 
--- Updates number of lives
+-- Updates number of lives and reprints them on the screen
+--
 function Gameplan:updateLives()
   
   lives = lives - 1
@@ -302,6 +307,9 @@ function Gameplan:resetLives()
   lives = 4
 end  
 
+-- This function makes an animation when pacman dies.
+-- All the players twinkle 4 times before all player's position are reset
+--
 function deadAnimation() 
     if menuView == "pauseMenu" then
       deadAnimationTimer:stop()
@@ -344,7 +352,9 @@ function deadAnimation()
     end
 end
 
--- This function resets all players to their origin position
+--
+-- This function keeps track of the deadanimation of the players, and calls animation
+-- 
 function Gameplan:reloadPlayerPos()
 
     animationcount = 0
@@ -539,7 +549,7 @@ function Gameplan:refresh()
             -- This if statement is to handle bugs in yellow dot handling that occured
             -- It's not straight forward, but it's due to the size of pacman
             -- related to the position that's in the upper left corner
-            -- This is purely SHIT CODE! And has to be rewritten.. The developers of this code are ashamed...
+            -- This is bad code, and could possible be rewritten.
             if player.type == "pacman" then
               if player.direction == "right" then
                   oldPos.x = oldPos.x + step * 3
@@ -571,11 +581,6 @@ function Gameplan:refresh()
     if collision == true then
       self:updateLives()
     end
-    
-    --collectgarbage("stop")
-    
-    --for testing, prints bytes of memory freed for each transaction
-    --ADLogger.trace(collectgarbage("count")*1024)
     return not collision
 end
 

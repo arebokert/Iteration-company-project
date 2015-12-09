@@ -1,5 +1,8 @@
 Player = {}
 
+-- This function checks which new pos the player wants to go
+-- @gameplan: The gameplan
+-- @return new_pos: The new wanted pos of player
 function Player:movement(gameplan)
   -- Set step of each movement 
   step = 5
@@ -62,6 +65,8 @@ function Player:changeGhostDir(gameplan,new_pos)
     end
 end
 
+-- Constructor of player
+-- @type: A string describing which type of player e.g. pacman or ghost
 function Player:new (type)
   obj = {}   -- create object if user does not provide one
   setmetatable(obj, self)
@@ -70,16 +75,23 @@ function Player:new (type)
   return obj
 end
 
+-- Sets pos of player
+-- @x: x coordinate
+-- @y: y coordinate
 function Player:setPos(x, y)
   self.x = x
   self.y = y
 end
 
+-- Gets pos of player
+-- @x: x coordinate
+-- @y: y coordinate
 function Player:getPos()
   pos = {x = self.x, y = self.y}
   return pos
 end
 
+-- Randomizes a direction of an opponent
 function Player:Randomdirection()
   possibledirections = {"up", "down", "left", "right"}
   pacmanrelativepos = {} 

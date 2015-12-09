@@ -2,30 +2,15 @@
 GameplanGraphics = {}
 
 -- A block for walls. Colors and size
+-- @block: Size of block in pixels
 function GameplanGraphics.createWall(block)
     local w = gfx.new_surface(block, block)
     w:clear({r=118, g=18, b=36})
     return w
 end
 
--- Gameover screen to be loaded when all lives is run out
-function GameplanGraphics.gameOver(picpath)
-    local gameOver = gfx.loadpng(picpath)
-    screen:copyfrom(gameOver, nil,{x=450, y=250})
-    local score_text = sys.new_freetype({r=255,g=255,b=255}, 20, {x=575,y=315}, font_path)
-    local word = "Score: " .. Score.getScore()
-    score_text:draw_over_surface(screen,word)
-    -- This is for the dot that marks position
-    local w = gfx.new_surface(20, 20)
-    w:clear({r=255, g=255, b=255})
-    screen:copyfrom(w,nil,{x=480, y=350})
-    -- --------
-    gfx.update()
- -- gameOver:destroy() 
-end
-
-
 -- A block for aisles. Colors and size
+-- @block: Size of block in pixles.
 function GameplanGraphics.createAisle(block)
     local a = gfx.new_surface(block, block)
     a:clear({r=0, g=0, b=0})
@@ -33,6 +18,8 @@ function GameplanGraphics.createAisle(block)
 end
 
 -- A surface for yellow dots. Color and size
+-- @psize: Size of yellow dot in pixles
+--
 function GameplanGraphics.createYellowDot(psize)
     local dot = gfx.new_surface(psize, psize)
     dot:clear({r=222, g=228, b=51})
@@ -41,12 +28,15 @@ end
 
 -- A function that calculates what the distance from the left border of the cell to where the yellow dot is suppsoed to
 -- be painted
+-- @block: The size in pixles of one block in the gameplan
+-- @dotSize: the wanted size of the dots
 function GameplanGraphics.yellowDotOffset(block, dotSize)
   local offset = math.ceil((block - dotSize)/2)
   return offset
 end
 
 -- A surface for the door. Color and size
+-- @block: Block size in pixles
 function GameplanGraphics.createDoor(block) 
   local door = gfx.new_surface(block, math.ceil(block/4))
   door:clear({r=200,g=80,b=51})
@@ -54,6 +44,7 @@ function GameplanGraphics.createDoor(block)
 end
 
 -- Load all ghost and pacman pictures at start of pacman for use later
+--
 function GameplanGraphics.loadSprites()
   sprites = {}
   sprites['pacmanleft0'] = gfx.loadpng("views/pacman/data/pacmanleft0.png")
@@ -77,7 +68,7 @@ end
 -- 
 -- Update direction of player picture depending on direction
 --
--- @type: player 
+-- @type player: The player that's supposed to be updated
 function GameplanGraphics.updatePlayerRotation(player)     
   if player.type == "pacman" then
     player.picture0 = sprites[player.type..player.direction..'0']
