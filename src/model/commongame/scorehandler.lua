@@ -39,7 +39,7 @@ end
 --
 -- This function should be called when a user has won a game, or reached game over condition
 -- The score is then saved in the database
--- 
+-- If there is no internet connection, the highscore is not taken care of
 -- 
 function Score.submitHighScore()
    local playerID = "TestPlayer"
@@ -50,12 +50,15 @@ function Score.submitHighScore()
 end
 
 -- TODO
--- This function should return the highscore of the game (globally, or personally?)
+-- This function should return the highscore of the game (globally)
 -- @return: Highscore
 function Score.retrieveHighscore()
+  return
 end
 
-
+--
+-- This is to set what game is active
+-- @setgame: The game that's active
 function Score.setGame(setgame)
   game = setgame
 end
