@@ -24,7 +24,7 @@ PLAYER_FULL = 4
 --last modified: Dec 9 2015                                 --------
 --------------------------------------------------------------------
 function Game_multiplayer.getPlayerId()
-  local id = 2
+  local id = 1
   return id
 end
 
@@ -233,7 +233,8 @@ function Game_multiplayer.getCompetitorData()
     playerId = id,
     matchId = Game_multiplayer.match_id
     })
-  return nh.sendJSON(request, "4096MultiPlayerRequest")
+
+    return nh.sendJSON(request, "4096MultiPlayerRequest")
   -- TODO: Add timeout function for server request.
 end
 
@@ -250,11 +251,13 @@ function Game_multiplayer.setCompetitorData(JSONObject)
     return true
   end
   jo = JSON:decode(JSONObject)
-
+  dump(jo)
   -- Check flag status
   if jo["flag"] == PLAYER_UPDATE then
     -- Update competitors box.
-    Boxes_competitor.box_table = jo["box"]
+    local new_box = jo["box"]
+        
+    Boxes_competitor.box_table = new_box
     Boxes_competitor.current_score = jo["score"]
   elseif jo["flag"] == PLAYER_QUIT then
     -- Other player quit the game. End game.

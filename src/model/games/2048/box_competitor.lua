@@ -107,11 +107,13 @@ function Boxes_competitor.showMove()
   for j = 0, 3 do
     for i = 1, 4 do
       local bg_pos = {x = i*Boxes_competitor.square_2048_margin+Boxes_competitor.box_start_x, y=j*Boxes_competitor.square_2048_margin+Boxes_competitor.box_start_y, w= Boxes_competitor.each_square_2048, h = Boxes_competitor.each_square_2048}
-      if(Boxes_competitor.box_table[i+j*4] == 0) then
+      local box_value = Boxes_competitor.box_table[i+j*4]
+      if(box_value== 0) then
         box_img = Boxes_competitor.box_img[0]
       else
-        box_img = Boxes_competitor.box_img[Boxes_competitor.box_table[i+j*4]]
+        box_img = Boxes_competitor.box_img[box_value]
       end
+      
       screen_competitor:copyfrom(box_img, nil,bg_pos,true)
     end
   end
