@@ -351,14 +351,16 @@ def create_match(gamename, mac, playerid):
         global_id = add_user(mac, playerid)
 
     c = get_db()
+    cursor = c.cursor()
     try:
-        c.execute(
+        cursor.execute(
             "INSERT INTO matches (gamename"
             ", player_one_id)"
             " VALUES (?,?)"
             , (gamename, global_id,))
-        last_id = c.cursor().lastrowid
+        last_id = cursor.lastrowid
         c.commit()
+
     except sqlite3.Error as e:
         get_db().rollback()
         log_error('create_match', e.args[0])

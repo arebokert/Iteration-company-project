@@ -3,12 +3,45 @@ import database_handler as dbh
 from flask import jsonify
 
 
+def log(func_name, msg):
+    print 'MSG:     Game4096_multiplayer:    ' + func_name + '   :   ' + msg
+    return True
+
+
+def log_error(func_name, msg):
+    print 'ERROR:   Game4096_multiplayer:    ' + func_name + '   :   ' + msg
+    return True
+
+
+def join_match(jsonObj):
+    """Handle request from player to start new of join existing match.
+    Args:
+        jsonObj: JSON object containg {mac, playerId}
+    Returns:
+        Will return the match_id as a positive integer. Will return the
+        integer value -1 if something went wrong in the database, -2 if data
+        sent was wrong or corrupt.
+    Raises:
+    History (date user: text):
+        2015-12-09 bjowi227: Created.
+    """
+    data = json.loads(jsonObj)
+    # Check data for consistency
+    if not isinstance( data['playerId'], int ):
+        msg = "Received parameter playerId is not an integer."
+        log_error("join_match", msg)
+        return -2
+
+    # Join or create new match.
+    return dbh.start_new_4096_match(data['mac'], data['playerId'])
+
+
 def submit_box(jsonObj):
     """Handle a send request incoming from a player.
     Shall add the players latest status to a variable. Only one
     status shall be available at any given time.
     Args:
-        jsonObj: JSON object containg {flag, mac, playerid, box, score}
+        jsonObj: JSON object containg {matchId, flag, mac, playerId, box, score}
     Returns:
         Will return a boolean value. True if everything went ok, 
         otherwise false.
@@ -18,38 +51,39 @@ def submit_box(jsonObj):
         2015-12-06 bjowi227: Implemented function.
     """
     data = json.loads(jsonObj)
-    # Get player information
-    player = dbh.get_user_safe(data['mac'], data['playerid'])
+    # Check data for consistency
+    if not isinstance( data['matchId'], int ) or\
+            not isinstance( data['playerId'], int ):
+        msg = "Received parameter matchId or playerId is not an integer."
+        log_error("submit_box", msg)
+        return False
 
-    # Get match, or create new match.
-    response = dbh.get_match_history("4096", data['mac'], data['playerid'], 1)
-    if len(response) == 0:
-        match = dbh.start_new_4096_match(data['mac'], data['playerid'])
-    else:
-        match = response[0]
-        if match is None or response[2] is not None:
-            # No match was found or match was found but has ended, create new match.
-            match = dbh.start_new_4096_match(data['mac'], data['playerid'])
+    # Get player information
+    player = dbh.get_user_safe(data['mac'], data['playerId'])
+    match = data['matchId']
 
     if data['flag'] == 1:
-        # Normal move update. Update box.
+        msg = "Normal move update. Update box."
+        log("submit_box", msg)
         dbh.update_4096_box(match, player, data['box'])
         dbh.set_4096_score(match, player, data['score'])
         dbh.update_4096_flag(match, player, 1)
     elif data['flag'] == 2:
-        # The player has quit the game, set other player as winner.
+        msg = "The player has quit the game, set other player as winner."
+        log("submit_box", msg)
         pn = dbh.get_matchplayer(match, player)
         if pn == 1:
             op = dbh.get_user_in_match(match, 2)
         elif pn == 2:
             op = dbh.get_user_in_match(match, 1)
         else:
-            print "Something went wrong in submit score for 4096."
+            log_error("submit_box", "Something went wrong in submit score for 4096.")
             return False
         dbh.set_winner('4096', match, op)
         dbh.update_4096_flag(match, player, 2)
     elif data['flag'] == 4:
-        # Player has filled their squares and cannot do anything.
+        msg = "Player has filled their squares and cannot do anything."
+        log("submit_box", msg)
         dbh.update_4096_box(match, player, data['box'])
         dbh.set_4096_score(match, player, data['score'])
         dbh.update_4096_flag(match, player, 4)
@@ -61,7 +95,7 @@ def submit_box(jsonObj):
 def request_box(jsonObj):
     """Handle a data request from a player.
     Args:
-        jsonObj: JSON object containg {mac, playerid}
+        jsonObj: JSON object containg {mac, playerId, matchId }
     Returns:
         Shall return a JSON object with the relevant data. The object
         shall be able to contain {flag, box, score}
@@ -82,30 +116,38 @@ def request_box(jsonObj):
         2015-12-06 bjowi227: Implemented function.
     """
     data = json.loads(jsonObj)
-    # Get player information
-    player = dbh.get_user_safe(data['mac'], data['playerid'])
-
-    # Get match, or create new match.
-    response = dbh.get_match_history("4096", data['mac'], data['playerid'], 1)
-    if len(response) == 0:
-        match = dbh.start_new_4096_match(data['mac'], data['playerid'])
-    else:
-        match = response[0]
-        if match is None or response[2] is not None:
-            # No match was found or match was found but has ended, create new match.
-            match = dbh.start_new_4096_match(data['mac'], data['playerid'])
-
     op_box = []
-    # Get opponent id
+    op_score = 0
+    status_flag = 3
+
+    # Check data for consistency
+    if not isinstance( data['matchId'], int ) or\
+            not isinstance( data['playerId'], int ):
+        msg = "Received parameter matchId or playerId is not an integer."
+        log_error("request_box", msg)
+        return jsonify({"flag": status_flag, "box": op_box, "score": op_score})
+
+    # Get global_id for player
+    player = dbh.get_user_safe(data['mac'], data['playerId'])
+
+    match = data['matchId']
+
+    # Get global_id of opponent.
     pn = dbh.get_matchplayer(match, player)
     if pn == 1:
         op_id = dbh.get_user_in_match(match, 2)
     elif pn == 2:
         op_id = dbh.get_user_in_match(match, 1)
+    elif pn == -1 or pn == 0:
+        # The player was not part of the match.
+        log_error("request_box", "Player not part of specified match.")
+        return jsonify({"flag": status_flag, "box": op_box, "score": op_score})
+
 
     if op_id != 1 or op != 2:
-        print "Opponent could not be found."
-        return jsonify({"flag": 3, "box": op_box, "score": 0})
+        # An opponent has not yet joined the game.
+        log_error("request_box", "Opponent could not be found at this time."
+        return jsonify({"flag": status_flag, "box": op_box, "score": op_score})
 
     # Check the flag of the opponent.
     status_flag = dbh.get_4096_flag(match, op_id)
