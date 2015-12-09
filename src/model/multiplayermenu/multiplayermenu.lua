@@ -1,8 +1,8 @@
 multiModel = {title = "Multiplayer Menu"}
 textpath = root_path.."model/games/"
 
---Constructor
---@return obj - returns an instance of the multiplayermenu
+-- function: new()
+--@return obj - returns an instance of the multiplayermodel
 function multiModel:new ()
     obj = {}
     setmetatable(obj, self)
@@ -10,15 +10,26 @@ function multiModel:new ()
     return obj
 end
 
+-- function: setOptions()
+-- Sets a table to a self-referenced variable.
+-- Might be redundant.
+-- 
+-- @param options - table to be set
 function multiModel:setOptions(options)
     self.options = options
     self.size = #options
 end
 
+-- function: getOptions()
+-- Returns the options-table.
+--
+-- @return self.options
 function multiModel:getOptions()
     return self.options
 end
 
+-- function: getSize()
+-- Returns the length of a the options-table.
 function multiModel:getSize()
     return #self.options
 end
@@ -34,22 +45,10 @@ function multiModel:fetchPath()
     return self.foldertable    
 end
 
---Experiment function that might or might not work on the box.
---Attempts to count folder in a directory (using terminal commands).
---Note: Discarded.
-function multiModel:countFolders(folder)
-    --ADLogger.trace(root_path)
-    for folderName in io.popen([[ls -a "/mnt/nfs/src/model/games/" /b /ad]]):lines() do 
-    --foldertable[folderName] = "/mnt/nfs/src//model/games/"..folderName.."/resources/" end
-    ADLogger.trace("Found folder")
-    end
-    return foldertable
-    --Testing for Windows:
-    --for folderName in io.popen([[dir "src/" /b /ad]]):lines() do print(folderName) end
-end
-
---Returning dummy information until a database/server-connection can be secured.
---@param dummy - Contains strings for the multiplayerview.
+-- function: fetchResults()
+--Stub/dummy-method returning hardcoded information representing recent gamehistory to be printed.
+--
+--@param resultset - Contains strings for the multiplayerview.
 function multiModel:fetchResults()
     resultset = {}
     

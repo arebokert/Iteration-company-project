@@ -26,19 +26,6 @@ function multiplayermenu.loadMenu()
   gfx.update()
 end
 
---prints a word on a selected surface
---@param word - the word to print
---@param color - the color with which to print
---@param size - the size of the text
---@param position - the position of the text
---@param Screen - the surface on which to print the menu
---function multiplayermenu.writeWord(word, color, size, position)
-function multiplayermenu.writeWord(word, btn)
-  ADLogger.trace(root_path)
-  ADLogger.trace(font_path)
-  word = word or  "hello world" 
-end
-
 --loads the most recent results
 --@param recentRes - array from where to read recent results
 function multiplayermenu.loadRecentResults(recentRes)
@@ -128,6 +115,7 @@ function multiplayermenu.reloadRecent()
     multiMenu:clear(losecol, {x = ((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5, y = ((multiMenu:get_height())/2)*1.6, w = ((multiMenu:get_width())/10)*3, h = 50})
   end
   
+  --prints the extraxted information upon the surface
   btnett:draw_over_surface(multiMenu,score1)
   btntva:draw_over_surface(multiMenu,score2)
   btntre:draw_over_surface(multiMenu,score3)
