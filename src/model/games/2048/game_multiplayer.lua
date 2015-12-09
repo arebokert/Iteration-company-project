@@ -258,13 +258,13 @@ end
 --------------------------------------------------------------------
 --function: setCompetitorData
 --@param JSONObject - Data in JSON object form.
---@return - True if game continues. False if game needs to end.
+--@return - True if GUI refresh is needed.
 --description: Update data for competitor with received data.
 --last modified Dec 03, 2015
 --------------------------------------------------------------------
 function Game_multiplayer.setCompetitorData(JSONObject)
   if JSONObject == nil then
-    return true
+    return false
   end
   jo = JSON:decode(JSONObject)
   dump(jo)
@@ -272,28 +272,30 @@ function Game_multiplayer.setCompetitorData(JSONObject)
   if jo["flag"] == PLAYER_UPDATE then
     -- Update competitors box.
     local new_box = jo["box"]
-        
     Boxes_competitor.box_table = new_box
     Boxes_competitor.current_score = jo["score"]
+    return true
   elseif jo["flag"] == PLAYER_QUIT then
     -- Other player quit the game. End game.
+    Boxes_competitor.endGame("QUIT GAME")
+    Boxes_multiplayer.endGame("YOU WON")
     return false
   elseif jo["flag"] == PLAYER_SAME then
     -- Other player won. Continue playing until full box.
-    return true
+    return false
   elseif jo["flag"] == PLAYER_FULL then
     -- Other player has full box. Continue playing until full box.
-    Boxes_competitor.box_table = jo["box"]
     Boxes_competitor.current_score = jo["score"]
-    -- TODO: Maybe change color of competitors box?
+    Boxes_competitor.endGame("FULL BOX")
     return false
   elseif jo["flag"] == PLAYER_WON then
     -- Opponent won the game.
-    Boxes_competitor.box_table = jo["box"]
     Boxes_competitor.current_score = jo["score"]
+    Boxes_competitor.endGame("WON")
+    Boxes_multiplayer.endGame("LOST")
     return false
   end
-  return true  
+  return false
 end
 
 --------------------------------------------------------------------
@@ -320,14 +322,11 @@ callback_2048 = function (timer)
   local competitor_Json = Game_multiplayer.getCompetitorData()
 
   -- Use data recovered.
-  if not Game_multiplayer.setCompetitorData(competitor_Json) then
-    Boxes_multiplayer.endGame("Opponent quit, won or lost")
-  end
-  -- TODO: Add if statement. If return value ofprevious call is 
-  --  false, game should end.
-
-  -- Refresh competitor side of GUI.
-  Boxes_competitor.refresh()
+  if Game_multiplayer.setCompetitorData(competitor_Json) then
+    -- Refresh competitor side of GUI if needed.
+    Boxes_competitor.refresh()
+  end  
+  
   call = false
 end
 
