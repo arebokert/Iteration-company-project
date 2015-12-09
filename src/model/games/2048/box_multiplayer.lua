@@ -193,8 +193,9 @@ end
 function Boxes.endGame(msg) 
   ADLogger.trace(msg)
   screen_player:clear({r=50,g=20,b=30})
-  local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=500,y=420},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
+  local score = sys.new_freetype({g=0,r=100,b=0}, 70, {x=120,y=300},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
   score:draw_over_surface(screen_player, msg)
+  screen:copyfrom(screen_player,nil,{x=0,y=0})
   gfx.update()
    menuView = "2048_game_over"
 end
