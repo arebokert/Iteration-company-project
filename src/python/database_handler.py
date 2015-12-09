@@ -23,6 +23,13 @@ def dict_factory(cursor, row):
         d[col[0]] = row[idx]
     return d
 
+def array_factory(cursor, row):
+    a = []
+    if row is None:
+        return a
+    for idx, col in enumerate(cursor.description):
+        a.append( row[idx] )
+    return a
 
 def log(func_name, msg):
     print 'MSG:     DATABASE_HANDLER:    ' + func_name + '   :   ' + msg
@@ -1384,7 +1391,8 @@ def get_4096_box(match_id, player_id):
     except sqlite3.Error as e:
         log_error('get_4096_box', e.args[0])
         cfo = None
-    return dict_factory(c, cfo)
+
+    return array_factory(c, cfo)
 
 
 def update_4096_flag(match_id, player_id, new_flag):

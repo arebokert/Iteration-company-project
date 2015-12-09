@@ -2,7 +2,6 @@ ADConfig = require("Config.ADConfig")
 ADLogger = require("SDK.Utils.ADLogger")
 http = require("socket.http")
 ADLogger.trace("Applicatio Init")
-hasInternet=true
 root_path = ""
 
 if ADConfig.isSimulator then
@@ -92,23 +91,27 @@ end
 
 
 function onStart()
-    -- Set which state that's possible. Global variable
-    appSurface = appSurface:new()
-    appSurface:createScreen()
-    
-    _G.activeView = "menu"
-    ADLogger.trace("onStart")
-    if ADConfig.isSimulator then
-        if arg[#arg] == "-debug" then require("mobdebug").start() end
-    end
+  -- Set which state that's possible. Global variable
+  appSurface = appSurface:new()
+  appSurface:createScreen()
+  
+  _G.activeView = "menu"
+  ADLogger.trace("onStart")
   if ADConfig.isSimulator then
-        if arg[#arg] == "-debug" then require("mobdebug").start() end
-    end
- --[[ if http.request( "http://www.google.com" ) == nil then
+      if arg[#arg] == "-debug" then require("mobdebug").start() end
+  end
+  if ADConfig.isSimulator then
+      if arg[#arg] == "-debug" then require("mobdebug").start() end
+  end
+  
+  if http.request( "http://www.google.com" ) == nil then
     hasInternet=false
-  else
+  elseif NH.hasConnection() then
     hasInternet=true
-  end]]
+  else
+    hasInternet=false
+  end
+  
     --ADLogger.trace("Memory limit: " .. gfx.get_memory_limit())
     showmenu.loadMainMenu()
     

@@ -37,6 +37,18 @@ function NH.convertRequestToPrefix(request)
     end
 end
 
+-- This function checks if there is a connection to the server 
+-- @return: true if server connection exists. else false
+function NH.hasConnection()
+  connection = socket.tcp()
+  connection:settimeout(1)
+  if connection:connect(HOST, PORT)==nil then
+    return false
+  else
+    return true
+  end  
+end
+
     -- Send JSONObject with an operation to server.
     -- Returns the response from the server. The content of the object which is returned
     -- depends on the request sent.
