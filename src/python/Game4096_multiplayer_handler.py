@@ -33,7 +33,8 @@ def join_match(jsonObj):
         return jsonify({"matchId":-2})
 
     # Join or create new match.
-    return jsonify( {"matchId":dbh.start_new_4096_match(data['mac'], data['playerId'])} )
+    match = dbh.start_new_4096_match(data['mac'], data['playerId'])
+    return jsonify({"matchId":match})
 
 
 def submit_box(jsonObj):
@@ -134,6 +135,7 @@ def request_box(jsonObj):
 
     # Get global_id of opponent.
     pn = dbh.get_matchplayer(match, player)
+    op_id = 0
     if pn == 1:
         op_id = dbh.get_user_in_match(match, 2)
     elif pn == 2:
@@ -143,10 +145,9 @@ def request_box(jsonObj):
         log_error("request_box", "Player not part of specified match.")
         return jsonify({"flag": status_flag, "box": op_box, "score": op_score})
 
-
-    if op_id != 1 or op != 2:
+    if op_id == 0:
         # An opponent has not yet joined the game.
-        log_error("request_box", "Opponent could not be found at this time."
+        log_error("request_box", "Opponent could not be found at this time.")
         return jsonify({"flag": status_flag, "box": op_box, "score": op_score})
 
     # Check the flag of the opponent.

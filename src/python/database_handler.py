@@ -441,7 +441,7 @@ def add_match(gamename, mac, playerid):
     if cfo is None:
         return create_match(gamename, mac, playerid)
     else:
-        return insert_player_two(gamename, mac, playerid, cfo.match_id)
+        return insert_player_two(gamename, mac, playerid, cfo[0])
 
 
 def get_user_in_match(match_id, player_no):
