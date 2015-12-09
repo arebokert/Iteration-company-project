@@ -262,9 +262,6 @@ function Boxes.moveLeft()
   else
     --left is no way
     Boxes.tag["left"] = 1
-    if Boxes.checkEndGame() then
-      Boxes.endGame("GAME OVER")
-    end
   end
 end
 
@@ -322,11 +319,7 @@ function Boxes.moveRight()
     Boxes.addRandomNumber()
     Boxes.showMove()
   else
-   Boxes.tag["right"] = 1
-    if Boxes.checkEndGame() then
-      Boxes.endGame("GAME OVER")
-    end
-   
+   Boxes.tag["right"] = 1   
   end
 end
 
@@ -385,9 +378,6 @@ function Boxes.moveTop()
     Boxes.showMove()
   else
    Boxes.tag["top"] = 1
-    if Boxes.checkEndGame() then
-      Boxes.endGame("GAME OVER")
-    end
   end
 end
 
@@ -445,9 +435,6 @@ function Boxes.moveBottom()
     Boxes.showMove()
   else
    Boxes.tag["bottom"] = 1
-    if Boxes.checkEndGame() then
-      Boxes.endGame("GAME OVER")
-    end
   end
 end 
 
