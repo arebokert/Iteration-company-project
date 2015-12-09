@@ -20,14 +20,11 @@ local mainMenuContainer = nil
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 function showmenu.loadMainMenu()
-  --collectgarbage()
-  --collectgarbage("stop")
-  
-  --ADLogger.trace("Usage begin mainMenu: " .. gfx.get_memory_use())
+
     local options = {}
     options[1] = {title = "Game",
         action = function()
-            current_menu = "singlePlayerMenu"  -- give the temperate active menu to singlerPlayerMenu
+            current_menu = "singlePlayerMenu" 
             return "Return Option1"
         end,
         hover = function()
@@ -78,7 +75,6 @@ function showmenu.loadMainMenu()
         action = function()
             current_menu = "exit"
             sys.stop()
-            --showmenu.loadMenu("exit")
             return "Return Option4"
         end,
         hover = function()
@@ -112,8 +108,6 @@ end
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 function showmenu.loadMenu(subMenuFlag)
-  --collectgarbage()
-  --collectgarbage("stop")
   if(subMenuFlag == "highScore") then 
       if ab then
         ADLogger.trace("Destroy 1!!!!!!!")
@@ -191,6 +185,8 @@ function showmenu.mainMenuKeyEvents(key, state)
     end
 end
 
+--function: destroyContainer()
+-- Destroys the container created in loadMenu()
 function showmenu.destroyContainer()
     if mainMenuContainer then
       mainMenuContainer:destroy()

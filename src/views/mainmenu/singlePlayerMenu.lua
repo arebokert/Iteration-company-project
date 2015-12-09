@@ -70,13 +70,13 @@ function singlePlayerMenu.loadGameMenu()
 end
 
 --Called upon hitting the "right"-key/button.
---treverses the carousel
+--treverses the carousel.
 function singlePlayerMenu:next()
     
     if first_treverse then
       activeGame = activeGame + 1
     end
-    
+    --Clears the menu's background, to avoid overlapping opacities.
     ab:clear()
     local next = activeGame + 1
     local prev = activeGame - 1
@@ -87,7 +87,8 @@ function singlePlayerMenu:next()
     if activeGame==1 then
       prev = smodel:getSize()
     end
-      
+    
+    --Sets a new picture to active.  
     tempActive = activeGame
       
     ADLogger.trace(tempActive)
@@ -110,9 +111,10 @@ function singlePlayerMenu:next()
 end
 
 --Called upon hitting the "left"-key/button.
---treverses the carousel
+--Treverses the carousel depending on the amount of path's found in
+--table 'a'.
 function singlePlayerMenu:prev()
-
+    -- The original offset is '2', in this case 2048
     if first_treverse then
         activeGame = activeGame - 1
     end

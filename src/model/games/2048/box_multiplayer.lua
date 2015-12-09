@@ -79,6 +79,7 @@ function Boxes.showScore()
   local cover = gfx.new_surface(640,100)
   cover:clear({r=0,g=0,b=0})
   screen_player:copyfrom(cover,nil,{x=0,y=0})
+  cover:destroy()
   score_font:draw_over_surface(screen_player,"Score: " .. Boxes.current_score)
 --  screen_player:clear({r=245,g=245,b=245}, {x = screen_player:get_width()*0.4 + 100,y=screen_player:get_height()*0.1, w=50, h =50})
   
@@ -122,6 +123,7 @@ function Boxes.showMove()
       screen_player:copyfrom(box_img, nil,bg_pos,true)
     end
   end
+  ADLogger.trace("Usage begin mainMenu: " .. gfx.get_memory_use())
   Boxes.showScore() 
   screen:copyfrom(screen_player,nil)
   gfx.update() 

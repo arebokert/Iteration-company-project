@@ -67,6 +67,9 @@ def game4096MultiplayerSend(jsonObj):
 def game4096MultiplayerRequest(jsonObj):
     return Game4096_multiplayer_handler.request_box(jsonObj)
 
+def game4096MultiplayerMatchId(jsonObj):
+    return Game4096_multiplayer_handler.join_match(jsonObj)
+
 #Recives the input from the client and processes it according to what the 2 or 4 first characters are.
 class service(SocketServer.BaseRequestHandler):
 
@@ -95,6 +98,8 @@ class service(SocketServer.BaseRequestHandler):
             self.request.send(game4096MultiplayerSend(data[4:]))
         elif data[:4] == 'GFMR':
             self.request.send(game4096MultiplayerRequest(data[4:]))
+        elif data[:4] == 'GFMI':
+            self.request.send(game4096MultiplayerMatchId(data[4:]))
         else:
             print 'Incorrect operation.'
         self.request.close()
@@ -108,5 +113,6 @@ if __name__ == "__main__":
 
     # Port 0 means to select an arbitrary unused port
     #HOST, PORT = "localhost", 24069
-    server = ThreadedTCPServer(('',24069), service) #ThreadedTCPServer((HOST, PORT), ThreadedTCPRequestHandler)
+
+    server = ThreadedTCPServer(('',24070), service) #ThreadedTCPServer((HOST, PORT), ThreadedTCPRequestHandler)
     server.serve_forever()

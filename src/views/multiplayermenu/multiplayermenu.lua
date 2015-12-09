@@ -2,6 +2,7 @@ model = require "model.multiplayermenu.multiplayermenu"
 
 multiplayermenu = {}
 
+-- Members of the class
 local resulttable = nil
 local activeGame = nil
 local a = {}
@@ -10,8 +11,12 @@ local first_treverse = nil
 multiMenu = nil
 local font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 
---loads the view for the multiplayer menu
+--function: loadMenu()
+--Loads the view for the multiplayer menu
+--
+--
 --@param model - instantiates the model for the multiplayermenu
+--@param first_treverse - set to true, until the carousel has been used
 function multiplayermenu.loadMenu()
   first_treverse = true
   model = model:new()
@@ -24,19 +29,6 @@ function multiplayermenu.loadMenu()
   
   appSurface:copyfrom(multiMenu, nil)
   gfx.update()
-end
-
---prints a word on a selected surface
---@param word - the word to print
---@param color - the color with which to print
---@param size - the size of the text
---@param position - the position of the text
---@param Screen - the surface on which to print the menu
---function multiplayermenu.writeWord(word, color, size, position)
-function multiplayermenu.writeWord(word, btn)
-  ADLogger.trace(root_path)
-  ADLogger.trace(font_path)
-  word = word or  "hello world" 
 end
 
 --loads the most recent results
@@ -52,7 +44,7 @@ function multiplayermenu.loadRecentResults(recentRes)
   local btnsec = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= ((multiMenu:get_height())/2)*1.3+8}, font_path)
   local btnthird = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= ((multiMenu:get_height())/2)*1.6+8}, font_path)
   
-  --unpack the array
+  --unpack the array and print the 'latest' scores
   local score1 = resulttable[activeGame]["score1"]
   local score2 = resulttable[activeGame]["score2"]
   local score3 = resulttable[activeGame]["score3"]
@@ -89,7 +81,8 @@ function multiplayermenu.loadRecentResults(recentRes)
   gfx.update()
 end
 
---reloads the most recent results
+--Reloads the most recent results
+--Called upon while treversing the carousel, in order to appropriately update the scores.
 function multiplayermenu.reloadRecent()
   multiMenu:clear()
   local btnett = sys.new_freetype({r = 255, g = 255, b =255},35,{x=((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5+50, y= (multiMenu:get_height())/2+8}, font_path)
@@ -128,6 +121,7 @@ function multiplayermenu.reloadRecent()
     multiMenu:clear(losecol, {x = ((multiMenu:get_width()/2)-(multiMenu:get_width()/10*3)/2)-multiMenu:get_width()/5, y = ((multiMenu:get_height())/2)*1.6, w = ((multiMenu:get_width())/10)*3, h = 50})
   end
   
+  --prints the extraxted information upon the surface
   btnett:draw_over_surface(multiMenu,score1)
   btntva:draw_over_surface(multiMenu,score2)
   btntre:draw_over_surface(multiMenu,score3)
@@ -145,8 +139,12 @@ function multiplayermenu.loadCurrentPlayers(players)
   currentplayers = players or 0
 end
 
---starts the selected game
+-- function: start()
+-- Starts the selected game.
+-- The start.lua-file present into a method.
 function multiplayermenu.start()
+    --Sets the active view to the 'name' parameter
+    --In order to delegate keypress reading to the the proper class.
     activeView = a[tempActive]["name"]
     current_menu = "none"
     multiMenu:destroy()
@@ -157,10 +155,11 @@ function multiplayermenu.start()
 end
 
 --loads the game menu and carousel
+--
 function multiplayermenu.loadGameMenu()
   activeGame = 2
-  color = {r=20, g=10, b=0}
-  margin = 5
+  local color = {r=20, g=10, b=0}
+  local margin = 5
   local bg = gfx.loadjpeg(a[activeGame-1]["path"] .. 'background-small.jpg')
   multiMenu:copyfrom(bg, nil, {x=((multiMenu:get_width())/2)-350, y= multiMenu:get_height()/20+37})
   bg:destroy()

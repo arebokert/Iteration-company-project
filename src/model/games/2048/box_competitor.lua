@@ -77,6 +77,7 @@ function Boxes_competitor.showScore()
   local cover = gfx.new_surface(640,100)
   cover:clear({r=0,g=0,b=0})
   screen_competitor:copyfrom(cover,nil,{x=0,y=0})
+  cover:destroy()
   score_font:draw_over_surface(screen_competitor,"Score: " .. Boxes_competitor.current_score)
   
   
@@ -122,7 +123,6 @@ function Boxes_competitor.showMove()
       screen_competitor:copyfrom(box_img, nil,bg_pos,true)
     end
   end
-  Boxes_competitor.showScore() 
   screen:copyfrom(screen_competitor,nil,{x=screen:get_width()*0.5,y=0})
   gfx.update() 
 end
