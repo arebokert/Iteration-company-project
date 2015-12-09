@@ -30,10 +30,10 @@ def join_match(jsonObj):
     if not isinstance( data['playerId'], int ):
         msg = "Received parameter playerId is not an integer."
         log_error("join_match", msg)
-        return -2
+        return jsonify({"matchId":-2})
 
     # Join or create new match.
-    return dbh.start_new_4096_match(data['mac'], data['playerId'])
+    return jsonify( {"matchId":dbh.start_new_4096_match(data['mac'], data['playerId'])} )
 
 
 def submit_box(jsonObj):
@@ -56,7 +56,7 @@ def submit_box(jsonObj):
             not isinstance( data['playerId'], int ):
         msg = "Received parameter matchId or playerId is not an integer."
         log_error("submit_box", msg)
-        return False
+        return jsonify({"response": False})
 
     # Get player information
     player = dbh.get_user_safe(data['mac'], data['playerId'])
@@ -78,7 +78,7 @@ def submit_box(jsonObj):
             op = dbh.get_user_in_match(match, 1)
         else:
             log_error("submit_box", "Something went wrong in submit score for 4096.")
-            return False
+            return jsonify({"response": False})
         dbh.set_winner('4096', match, op)
         dbh.update_4096_flag(match, player, 2)
     elif data['flag'] == 4:
@@ -88,8 +88,8 @@ def submit_box(jsonObj):
         dbh.set_4096_score(match, player, data['score'])
         dbh.update_4096_flag(match, player, 4)
     else:
-        return False
-    return True
+        return jsonify({"response": False})
+    return jsonify({"response": True})
 
 
 def request_box(jsonObj):
