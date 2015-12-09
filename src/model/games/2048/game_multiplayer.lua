@@ -46,11 +46,13 @@ function Game_multiplayer.registerKey(key, state)
             -- Restart function has to be implemented
             Boxes_multiplayer.clear()
             Game_multiplayer.startMultiGame()
+            Boxes_competitor.clear()
             GameTimer_2048:stop()
           elseif menuoption == 2 then   --mainmenu
             activeView = "menu"
             current_menu = "mainMenu"
             Boxes_multiplayer.clear()
+            Boxes_competitor.clear()
             showmenu.loadMainMenu()
           end
         else
@@ -96,6 +98,7 @@ function Game_multiplayer.registerKey(key, state)
           menuView = nil
           Score.resetScore()
           Boxes_multiplayer.clear()
+          Boxes_competitor.clear()
           showmenu.loadMainMenu()
        else 
           ADLogger.trace("still in game over")
