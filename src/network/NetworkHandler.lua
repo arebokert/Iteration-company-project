@@ -3,7 +3,7 @@ socket = require("socket")
 NH = {}
 
 HOST = "2015-1.pumi.ida.liu.se"
-PORT = 24070
+PORT = 24069
 invalidInput = "Invalid input"
 
     -- Convert the request to the designated prefix which can be found at
