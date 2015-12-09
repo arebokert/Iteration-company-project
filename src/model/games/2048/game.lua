@@ -1,9 +1,19 @@
+--------------------------------------------------------------------
+--class: game                                               --------
+--description: start class of game(2048)                    --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
 Boxes = require("model.games.2048.box")
 InGameMenu = require("model.commongame.ingamemenuclass")
 Score = require("model.commongame.scorehandler")
 Game = {current = 0}
 menuView = nil
 
+--------------------------------------------------------------------
+--function: registerKey                                     --------
+--description: key functions                                --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
 function Game.registerKey(key, state)
     if state == "down" then
       if menuView == "pauseMenu" then
@@ -63,6 +73,12 @@ end
 -- 5px between each square
 --128, 272,105
 ---{x=400,y=100,w = 537, h=537}
+--------------------------------------------------------------------
+--function: showGamePage                                    --------
+--@param flag if flag == 1 resume                           --------
+--description: show Game function,define position           --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
 function Game.showGamePage(flag)         --- if flag == 1 , resume
    screen2048 = screen
    local width_2048 = screen2048:get_width()
