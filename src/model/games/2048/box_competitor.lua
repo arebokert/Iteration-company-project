@@ -68,6 +68,21 @@ function Boxes_competitor.setPosition(each_square, box_start_x, box_start_y)
 end
 
 --------------------------------------------------------------------
+--function: endGame                                         --------
+--description: weather the game end of not                  --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
+function Boxes_competitor.endGame(msg) 
+  screen_competitor:clear({r=50,g=20,b=30})
+  local message = sys.new_freetype({g=255,r=255,b=255}, 70, {x=760,y=300},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
+  local score = sys.new_freetype({g=255,r=255,b=255}, 30, {x=860,y=380},root_path.."views/mainmenu/data/font/Gidole-Regular.otf")
+  message:draw_over_surface(screen_player, msg)
+  score:draw_over_surface(screen_player, "Score: " .. Boxes_competitor.current_score)
+  screen:copyfrom(screen_competitor,nil,{x=0,y=0})
+  gfx.update()
+end
+
+--------------------------------------------------------------------
 --function: showScore                                       --------
 --description: show the scores of 2048                      --------
 --last modified Nov 22, 2015                                --------
@@ -79,7 +94,6 @@ function Boxes_competitor.showScore()
   screen_competitor:copyfrom(cover,nil,{x=0,y=0})
   cover:destroy()
   score_font:draw_over_surface(screen_competitor,"Score: " .. Boxes_competitor.current_score)
-  
   
 end
 
