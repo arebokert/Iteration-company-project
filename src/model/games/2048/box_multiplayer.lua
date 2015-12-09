@@ -20,7 +20,7 @@ local Boxes = {
   each_square_2048 = 0,  -- set size of square box
   square_2048_margin = 0, -- set size of square box add margin
   box_start_x = 0,        -- start_x of box ( all the 16numbers)
-  box_start_y = 0         -- start_y of box ( all the 16numbers) 
+  box_start_y = 0,         -- start_y of box ( all the 16numbers) 
   isGameEnded = false
 }
 
