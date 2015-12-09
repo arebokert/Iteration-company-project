@@ -25,7 +25,7 @@ PLAYER_WON = 5
 --last modified: Dec 9 2015                                 --------
 --------------------------------------------------------------------
 function Game_multiplayer.getPlayerId()
-  local id = 1
+  local id = 1338
   return id
 end
 
@@ -95,7 +95,7 @@ function Game_multiplayer.registerKey(key, state)
           activeView = "menu"
           menuView = nil
           Score.resetScore()
-           Boxes.clear()
+          Boxes_multiplayer.clear()
           showmenu.loadMainMenu()
        else 
           ADLogger.trace("still in game over")
