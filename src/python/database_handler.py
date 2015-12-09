@@ -472,14 +472,14 @@ def get_user_in_match(match_id, player_no):
                            ' WHERE match_id = ?'
                            , (match_id,))
             cfo = cursor.fetchone()
-            log('get_user_in_match', 'Query result: ' + cfo)
+            #log('get_user_in_match', 'Query result: ' + cfo[0])
         elif player_no == 2:
             cursor.execute('SELECT player_two_id'
                            ' FROM matches'
                            ' WHERE match_id = ?'
                            , (match_id,))
             cfo = cursor.fetchone()
-            log('get_user_in_match', 'Query result: ' + cfo)
+            #log('get_user_in_match', 'Query result: ' + cfo[0])
         else:
             log_error('get_user_in_match', 'Incorrect input of player_no. Must be integer 1 or 2.')
             return -1
