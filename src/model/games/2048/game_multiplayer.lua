@@ -285,10 +285,12 @@ function Game_multiplayer.setCompetitorData(JSONObject)
     return false
   elseif jo["flag"] == PLAYER_FULL then
     -- Other player has full box. Continue playing until full box.
+    Boxes_competitor.current_score = jo["score"]
     Boxes_competitor.endGame("FULL BOX")
     return false
   elseif jo["flag"] == PLAYER_WON then
     -- Opponent won the game.
+    Boxes_competitor.current_score = jo["score"]
     Boxes_competitor.endGame("WON")
     Boxes_multiplayer.endGame("LOST")
     return false
