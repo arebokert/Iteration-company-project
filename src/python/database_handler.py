@@ -168,10 +168,11 @@ def get_user_safe(mac, playerid):
     """
 
     global_id = get_user(mac, playerid)
+    log("get_user_safe", str(global_id))
     if global_id == -1:
         return add_user(mac, playerid)
-    else:
-        return global_id
+    log("get_user_safe", str(global_id))
+    return global_id
 
 
 def get_unit_user(global_id):
@@ -474,14 +475,14 @@ def get_user_in_match(match_id, player_no):
                            ' WHERE match_id = ?'
                            , (match_id,))
             cfo = cursor.fetchone()
-            #log('get_user_in_match', 'Query result: ' + cfo[0])
+            log('get_user_in_match', 'Query result: ' + str(cfo))
         elif player_no == 2:
             cursor.execute('SELECT player_two_id'
                            ' FROM matches'
                            ' WHERE match_id = ?'
                            , (match_id,))
             cfo = cursor.fetchone()
-            #log('get_user_in_match', 'Query result: ' + cfo[0])
+            log('get_user_in_match', 'Query result: ' + str(cfo))
         else:
             log_error('get_user_in_match', 'Incorrect input of player_no. Must be integer 1 or 2.')
             return -1
@@ -1313,24 +1314,24 @@ def update_4096_box(match_id, player_id, new_box):
     c = get_db()
     try:
         c.execute("UPDATE fns_player_boxes"
-                  " SET fns_player_boxes.box_1_1 = ?"
-                  ", fns_player_boxes.box_1_2 = ?"
-                  ", fns_player_boxes.box_1_3 = ?"
-                  ", fns_player_boxes.box_1_4 = ?"
-                  ", fns_player_boxes.box_2_1 = ?"
-                  ", fns_player_boxes.box_2_2 = ?"
-                  ", fns_player_boxes.box_2_3 = ?"
-                  ", fns_player_boxes.box_2_4 = ?"
-                  ", fns_player_boxes.box_3_1 = ?"
-                  ", fns_player_boxes.box_3_2 = ?"
-                  ", fns_player_boxes.box_3_3 = ?"
-                  ", fns_player_boxes.box_3_4 = ?"
-                  ", fns_player_boxes.box_4_1 = ?"
-                  ", fns_player_boxes.box_4_2 = ?"
-                  ", fns_player_boxes.box_4_3 = ?"
-                  ", fns_player_boxes.box_4_4 = ?"
-                  " WHERE fns_player_boxes.match_id = ?"
-                  " AND fns_player_boxes.player_id = ?"
+                  " SET box_1_1 = ?"
+                  ", box_1_2 = ?"
+                  ", box_1_3 = ?"
+                  ", box_1_4 = ?"
+                  ", box_2_1 = ?"
+                  ", box_2_2 = ?"
+                  ", box_2_3 = ?"
+                  ", box_2_4 = ?"
+                  ", box_3_1 = ?"
+                  ", box_3_2 = ?"
+                  ", box_3_3 = ?"
+                  ", box_3_4 = ?"
+                  ", box_4_1 = ?"
+                  ", box_4_2 = ?"
+                  ", box_4_3 = ?"
+                  ", box_4_4 = ?"
+                  " WHERE match_id = ?"
+                  " AND player_id = ?"
                   , (new_box[0], new_box[1], new_box[2], new_box[3]
                      , new_box[4], new_box[5], new_box[6], new_box[7]
                      , new_box[8], new_box[9], new_box[10], new_box[11]
@@ -1376,12 +1377,12 @@ def get_4096_box(match_id, player_id):
                   ", box_4_3"
                   ", box_4_4"
                   " FROM fns_player_boxes"
-                  " WHERE fns_player_boxes.match_id = ?"
-                  " AND fns_player_boxes.player_id = ?"
+                  " WHERE match_id = ?"
+                  " AND player_id = ?"
                   , (match_id, player_id,))
         cfo = c.fetchone()
     except sqlite3.Error as e:
-        log_error('update_4096_box', e.args[0])
+        log_error('get_4096_box', e.args[0])
         cfo = None
     return dict_factory(c, cfo)
 
