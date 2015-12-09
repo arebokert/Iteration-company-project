@@ -1,3 +1,8 @@
+--------------------------------------------------------------------
+--class: game_multiplayer                                   --------
+--description: start class of game(2048)                    --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
 Boxes_multiplayer = require("model.games.2048.box_multiplayer")
 Boxes_competitor = require("model.games.2048.box_competitor")
 InGameMenu = require("model.commongame.ingamemenuclass")
@@ -13,6 +18,11 @@ PLAYER_QUIT = 2
 PLAYER_SAME = 3
 PLAYER_FULL = 4
 
+--------------------------------------------------------------------
+--function: registerKey                                     --------
+--description: key functions                                --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
 function Game_multiplayer.registerKey(key, state)
     if state == "down" then
       if menuView == "pauseMenu" then
@@ -73,7 +83,12 @@ function Game_multiplayer.registerKey(key, state)
       end
     end
 end
-
+--------------------------------------------------------------------
+--function: showGamePage                                    --------
+--@param flag if flag == 1 resume                           --------
+--description: show Game function,define position           --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
 -- 5px between each square
 --128, 272,105
 ---{x=400,y=100,w = 537, h=537}
