@@ -93,6 +93,13 @@ def submit_box(jsonObj):
         dbh.update_4096_box(match, player, data['box'])
         dbh.set_4096_score(match, player, data['score'])
         dbh.update_4096_flag(match, player, 4)
+    elif data['flag'] == 5:
+        msg = "Player has won the game."
+        log("submit_box", msg)
+        dbh.update_4096_box(match, player, data['box'])
+        dbh.set_4096_score(match, player, data['score'])
+        dbh.update_4096_flag(match, player, 5)
+        dbh.set_winner('4096', match, player)
     else:
         return makeJson({"response": False})
     return makeJson({"response": True})
@@ -173,5 +180,9 @@ def request_box(jsonObj):
         op_box = dbh.get_4096_box(match, op_id)
         op_score = dbh.get_4096_score(match, op_id)
         dbh.update_4096_flag(match, op_id, 3)
+    elif status_flag == 5:
+        # The other player has won.
+        op_box = dbh.get_4096_box(match, op_id)
+        op_score = dbh.get_4096_score(match, op_id)
 
     return makeJson({"flag": status_flag, "box": op_box, "score": op_score})
