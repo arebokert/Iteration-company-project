@@ -24,7 +24,7 @@ PLAYER_FULL = 4
 --last modified: Dec 9 2015                                 --------
 --------------------------------------------------------------------
 function Game_multiplayer.getPlayerId()
-  local id = 1
+  local id = 2
   return id
 end
 
@@ -188,7 +188,7 @@ function Game_multiplayer.sendUpdatedBox(sendFlag)
     box = Boxes_multiplayer.box_table,
     score = Boxes_multiplayer.current_score
     })
-  return nh.sendJSON(JObj, "4096MultiPlayerSubmit")
+  return nh.sendJSON(request, "4096MultiPlayerSubmit")
 end
 
 
