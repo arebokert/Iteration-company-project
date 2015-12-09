@@ -1252,9 +1252,10 @@ def set_4096_score(match_id, player_id, new_score):
     """
     c = get_db()
     try:
-        c.execute("UPDATE SET fns_player_boxes.score = ?"
-                  " WHERE fns_player_boxes.match_id = ?"
-                  " AND fns_player_boxes.player_id = ?"
+        c.execute("UPDATE fns_player_boxes"
+                  " SET score = ?"
+                  " WHERE match_id = ?"
+                  " AND player_id = ?"
                   , (new_score, match_id, player_id,))
         c.commit()
     except sqlite3.Error as e:
@@ -1311,7 +1312,8 @@ def update_4096_box(match_id, player_id, new_box):
     """
     c = get_db()
     try:
-        c.execute("UPDATE SET fns_player_boxes.box_1_1 = ?"
+        c.execute("UPDATE fns_player_boxes"
+                  " SET fns_player_boxes.box_1_1 = ?"
                   ", fns_player_boxes.box_1_2 = ?"
                   ", fns_player_boxes.box_1_3 = ?"
                   ", fns_player_boxes.box_1_4 = ?"
@@ -1401,9 +1403,10 @@ def update_4096_flag(match_id, player_id, new_flag):
     """
     c = get_db()
     try:
-        c.execute("UPDATE SET fns_player_boxes.status_flag = ?"
-                  " WHERE fns_player_boxes.match_id = ?"
-                  " AND fns_player_boxes.player_id = ?"
+        c.execute("UPDATE fns_player_boxes"
+                  " SET status_flag = ?"
+                  " WHERE match_id = ?"
+                  " AND player_id = ?"
                   , (new_flag, match_id, player_id,))
         c.commit()
     except sqlite3.Error as e:
