@@ -42,7 +42,7 @@ end
 -- If there is no internet connection, the highscore is not taken care of
 -- 
 function Score.submitHighScore()
-   local playerID = "TestPlayer"
+   local playerID = "David"
    if hasInternet then
       local response = HighscoreHandler:submitGlobalHighscore(game, playerID, scoreCount) 
       dump(response)
