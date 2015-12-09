@@ -19,6 +19,16 @@ PLAYER_SAME = 3
 PLAYER_FULL = 4
 
 --------------------------------------------------------------------
+--function: getPlayerId                                     --------
+--description: Get id                                       --------
+--last modified: Dec 9 2015                                 --------
+--------------------------------------------------------------------
+function Game_multiplayer.getPlayerId()
+  local id = 1
+  return id
+end
+
+--------------------------------------------------------------------
 --function: registerKey                                     --------
 --description: key functions                                --------
 --last modified Nov 22, 2015                                --------
@@ -167,17 +177,44 @@ end
 --------------------------------------------------------------------
 function Game_multiplayer.sendUpdatedBox(sendFlag)
   local mac = nh.getMAC()
-  local id = 1
+  local id = Game_multiplayer.getPlayerId()
+  local match_id = Game_multiplayer.match_id
   local localSendFlag = sendFlag
   local request = JSON:encode({
+    matchId = match_id, 
     flag = localSendFlag,
     mac = mac,
-    playerid = id,
+    playerId = id,
     box = Boxes_multiplayer.box_table,
     score = Boxes_multiplayer.current_score
     })
   return nh.sendJSON(JObj, "4096MultiPlayerSubmit")
 end
+
+
+
+--------------------------------------------------------------------
+--function: getMatchId
+--@return - MatchID
+--description: Request match id from server. 
+--last modified Dec 09, 2015
+--------------------------------------------------------------------
+function Game_multiplayer.getMatchId()
+  local mac = nh.getMAC()
+  local id = Game_multiplayer.getPlayerId()
+  ADLogger.trace(id)
+  local request = JSON:encode({
+    mac = mac,
+    playerId = id
+    })
+    
+  local match_id = nh.sendJSON(request, "4096GetMatchId")
+  match_id = JSON:decode(match_id)
+  match_id = match_id.matchId
+  return match_id
+  -- TODO: Add timeout function for server request.
+end
+
 
 
 --------------------------------------------------------------------
@@ -189,10 +226,12 @@ end
 --------------------------------------------------------------------
 function Game_multiplayer.getCompetitorData()
   local mac = nh.getMAC()
-  local id = 1
+  local id = Game_multiplayer.getPlayerId()
+  
   local request = JSON:encode({
     mac = mac,
-    playerid = id
+    playerId = id,
+    matchId = Game_multiplayer.match_id
     })
   return nh.sendJSON(request, "4096MultiPlayerRequest")
   -- TODO: Add timeout function for server request.
@@ -268,6 +307,14 @@ end
 
 function Game_multiplayer.startMultiGame()
  Game_multiplayer.showGamePage(0)
+ 
+ local match_id = Game_multiplayer.getMatchId()
+ if match_id == nil then
+  -- No match id, something is wrong! 
+  return false
+ end
+ Game_multiplayer.match_id = match_id
+ dump('MATCH ID: ' .. Game_multiplayer.match_id)
  Game_multiplayer.queryTimer()
  --Game.multiplayer()
 end
