@@ -110,17 +110,17 @@ def add_user(mac, playerid):
                   ", user_id)"
                   " VALUES (?,?)"
                   , (mac, playerid,))
-
-        gid = get_user(mac, playerid)
         c.commit()
+        gid = get_user(mac, playerid)
     except sqlite3.Error as e:
         get_db().rollback()
-        log_error('add_highscore', e.args[0])
+        log_error('add_user', e.args[0])
         return -1
     if gid is None:
         log_error('add_user', 'Could not find last row id.')
         return -1
     return gid
+
 
 def get_user(mac, playerid):
     """Get user information in form of global_id from database.
@@ -439,8 +439,10 @@ def add_match(gamename, mac, playerid):
 
     # If cfo is None, a new row will have to be created to keep the new match.
     if cfo is None:
+        log("add_match", "Creating new match.")
         return create_match(gamename, mac, playerid)
     else:
+        log("add_match", "Adding player to existing match.")
         return insert_player_two(gamename, mac, playerid, cfo[0])
 
 
@@ -709,7 +711,7 @@ def add_round_score(gamename, match_id, mac, playerid, score):
     if cfa[0][0] == global_id:
         field_name = 'player_one_score'
         rn = p1r + 1
-    elif cfo[0][1] == global_id:
+    elif cfa[0][1] == global_id:
         field_name = 'player_one_score'
         rn = p2r + 1
     else:
