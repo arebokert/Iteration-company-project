@@ -3,7 +3,7 @@ socket = require("socket")
 NH = {}
 
 HOST = "2015-1.pumi.ida.liu.se"
-PORT = 24068
+PORT = 24066
 invalidInput = "Invalid input"
 
     -- Convert the request to the designated prefix which can be found at
@@ -69,7 +69,8 @@ function NH.sendJSON(JSONObject, request)
             -- Connect to the server
             connection = socket.tcp()
             connection:settimeout(3)
-            assert(connection:connect(HOST, PORT), "Connection failed!")
+            --assert(connection:connect(HOST, PORT), "Connection failed!")
+            connection:connect(HOST, PORT)
             -- Concatenates the operation with the JSONObject
             object = requestPrefix .. JSONObject
             -- Sends the object to the server
