@@ -1,3 +1,6 @@
+-- Class: menuclass
+-- Serves as a model/logical operator for the showmenuclass.
+
 Menu = {title = "Main Menu"}
 
 -- Creates a new menu object
@@ -9,7 +12,9 @@ function Menu:new ()
     return obj
 end
 
--- Sets the options of the menu
+-- function: setOptions(table)
+-- Sets the options of the menu.
+--
 -- @param  options -  a table containing the options to be added to the menu
 function Menu:setOptions(options)
     self.options = options
@@ -17,7 +22,11 @@ function Menu:setOptions(options)
     ADLogger.trace("Menu initiated")
 end
 
--- Loads a highscore-table from file, if it does not exist it returns an empty (new) table.
+-- function: setActive(a)
+-- Updates the lower menu (considered to be the main menu) when a key is pressed.
+-- Reloads pictures accordingly in order to highlight the new active button.
+-- Also checks for an internet connection in order to make some features unavailable.
+--
 -- @param  a - an integer representing which item in the menu to be active
 function Menu:setActive(a)
     ADLogger.trace("SET ACTIVE")
@@ -61,10 +70,15 @@ function Menu:setActive(a)
     gfx.update()
 end
 
+-- function: getActive()
+-- Returns the active choice of the mainmenu.
 function Menu:getActive()
   return self.active
 end
 
+-- function: next()
+-- Called by pressing the 'right' key, activates the next menu-choice by calling
+-- setActive() with the 'next' parameter.
 function Menu:next()
     local next = self.active + 1
 	if ((next == 3) and (hasInternet==false)) then
@@ -77,6 +91,8 @@ function Menu:next()
     self:setActive(next)
 end
 
+-- function: prev()
+-- Mirrors the next()-method, called by pressing the 'left' key.
 function Menu:prev()
     local prev = self.active - 1
     if ((prev == 3) and (hasInternet==false)) then
@@ -89,35 +105,36 @@ function Menu:prev()
     self:setActive(prev)
 end
 
+-- function: action()
+-- Calls the stored action()-method of the mainmenu's active choice. Most often giving contrl to the submenu
+-- loaded by the hover()-method below.
 function Menu:action()
     self.options[self.active].action()
 end
 
+-- function: hover()
+-- Calls the stored hover()-method of the mainmenu's active choice, essentially loading a new submenu
+-- upon navigating.
 function Menu:hover()
     self.options[self.active].hover()
 end
 
-function Menu:printSub(container)
-    self.container = container
-    width = container:get_width()
-    height = container:get_height()
-    appSurface:copyfrom(container, nil, self.containerPos)
-end
-
+-- function: print()
+-- Prints the menu on the screen and updates the view.
+--
+-- @param container - a surface created in the view, used as a reference here.
+-- @param startx - x-parameter used to position elements.
+-- @param starty - y-parameter for placing the contents of the menu.
+-- @param m - an integer used in the operations required to position buttons.
 function Menu:print(container, startx, starty, m)
-    ADLogger.trace("BP 1")
     ADLogger.trace("Before mainmenu: ")
     if self.container then
       self.container:destroy()
     end
     self.container = container
-    ADLogger.trace("BP 2")
     margin = m
-    ADLogger.trace("BP 3")
     width = (container:get_width() - margin*(self.size - 1) - 2*startx)/ self.size
-    ADLogger.trace("BP 4")
     height = container:get_height() - 2*starty
-    ADLogger.trace("BP 5")
 
     for i = 1,self.size do
 
@@ -131,7 +148,6 @@ function Menu:print(container, startx, starty, m)
         temppic:premultiply()
         container:copyfrom(temppic, nil, opt.buttonPos)
         temppic:destroy()
-        --collectgarbage()
     end
 
     -- Updating the new container on the appSurface
@@ -142,6 +158,8 @@ function Menu:print(container, startx, starty, m)
     end
 end
 
+-- function:  destroy()
+-- Destroys 'self.container' in order to free up the memory used.
 function Menu:destroyContainer()
     if self.container then
       self.container:destroy()
