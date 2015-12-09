@@ -43,7 +43,7 @@ end
 -- 
 function Score.submitHighScore()
    local playerID = "David"
-   if hasInternet then
+   if NH.hasConnection() then
       local response = HighscoreHandler:submitGlobalHighscore(game, playerID, scoreCount) 
       dump(response)
    end 

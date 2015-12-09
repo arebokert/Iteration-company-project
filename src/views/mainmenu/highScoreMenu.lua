@@ -168,7 +168,7 @@ function highScoreMenu.loadLocalScore(scores)
   end 
   -- If no scores for this player are in DB
   if prevscore == false then
-    highScore_local_text[1]:draw_over_surface(highScoreSurface, "No previous scores logged")
+    highScore_local_text[1]:draw_over_surface(highScoreSurface, "No previous scores available")
   end
 end
 --------------------------------------------------------------------
@@ -222,6 +222,9 @@ function highScoreMenu.loadStatus()
   local gold = gfx.loadpng('views/highscore/data/gold.png')
   local silver = gfx.loadpng('views/highscore/data/silver.png')
   local bronze = gfx.loadpng('views/highscore/data/bronze.png')
+  gold:premultiply()
+  silver:premultiply()
+  bronze:premultiply()
   local goldpoints 
   local silverpoints 
   local bronzepoints 
@@ -252,9 +255,11 @@ end
 --------------------------------------------------------------------
 function highScoreMenu.loadGameMenu()
   local bg = gfx.loadpng(datapath .. '/menu-arrow-left.png')
+  bg:premultiply()
   highScoreSurface:copyfrom(bg, nil, {x =appSurface:get_width()*0.32, y= appSurface:get_height()*0.13})
   bg:destroy()
   local bg = gfx.loadpng(datapath .. '/menu-arrow-right.png')
+  bg:premultiply()
   highScoreSurface:copyfrom(bg, nil, {x =appSurface:get_width()*0.65, y= appSurface:get_height()*0.13})
   bg:destroy()
   local color = {r=255, g=255, b=255}
@@ -278,13 +283,9 @@ function highScoreMenu.loadScores(GameName, noofscores)
  
   local highScores = {}
   if hasInternet then
-    if HighscoreHandler:getGlobalHighscore(GameName, noofscores) == nil then
-      highScores.highscoreTable = {{mac = "MAC", score = "Failed", user_id = "Server Connection"}}
-    else  
-      highScores.highscoreTable = JSON:decode(HighscoreHandler:getGlobalHighscore(GameName, noofscores))
-    end  
+    highScores.highscoreTable = JSON:decode(HighscoreHandler:getGlobalHighscore(GameName, noofscores))  
   else
-    highScores.highscoreTable = {{mac = "MAC", score = "Connection", user_id = "No Internet"}}
+    highScores.highscoreTable = {{mac = "MAC", score = "Failed", user_id = "Connection"}}
   end    
   
   return highScores.highscoreTable

@@ -102,10 +102,13 @@ function Game.showGamePage(flag)         --- if flag == 1 , resume
    --local each_square = (height_2048 * 0.6 -25) *0.25
    --local centre_square = {x = width_2048*0.2, y = height_2048 * 0.1, w = width_2048 * 0.6, h = width_2048}
 
-   screen2048:clear({r=245,g=245,b=245})
-   screen2048:clear({r=0,g=205,b=204},centre_square)
-   gfx.update()
-   Boxes.init(each_square, box_start_x, box_start_y,flag)
+  -- screen2048:clear({r=245,g=245,b=245})
+  local bg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
+  screen2048:copyfrom(bg, nil)
+  bg:destroy()
+  screen2048:clear({r=118, g=18, b=36},centre_square)
+  gfx.update()
+  Boxes.init(each_square, box_start_x, box_start_y,flag)
 end
 
 function Game.startGame()
