@@ -17,6 +17,7 @@ PLAYER_UPDATE = 1
 PLAYER_QUIT = 2
 PLAYER_SAME = 3
 PLAYER_FULL = 4
+PLAYER_WON = 5
 
 --------------------------------------------------------------------
 --function: getPlayerId                                     --------
@@ -58,18 +59,18 @@ function Game_multiplayer.registerKey(key, state)
       elseif menuView == nil then
         if key == "up" then   --move every number to top
           Boxes_multiplayer.moveTop()
-            Game_multiplayer.sendUpdatedBox(1)
+            Game_multiplayer.sendUpdatedBox(PLAYER_UPDATE)
         elseif key == "down" then
           Boxes_multiplayer.moveBottom()
-            Game_multiplayer.sendUpdatedBox(1)
+            Game_multiplayer.sendUpdatedBox(PLAYER_UPDATE)
         elseif key == "left" then
           Boxes_multiplayer.moveLeft()
-            Game_multiplayer.sendUpdatedBox(1)
+            Game_multiplayer.sendUpdatedBox(PLAYER_UPDATE)
         elseif key == "right" then
           Boxes_multiplayer.moveRight()
-            Game_multiplayer.sendUpdatedBox(1)
+            Game_multiplayer.sendUpdatedBox(PLAYER_UPDATE)
         elseif key == "exit" then
-            Game_multiplayer.sendUpdatedBox(2)
+            Game_multiplayer.sendUpdatedBox(PLAYER_QUIT)
           activeView = "menu"
           current_menu = "mainMenu"
           GameTimer_2048:stop()
@@ -81,10 +82,10 @@ function Game_multiplayer.registerKey(key, state)
         end
 
         if Boxes_multiplayer.checkWinGame() then
-          Game_multiplayer.sendUpdatedBox(5)
+          Game_multiplayer.sendUpdatedBox(PLAYER_WON)
           Boxes_multiplayer.winGame()
         elseif Boxes_multiplayer.checkEndGame() then
-          Game_multiplayer.sendUpdatedBox(4)
+          Game_multiplayer.sendUpdatedBox(PLAYER_FULL)
           Boxes_multiplayer.endGame("GAME OVER")
         end
 
@@ -286,6 +287,11 @@ function Game_multiplayer.setCompetitorData(JSONObject)
     Boxes_competitor.current_score = jo["score"]
     -- TODO: Maybe change color of competitors box?
     return false
+  elseif jo["flag"] == PLAYER_WON then
+    -- Opponent won the game.
+    Boxes_competitor.box_table = jo["box"]
+    Boxes_competitor.current_score = jo["score"]
+    return false
   end
   return true  
 end
@@ -315,7 +321,7 @@ callback_2048 = function (timer)
 
   -- Use data recovered.
   if not Game_multiplayer.setCompetitorData(competitor_Json) then
-    Boxes_multiplayer.endGame("Opponent quit or lost")
+    Boxes_multiplayer.endGame("Opponent quit, won or lost")
   end
   -- TODO: Add if statement. If return value ofprevious call is 
   --  false, game should end.
