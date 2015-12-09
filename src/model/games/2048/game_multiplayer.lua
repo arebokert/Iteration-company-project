@@ -318,7 +318,7 @@ callback_2048 = function (timer)
   -- Request opponent data from server.
   ADLogger.trace(tostring(call))
   if call then
-    return
+    return false
   end
   call = true
   ADLogger.trace(tostring(call))
@@ -331,6 +331,7 @@ callback_2048 = function (timer)
   end  
   
   call = false
+  return true
 end
 
 function Game_multiplayer.startMultiGame()
