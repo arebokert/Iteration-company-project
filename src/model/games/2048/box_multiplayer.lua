@@ -182,6 +182,7 @@ function Boxes.checkEndGame()
   if(result == 4) then
     return true
   end
+  return false
 end
 
 --------------------------------------------------------------------
