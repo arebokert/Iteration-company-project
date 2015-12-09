@@ -23,6 +23,13 @@ def dict_factory(cursor, row):
         d[col[0]] = row[idx]
     return d
 
+def array_factory(cursor, row):
+    a = []
+    if row is None:
+        return a
+    for idx, col in enumerate(cursor.description):
+        a.append( row[idx] )
+    return a
 
 def log(func_name, msg):
     print 'MSG:     DATABASE_HANDLER:    ' + func_name + '   :   ' + msg
@@ -110,17 +117,17 @@ def add_user(mac, playerid):
                   ", user_id)"
                   " VALUES (?,?)"
                   , (mac, playerid,))
-
-        gid = get_user(mac, playerid)
         c.commit()
+        gid = get_user(mac, playerid)
     except sqlite3.Error as e:
         get_db().rollback()
-        log_error('add_highscore', e.args[0])
+        log_error('add_user', e.args[0])
         return -1
     if gid is None:
         log_error('add_user', 'Could not find last row id.')
         return -1
     return gid
+
 
 def get_user(mac, playerid):
     """Get user information in form of global_id from database.
@@ -168,10 +175,11 @@ def get_user_safe(mac, playerid):
     """
 
     global_id = get_user(mac, playerid)
+    log("get_user_safe", str(global_id))
     if global_id == -1:
         return add_user(mac, playerid)
-    else:
-        return global_id
+    log("get_user_safe", str(global_id))
+    return global_id
 
 
 def get_unit_user(global_id):
@@ -439,8 +447,10 @@ def add_match(gamename, mac, playerid):
 
     # If cfo is None, a new row will have to be created to keep the new match.
     if cfo is None:
+        log("add_match", "Creating new match.")
         return create_match(gamename, mac, playerid)
     else:
+        log("add_match", "Adding player to existing match.")
         return insert_player_two(gamename, mac, playerid, cfo[0])
 
 
@@ -472,14 +482,14 @@ def get_user_in_match(match_id, player_no):
                            ' WHERE match_id = ?'
                            , (match_id,))
             cfo = cursor.fetchone()
-            log('get_user_in_match', 'Query result: ' + cfo)
+            log('get_user_in_match', 'Query result: ' + str(cfo))
         elif player_no == 2:
             cursor.execute('SELECT player_two_id'
                            ' FROM matches'
                            ' WHERE match_id = ?'
                            , (match_id,))
             cfo = cursor.fetchone()
-            log('get_user_in_match', 'Query result: ' + cfo)
+            log('get_user_in_match', 'Query result: ' + str(cfo))
         else:
             log_error('get_user_in_match', 'Incorrect input of player_no. Must be integer 1 or 2.')
             return -1
@@ -709,7 +719,7 @@ def add_round_score(gamename, match_id, mac, playerid, score):
     if cfa[0][0] == global_id:
         field_name = 'player_one_score'
         rn = p1r + 1
-    elif cfo[0][1] == global_id:
+    elif cfa[0][1] == global_id:
         field_name = 'player_one_score'
         rn = p2r + 1
     else:
@@ -1250,9 +1260,10 @@ def set_4096_score(match_id, player_id, new_score):
     """
     c = get_db()
     try:
-        c.execute("UPDATE SET fns_player_boxes.score = ?"
-                  " WHERE fns_player_boxes.match_id = ?"
-                  " AND fns_player_boxes.player_id = ?"
+        c.execute("UPDATE fns_player_boxes"
+                  " SET score = ?"
+                  " WHERE match_id = ?"
+                  " AND player_id = ?"
                   , (new_score, match_id, player_id,))
         c.commit()
     except sqlite3.Error as e:
@@ -1309,24 +1320,25 @@ def update_4096_box(match_id, player_id, new_box):
     """
     c = get_db()
     try:
-        c.execute("UPDATE SET fns_player_boxes.box_1_1 = ?"
-                  ", fns_player_boxes.box_1_2 = ?"
-                  ", fns_player_boxes.box_1_3 = ?"
-                  ", fns_player_boxes.box_1_4 = ?"
-                  ", fns_player_boxes.box_2_1 = ?"
-                  ", fns_player_boxes.box_2_2 = ?"
-                  ", fns_player_boxes.box_2_3 = ?"
-                  ", fns_player_boxes.box_2_4 = ?"
-                  ", fns_player_boxes.box_3_1 = ?"
-                  ", fns_player_boxes.box_3_2 = ?"
-                  ", fns_player_boxes.box_3_3 = ?"
-                  ", fns_player_boxes.box_3_4 = ?"
-                  ", fns_player_boxes.box_4_1 = ?"
-                  ", fns_player_boxes.box_4_2 = ?"
-                  ", fns_player_boxes.box_4_3 = ?"
-                  ", fns_player_boxes.box_4_4 = ?"
-                  " WHERE fns_player_boxes.match_id = ?"
-                  " AND fns_player_boxes.player_id = ?"
+        c.execute("UPDATE fns_player_boxes"
+                  " SET box_1_1 = ?"
+                  ", box_1_2 = ?"
+                  ", box_1_3 = ?"
+                  ", box_1_4 = ?"
+                  ", box_2_1 = ?"
+                  ", box_2_2 = ?"
+                  ", box_2_3 = ?"
+                  ", box_2_4 = ?"
+                  ", box_3_1 = ?"
+                  ", box_3_2 = ?"
+                  ", box_3_3 = ?"
+                  ", box_3_4 = ?"
+                  ", box_4_1 = ?"
+                  ", box_4_2 = ?"
+                  ", box_4_3 = ?"
+                  ", box_4_4 = ?"
+                  " WHERE match_id = ?"
+                  " AND player_id = ?"
                   , (new_box[0], new_box[1], new_box[2], new_box[3]
                      , new_box[4], new_box[5], new_box[6], new_box[7]
                      , new_box[8], new_box[9], new_box[10], new_box[11]
@@ -1372,14 +1384,15 @@ def get_4096_box(match_id, player_id):
                   ", box_4_3"
                   ", box_4_4"
                   " FROM fns_player_boxes"
-                  " WHERE fns_player_boxes.match_id = ?"
-                  " AND fns_player_boxes.player_id = ?"
+                  " WHERE match_id = ?"
+                  " AND player_id = ?"
                   , (match_id, player_id,))
         cfo = c.fetchone()
     except sqlite3.Error as e:
-        log_error('update_4096_box', e.args[0])
+        log_error('get_4096_box', e.args[0])
         cfo = None
-    return dict_factory(c, cfo)
+
+    return array_factory(c, cfo)
 
 
 def update_4096_flag(match_id, player_id, new_flag):
@@ -1399,9 +1412,10 @@ def update_4096_flag(match_id, player_id, new_flag):
     """
     c = get_db()
     try:
-        c.execute("UPDATE SET fns_player_boxes.status_flag = ?"
-                  " WHERE fns_player_boxes.match_id = ?"
-                  " AND fns_player_boxes.player_id = ?"
+        c.execute("UPDATE fns_player_boxes"
+                  " SET status_flag = ?"
+                  " WHERE match_id = ?"
+                  " AND player_id = ?"
                   , (new_flag, match_id, player_id,))
         c.commit()
     except sqlite3.Error as e:

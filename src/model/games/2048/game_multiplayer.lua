@@ -17,6 +17,17 @@ PLAYER_UPDATE = 1
 PLAYER_QUIT = 2
 PLAYER_SAME = 3
 PLAYER_FULL = 4
+PLAYER_WON = 5
+
+--------------------------------------------------------------------
+--function: getPlayerId                                     --------
+--description: Get id                                       --------
+--last modified: Dec 9 2015                                 --------
+--------------------------------------------------------------------
+function Game_multiplayer.getPlayerId()
+  local id = 1
+  return id
+end
 
 --------------------------------------------------------------------
 --function: registerKey                                     --------
@@ -48,18 +59,18 @@ function Game_multiplayer.registerKey(key, state)
       elseif menuView == nil then
         if key == "up" then   --move every number to top
           Boxes_multiplayer.moveTop()
-            sendUpdatedBox(1)
+            Game_multiplayer.sendUpdatedBox(PLAYER_UPDATE)
         elseif key == "down" then
           Boxes_multiplayer.moveBottom()
-            sendUpdatedBox(1)
+            Game_multiplayer.sendUpdatedBox(PLAYER_UPDATE)
         elseif key == "left" then
           Boxes_multiplayer.moveLeft()
-            sendUpdatedBox(1)
+            Game_multiplayer.sendUpdatedBox(PLAYER_UPDATE)
         elseif key == "right" then
           Boxes_multiplayer.moveRight()
-            sendUpdatedBox(1)
+            Game_multiplayer.sendUpdatedBox(PLAYER_UPDATE)
         elseif key == "exit" then
-            sendUpdatedBox(2)
+            Game_multiplayer.sendUpdatedBox(PLAYER_QUIT)
           activeView = "menu"
           current_menu = "mainMenu"
           GameTimer_2048:stop()
@@ -69,6 +80,15 @@ function Game_multiplayer.registerKey(key, state)
           menuView = "pauseMenu"
           GameTimer_2048:stop()
         end
+
+        if Boxes_multiplayer.checkWinGame() then
+          Game_multiplayer.sendUpdatedBox(PLAYER_WON)
+          Boxes_multiplayer.winGame()
+        elseif Boxes_multiplayer.checkEndGame() then
+          Game_multiplayer.sendUpdatedBox(PLAYER_FULL)
+          Boxes_multiplayer.endGame("GAME OVER")
+        end
+
       elseif menuView == "2048_game_over" then 
        if key == "exit" then
           current_menu = "mainmenu"
@@ -98,7 +118,7 @@ function Game_multiplayer.showGamePage(flag)         --- if flag == 1 , resume
    Game_multiplayer.loadBoxes(left_screen)
    Game_multiplayer.loadComBoxes(right_screen)
    screen:copyfrom(left_screen,nil,{x=0,y=0})
-   screen:clear({r=0,g=0,b=100},{x=screen:get_width()*0.5, y= 0, w= 2, h = screen:get_height()})
+   screen:clear({r=0,g=0,b=0},{x=screen:get_width()*0.5, y= 0, w= 2, h = screen:get_height()})
    screen:copyfrom(right_screen,nil,{x=screen:get_width()*0.5,y=0})
    gfx.update()
 end
@@ -125,8 +145,11 @@ function Game_multiplayer.loadBoxes(temp_screen)
    end
    --local each_square = (height_2048 * 0.6 -25) *0.25
    --local centre_square = {x = width_2048*0.2, y = height_2048 * 0.1, w = width_2048 * 0.6, h = width_2048}
-   screen_player:clear({r=245,g=245,b=245})
-   screen_player:clear({r=0,g=205,b=204},centre_square)
+   local bg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
+   screen_player:copyfrom(bg, nil)
+   bg:destroy()
+  -- screen_competitor:clear({r=0,g=0,b=245})
+   screen_player:clear({r=118, g=18, b=36},centre_square)
    Boxes_multiplayer.init(each_square, box_start_x, box_start_y,0)
 end
 
@@ -152,8 +175,11 @@ function Game_multiplayer.loadComBoxes(temp_screen)
    end
    --local each_square = (height_2048 * 0.6 -25) *0.25
    --local centre_square = {x = width_2048*0.2, y = height_2048 * 0.1, w = width_2048 * 0.6, h = width_2048}
-   screen_competitor:clear({r=245,g=245,b=245})
-   screen_competitor:clear({r=0,g=205,b=204},centre_square)
+   local bg = gfx.loadjpeg('views/pacman/data/pacmanbg.jpg')
+   screen_competitor:copyfrom(bg, nil)
+   bg:destroy()
+  -- screen_competitor:clear({r=0,g=0,b=245})
+   screen_competitor:clear({r=118, g=18, b=36},centre_square)
    Boxes_competitor.init(each_square, box_start_x, box_start_y,0)
 end
 
@@ -167,17 +193,44 @@ end
 --------------------------------------------------------------------
 function Game_multiplayer.sendUpdatedBox(sendFlag)
   local mac = nh.getMAC()
-  local id = 1
+  local id = Game_multiplayer.getPlayerId()
+  local match_id = Game_multiplayer.match_id
   local localSendFlag = sendFlag
   local request = JSON:encode({
+    matchId = match_id, 
     flag = localSendFlag,
     mac = mac,
-    playerid = id,
+    playerId = id,
     box = Boxes_multiplayer.box_table,
     score = Boxes_multiplayer.current_score
     })
-  return nh.sendJSON(JObj, "4096MultiPlayerSubmit")
+  return nh.sendJSON(request, "4096MultiPlayerSubmit")
 end
+
+
+
+--------------------------------------------------------------------
+--function: getMatchId
+--@return - MatchID
+--description: Request match id from server. 
+--last modified Dec 09, 2015
+--------------------------------------------------------------------
+function Game_multiplayer.getMatchId()
+  local mac = nh.getMAC()
+  local id = Game_multiplayer.getPlayerId()
+  ADLogger.trace(id)
+  local request = JSON:encode({
+    mac = mac,
+    playerId = id
+    })
+    
+  local match_id = nh.sendJSON(request, "4096GetMatchId")
+  match_id = JSON:decode(match_id)
+  match_id = match_id.matchId
+  return match_id
+  -- TODO: Add timeout function for server request.
+end
+
 
 
 --------------------------------------------------------------------
@@ -189,12 +242,15 @@ end
 --------------------------------------------------------------------
 function Game_multiplayer.getCompetitorData()
   local mac = nh.getMAC()
-  local id = 1
+  local id = Game_multiplayer.getPlayerId()
+  
   local request = JSON:encode({
     mac = mac,
-    playerid = id
+    playerId = id,
+    matchId = Game_multiplayer.match_id
     })
-  return nh.sendJSON(request, "4096MultiPlayerRequest")
+
+    return nh.sendJSON(request, "4096MultiPlayerRequest")
   -- TODO: Add timeout function for server request.
 end
 
@@ -211,11 +267,13 @@ function Game_multiplayer.setCompetitorData(JSONObject)
     return true
   end
   jo = JSON:decode(JSONObject)
-
+  dump(jo)
   -- Check flag status
   if jo["flag"] == PLAYER_UPDATE then
     -- Update competitors box.
-    Boxes_competitor.box_table = jo["box"]
+    local new_box = jo["box"]
+        
+    Boxes_competitor.box_table = new_box
     Boxes_competitor.current_score = jo["score"]
   elseif jo["flag"] == PLAYER_QUIT then
     -- Other player quit the game. End game.
@@ -228,7 +286,12 @@ function Game_multiplayer.setCompetitorData(JSONObject)
     Boxes_competitor.box_table = jo["box"]
     Boxes_competitor.current_score = jo["score"]
     -- TODO: Maybe change color of competitors box?
-    return true
+    return false
+  elseif jo["flag"] == PLAYER_WON then
+    -- Opponent won the game.
+    Boxes_competitor.box_table = jo["box"]
+    Boxes_competitor.current_score = jo["score"]
+    return false
   end
   return true  
 end
@@ -257,7 +320,9 @@ callback_2048 = function (timer)
   local competitor_Json = Game_multiplayer.getCompetitorData()
 
   -- Use data recovered.
-  Game_multiplayer.setCompetitorData(competitor_Json)
+  if not Game_multiplayer.setCompetitorData(competitor_Json) then
+    Boxes_multiplayer.endGame("Opponent quit, won or lost")
+  end
   -- TODO: Add if statement. If return value ofprevious call is 
   --  false, game should end.
 
@@ -268,6 +333,14 @@ end
 
 function Game_multiplayer.startMultiGame()
  Game_multiplayer.showGamePage(0)
+ 
+ local match_id = Game_multiplayer.getMatchId()
+ if match_id == nil then
+  -- No match id, something is wrong! 
+  return false
+ end
+ Game_multiplayer.match_id = match_id
+ dump('MATCH ID: ' .. Game_multiplayer.match_id)
  Game_multiplayer.queryTimer()
  --Game.multiplayer()
 end

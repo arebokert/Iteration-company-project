@@ -4,6 +4,9 @@
 --last modified Nov 29, 2015                                --------
 --------------------------------------------------------------------
 --
+
+local score_font = sys.new_freetype({g=255,r=255,b=255}, 52, {x=545,y=20}, root_path .."views/mainmenu/data/font/Gidole-Regular.otf")
+
 Boxes = {
   tag = {left =0, right =0, bottom = 0, top = 0},   -- end game tag
   current_zero = 16,  -- default 16 numbers = 0
@@ -73,7 +76,13 @@ end
 --last modified Nov 29, 2015                                --------
 --------------------------------------------------------------------
 function Boxes.showScore()
-  Score.printScore()
+  
+  local score = Score.getScore()
+  local cover = gfx.new_surface(1280,100)
+  cover:clear({r=0,g=0,b=0})
+  screen2048:copyfrom(cover,nil,{x=0,y=0})
+  score_font:draw_over_surface(screen2048, "Score: " .. score)
+ -- screen_player:clear({r=245,g=245,b=245}, {x = screen_player:get_width()*0.4 + 100,y=screen_player:get_height()*0.1, w=50, h =50})  
 end
 
 --------------------------------------------------------------------

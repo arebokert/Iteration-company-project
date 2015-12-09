@@ -3,7 +3,7 @@ socket = require("socket")
 NH = {}
 
 HOST = "2015-1.pumi.ida.liu.se"
-PORT = 24069
+PORT = 24070
 invalidInput = "Invalid input"
 
     -- Convert the request to the designated prefix which can be found at
@@ -30,9 +30,23 @@ function NH.convertRequestToPrefix(request)
         return "GFMS" --For "Game Fourtynintysix Multiplayer Submit"
     elseif request == "4096MultiPlayerRequest" then
         return "GFMR" --For "Game Fourtynintysix Multiplayer Submit"
+    elseif request == "4096GetMatchId" then
+        return "GFMI" --For "Game Fourtynintysix Multiplayer get match Id"        
     else
         return invalidInput
     end
+end
+
+-- This function checks if there is a connection to the server 
+-- @return: true if server connection exists. else false
+function NH.hasConnection()
+  connection = socket.tcp()
+  connection:settimeout(1)
+  if connection:connect(HOST, PORT)==nil then
+    return false
+  else
+    return true
+  end  
 end
 
     -- Send JSONObject with an operation to server.

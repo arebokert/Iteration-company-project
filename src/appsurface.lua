@@ -1,4 +1,4 @@
---- Class: appSurface 
+-- Class: appSurface 
 -- This class' purpose is to maintain the gfx-memory used by the
 -- application. Not entirely implemented.
 -- @param appSurface - class-table
@@ -7,7 +7,7 @@
 appSurface = {title = "appSurface"}
 appScreen = nil
 
---- function: new()
+-- function: new()
 -- Method to instantiate the class.
 -- @return obj - the object that was created
 function appSurface:new()
@@ -17,14 +17,14 @@ function appSurface:new()
     return obj
 end
 
---- function: createScreen()
+-- function: createScreen()
 -- Sets the parameters for the global appScreen.
 function appSurface:createScreen()
     appScreen = gfx.new_surface(screen:get_width(),screen:get_height())
     ADLogger.trace("New appScreen created!")
 end
 
---- function: destroy()
+-- function: destroy()
 -- Destroys the appScreen, clears the 'screen' and destroys the lower menu-container,
 -- to provide a clean slate at certain transitions.
 function appSurface:destroy()
@@ -33,9 +33,10 @@ function appSurface:destroy()
         
     appScreen:destroy()
     screen:clear()
+    appSurface:createScreen()
 end
 
---- function: copyfrom(surface, dest_rect)
+-- function: copyfrom(surface, dest_rect)
 -- Replicates the surface:copyfrom-function, simulating an override to
 -- implement the class with greater ease (i.e. replace 'screen' with appSurface)
 -- 
@@ -56,7 +57,7 @@ function appSurface:copyfrom(surface, dest_rect)
     ADLogger.trace("RAM usage after appScreen-update: " .. getMemoryUsage("ram"))
 end
 
---- function: copyfrom(surface, dest_rect, pos)
+-- function: copyfrom(surface, dest_rect, pos)
 -- Duplicate copyfrom()-method, overrides the previous.
 function appSurface:copyfrom(surface, dest_rect, pos)
     screen:clear()
@@ -68,7 +69,7 @@ function appSurface:copyfrom(surface, dest_rect, pos)
     ADLogger.trace("RAM usage after appScreen-update: " .. getMemoryUsage("ram"))
 end
 
---- function: destroyMenu()
+-- function: destroyMenu()
 -- Destroys the various menues, if they're not nil. Used while transitioning between
 -- different menues and/or starting games in order to free gfx-memory and thus
 -- prevent overflows.
@@ -96,21 +97,21 @@ function appSurface:destroyMenu()
     
 end
 
---- function: get_height()
+-- function: get_height()
 -- Replicates the surface:get_height()-function and
 -- returns the screen's height.
 function appSurface:get_height()
     return screen:get_height()
 end
 
---- function: get_width()
+-- function: get_width()
 -- Replicates the surface:get_width()-function and
 -- returns the screen's width.
 function appSurface:get_width()
     return screen:get_width()
 end
 
---- function: drawOver(ftype, text)
+-- function: drawOver(ftype, text)
 -- Solution to print text on the appScreen, generally unused.
 -- 
 -- @param ftype - freetype used to draw
@@ -121,7 +122,7 @@ function appSurface:drawOver(ftype, text)
     gfx.update()
 end
 
---- function: getMemoryUsage()
+-- function: getMemoryUsage()
 -- Global, joint function to return a string containing the RAM-state or gfx-usage
 -- of the app. Often referred to in ADLogger.trace() throughout the application.
 -- 

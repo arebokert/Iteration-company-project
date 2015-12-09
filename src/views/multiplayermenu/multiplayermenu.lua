@@ -2,6 +2,7 @@ model = require "model.multiplayermenu.multiplayermenu"
 
 multiplayermenu = {}
 
+-- Members of the class
 local resulttable = nil
 local activeGame = nil
 local a = {}
@@ -10,8 +11,12 @@ local first_treverse = nil
 multiMenu = nil
 local font_path = root_path.."views/mainmenu/data/font/Gidole-Regular.otf"
 
---loads the view for the multiplayer menu
+--dunction: loadMenu()
+--Loads the view for the multiplayer menu
+--
+--
 --@param model - instantiates the model for the multiplayermenu
+--@param first_treverse - set to true, until the carousel has been used
 function multiplayermenu.loadMenu()
   first_treverse = true
   model = model:new()
@@ -133,8 +138,12 @@ function multiplayermenu.loadCurrentPlayers(players)
   currentplayers = players or 0
 end
 
---starts the selected game
+-- function: start()
+-- Starts the selected game.
+-- The start.lua-file present into a method.
 function multiplayermenu.start()
+    --Sets the active view to the 'name' parameter
+    --In order to delegate keypress reading to the the proper class.
     activeView = a[tempActive]["name"]
     current_menu = "none"
     multiMenu:destroy()
@@ -145,10 +154,11 @@ function multiplayermenu.start()
 end
 
 --loads the game menu and carousel
+--
 function multiplayermenu.loadGameMenu()
   activeGame = 2
-  color = {r=20, g=10, b=0}
-  margin = 5
+  local color = {r=20, g=10, b=0}
+  local margin = 5
   local bg = gfx.loadjpeg(a[activeGame-1]["path"] .. 'background-small.jpg')
   multiMenu:copyfrom(bg, nil, {x=((multiMenu:get_width())/2)-350, y= multiMenu:get_height()/20+37})
   bg:destroy()

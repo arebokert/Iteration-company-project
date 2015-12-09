@@ -75,7 +75,6 @@ function showmenu.loadMainMenu()
         action = function()
             current_menu = "exit"
             sys.stop()
-            --showmenu.loadMenu("exit")
             return "Return Option4"
         end,
         hover = function()
