@@ -1,4 +1,5 @@
 package.path = package.path .. ";../src/?.lua"
+root_path = package.path .. ";../src/"
 
 EXPORT_ASSERT_TO_GLOBALS = true;
 
@@ -15,9 +16,10 @@ freetype = require "SDK.Mocked.freetype"
 sys = require "SDK.Mocked.sys"
 
 -- can't find the file (has been moved)
--- require('model.commongame.scorehandler')
+--require('model.highscore.highscorehandler')
 require('model.commongame.scorehandler')
 -- tests if any of the functions in Score.lua crashes
+
 function testCrashScore() 
  assertTrue(runScoreFunctions())
 end

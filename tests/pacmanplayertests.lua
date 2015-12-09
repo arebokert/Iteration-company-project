@@ -28,7 +28,7 @@ end
 -- returns true if non of the functions crash
 -- @return: true
 function runPlayerFunctions() -- runs the functions in Player.lua
-  value = Player:movement()
+  value = Player:movement(nil)
   pacman = Player:new("pacman")   
   ghost = Player:new("ghost")
   Player:setPos(1,2)
