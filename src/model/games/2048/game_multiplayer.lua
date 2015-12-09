@@ -24,7 +24,7 @@ PLAYER_FULL = 4
 --last modified: Dec 9 2015                                 --------
 --------------------------------------------------------------------
 function Game_multiplayer.getPlayerId()
-  local id = 1
+  local id = 2
   return id
 end
 
@@ -58,18 +58,18 @@ function Game_multiplayer.registerKey(key, state)
       elseif menuView == nil then
         if key == "up" then   --move every number to top
           Boxes_multiplayer.moveTop()
-            sendUpdatedBox(1)
+            Game_multiplayer.sendUpdatedBox(1)
         elseif key == "down" then
           Boxes_multiplayer.moveBottom()
-            sendUpdatedBox(1)
+            Game_multiplayer.sendUpdatedBox(1)
         elseif key == "left" then
           Boxes_multiplayer.moveLeft()
-            sendUpdatedBox(1)
+            Game_multiplayer.sendUpdatedBox(1)
         elseif key == "right" then
           Boxes_multiplayer.moveRight()
-            sendUpdatedBox(1)
+            Game_multiplayer.sendUpdatedBox(1)
         elseif key == "exit" then
-            sendUpdatedBox(2)
+            Game_multiplayer.sendUpdatedBox(2)
           activeView = "menu"
           current_menu = "mainMenu"
           GameTimer_2048:stop()
@@ -188,7 +188,7 @@ function Game_multiplayer.sendUpdatedBox(sendFlag)
     box = Boxes_multiplayer.box_table,
     score = Boxes_multiplayer.current_score
     })
-  return nh.sendJSON(JObj, "4096MultiPlayerSubmit")
+  return nh.sendJSON(request, "4096MultiPlayerSubmit")
 end
 
 
