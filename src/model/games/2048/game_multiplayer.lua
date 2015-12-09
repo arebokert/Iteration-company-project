@@ -1,3 +1,8 @@
+--------------------------------------------------------------------
+--class: game_multiplayer                                   --------
+--description: start class of game(2048)                    --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
 Boxes_multiplayer = require("model.games.2048.box_multiplayer")
 Boxes_competitor = require("model.games.2048.box_competitor")
 InGameMenu = require("model.commongame.ingamemenuclass")
@@ -13,6 +18,11 @@ PLAYER_QUIT = 2
 PLAYER_SAME = 3
 PLAYER_FULL = 4
 
+--------------------------------------------------------------------
+--function: registerKey                                     --------
+--description: key functions                                --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
 function Game_multiplayer.registerKey(key, state)
     if state == "down" then
       if menuView == "pauseMenu" then
@@ -38,13 +48,18 @@ function Game_multiplayer.registerKey(key, state)
       elseif menuView == nil then
         if key == "up" then   --move every number to top
           Boxes_multiplayer.moveTop()
+            sendUpdatedBox(1)
         elseif key == "down" then
           Boxes_multiplayer.moveBottom()
+            sendUpdatedBox(1)
         elseif key == "left" then
           Boxes_multiplayer.moveLeft()
+            sendUpdatedBox(1)
         elseif key == "right" then
           Boxes_multiplayer.moveRight()
+            sendUpdatedBox(1)
         elseif key == "exit" then
+            sendUpdatedBox(2)
           activeView = "menu"
           current_menu = "mainMenu"
           GameTimer_2048:stop()
@@ -54,26 +69,26 @@ function Game_multiplayer.registerKey(key, state)
           menuView = "pauseMenu"
           GameTimer_2048:stop()
         end
+      elseif menuView == "2048_game_over" then 
+       if key == "exit" then
+          current_menu = "mainmenu"
+          activeView = "menu"
+          menuView = nil
+          Score.resetScore()
+           Boxes.clear()
+          showmenu.loadMainMenu()
+       else 
+          ADLogger.trace("still in game over")
+       end
       end
     end
-    if current_menu =="2048_game_over" then
-       if state == "down" then
-          if key == "exit" then
-       current_menu = "mainmenu"
-             activeView = "menu"
-          end
-       end
-    end
-    if current_menu =="2048_win" then
-       if state == "down" then
-	  if key == "exit" then
-       current_menu = "mainmenu"
-	     activeView = "menu"
-	  end
-       end
-    end
 end
-
+--------------------------------------------------------------------
+--function: showGamePage                                    --------
+--@param flag if flag == 1 resume                           --------
+--description: show Game function,define position           --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
 -- 5px between each square
 --128, 272,105
 ---{x=400,y=100,w = 537, h=537}
@@ -179,7 +194,7 @@ function Game_multiplayer.getCompetitorData()
     mac = mac,
     playerid = id
     })
-  return nh.sendJSON(JObj, "4096MultiPlayerRequest")
+  return nh.sendJSON(request, "4096MultiPlayerRequest")
   -- TODO: Add timeout function for server request.
 end
 
@@ -192,6 +207,9 @@ end
 --last modified Dec 03, 2015
 --------------------------------------------------------------------
 function Game_multiplayer.setCompetitorData(JSONObject)
+  if JSONObject == nil then
+    return true
+  end
   jo = JSON:decode(JSONObject)
 
   -- Check flag status

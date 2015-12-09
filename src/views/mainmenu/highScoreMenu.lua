@@ -69,12 +69,17 @@ function highScoreMenu.loadMenu()
   
   local scores = {}
   if(highScoreMenu.current_game == 1) then
-    scores = highScoreMenu.loadScores("Pacman", nil)
+    scores = highScoreMenu.loadScores("Pacman", 5)
  elseif highScoreMenu.current_game == 2 then
-    scores = highScoreMenu.loadScores("4096", nil)
+    scores = highScoreMenu.loadScores("4096", 5)
+ end
+  highScoreMenu.loadGlobalScore(scores)
+    if(highScoreMenu.current_game == 1) then
+    scores = highScoreMenu.loadScores("Pacman", 100)
+ elseif highScoreMenu.current_game == 2 then
+    scores = highScoreMenu.loadScores("4096", 100)
  end
   highScoreMenu.loadLocalScore(scores)
-  highScoreMenu.loadGlobalScore(scores)
   highScoreMenu.loadStatus()
   highScoreMenu.loadGameMenu()
   appSurface:copyfrom(highScoreSurface, nil)
@@ -139,15 +144,32 @@ function highScoreMenu.loadLocalScore(scores)
   local color = {r=255, g=255, b=255}
   local margin = 1
   local local_score = nil
+  -- This is a hordcoded player. Should be changed to match the MAC-ID
+  local userdisplayed = "David"
+  -- If no previous score of this player is in DB
+  local prevscore = false
+  local displayedscores = 0
   highScoreSurface:clear({r=7, g=19, b=77, a=240},{x =appSurface:get_width()*0.075, y= appSurface:get_height()*0.094, w= appSurface:get_width()*0.23,h=appSurface:get_height()*0.48})
   highScoreMenu.drawBorder(appSurface:get_width()*0.075,appSurface:get_height()*0.094, appSurface:get_width()*0.23,appSurface:get_height()*0.48, margin, color)
   --highScoreMenu.writeWord("Local HighScore",{r=255,g=255,b=255},24,{x =appSurface:get_width()*0.09, y= appSurface:get_height()*0.12},Screen)
   highScore_local_text_1:draw_over_surface(highScoreSurface,"My HighScore")
   highScore_local_text_2:draw_over_surface(highScoreSurface,"PlayerName" .. " : " .. "Score")
+  -- This loop displays all score of the player usedisplayed
   for k,v in pairs(scores) do
-    ADLogger.trace(k .. ". " .. v.user_id .. " " .. v.score)
-    highScore_local_text[k]:draw_over_surface(highScoreSurface,v.user_id .. " : " .. v.score)
+  --  ADLogger.trace(k .. ". " .. v.user_id .. " " .. v.score)
+    if v.user_id == userdisplayed then
+      highScore_local_text[displayedscores+1]:draw_over_surface(highScoreSurface,v.user_id .. " : " .. v.score)
+      prevscore = true
+      displayedscores = displayedscores + 1
+    end
+    if displayedscores == 5 then
+      break
+    end
   end 
+  -- If no scores for this player are in DB
+  if prevscore == false then
+    highScore_local_text[1]:draw_over_surface(highScoreSurface, "No previous scores logged")
+  end
 end
 --------------------------------------------------------------------
 --function: drawBorder                                       --------
@@ -180,13 +202,10 @@ function highScoreMenu.loadGlobalScore(scores)
   local margin = 1
   highScoreSurface:clear({r=7, g=19, b=77, a=240}, {x = appSurface:get_width()*0.7, y = appSurface:get_height()*0.094, w = appSurface:get_width()*0.23,h =appSurface:get_height()*0.48})
   highScoreMenu.drawBorder(appSurface:get_width()*0.7,appSurface:get_height()*0.094, appSurface:get_width()*0.23,appSurface:get_height()*0.48, margin, color)
-  --highScoreMenu.writeWord("Global HighScore",{r=255,g=255,b=255},24,{x = appSurface:get_width()*0.715, y = appSurface:get_height()*0.12},Screen)
-  --highScoreMenu.writeWord("PlayerName" .. " : " .. "Score",{r=255,g=255,b=255},20,{x = appSurface:get_width()*0.715, y= appSurface:get_height()*0.2},Screen)
   highScore_global_text_1:draw_over_surface(highScoreSurface,"Global HighScore")
   highScore_global_text_2:draw_over_surface(highScoreSurface,"PlayerName" .. " : " .. "Score")
   for k,v in pairs(scores) do
-    ADLogger.trace(k .. ". " .. v.user_id .. " " .. v.score)
-    --highScoreMenu.writeWord(v.playerName .. " : " .. v.score,{r=255,g=255,b=255},20,{x= appSurface:get_width()*0.715, y= appSurface:get_height()*0.24 + k *30},Screen)
+    -- ADLogger.trace(k .. ". " .. v.user_id .. " " .. v.score)
     highScore_global_text[k]:draw_over_surface(highScoreSurface,v.user_id .. " : " .. v.score)
   end
 end
@@ -200,9 +219,30 @@ end
 function highScoreMenu.loadStatus()
   local color = {r=255, g=255, b=255}
   local margin = 1
+  local gold = gfx.loadpng('views/highscore/data/gold.png')
+  local silver = gfx.loadpng('views/highscore/data/silver.png')
+  local bronze = gfx.loadpng('views/highscore/data/bronze.png')
+  local goldpoints 
+  local silverpoints 
+  local bronzepoints 
   highScoreSurface:clear({r=7, g=19, b=77, a=240},{x =appSurface:get_width()*0.335, y= appSurface:get_height()*0.272, w= appSurface:get_width()*0.33,h=appSurface:get_height()*0.3})
   highScoreMenu.drawBorder(appSurface:get_width()*0.335, appSurface:get_height()*0.272,appSurface:get_width()*0.33, appSurface:get_height()*0.3, margin, color)
-  highScoreMenu.writeWord("Status",{r=255,g=255,b=255},24,{x = appSurface:get_width()*0.375, y = appSurface:get_height()*0.30})
+  highScoreMenu.writeWord("Ranking",{r=255,g=255,b=255},32,{x = appSurface:get_width()*0.455, y = appSurface:get_height()*0.28})
+  highScoreSurface:copyfrom(gold,nil,{x = appSurface:get_width()*0.37, y = appSurface:get_height()*0.35})
+  highScoreSurface:copyfrom(silver,nil,{x = appSurface:get_width()*0.455, y = appSurface:get_height()*0.35})
+  highScoreSurface:copyfrom(bronze,nil,{x = appSurface:get_width()*0.54, y = appSurface:get_height()*0.35})
+  if (highScoreMenu.current_game == 1) then
+    goldpoints = "1800p"
+    silverpoints = "1600p"
+    bronzepoints = "1300p"
+  elseif (highScoreMenu.current_game == 2) then
+    goldpoints = "8000p"
+    silverpoints = "5000p"
+    bronzepoints = "2000p"
+  end
+  highScoreMenu.writeWord(goldpoints,{r=255,g=255,b=255},22,{x = appSurface:get_width()*0.39, y = appSurface:get_height()*0.50})
+  highScoreMenu.writeWord(silverpoints,{r=255,g=255,b=255},22,{x = appSurface:get_width()*0.475, y = appSurface:get_height()*0.50})
+  highScoreMenu.writeWord(bronzepoints,{r=255,g=255,b=255},22,{x = appSurface:get_width()*0.565, y = appSurface:get_height()*0.50})  
 end
 
 --------------------------------------------------------------------
@@ -234,14 +274,14 @@ end
 --last modified Nov 17, 2015                                --------
 --------------------------------------------------------------------
 -- if the highScoreMenu failed, repalce the code with the commited one, and commit on the code from local highScores = HighscoreHandler...... to return
-function highScoreMenu.loadScores(GameName, scoreType)
+function highScoreMenu.loadScores(GameName, noofscores)
  
   local highScores = {}
   if hasInternet then
-    if HighscoreHandler:getGlobalHighscore(GameName, 5) == nil then
+    if HighscoreHandler:getGlobalHighscore(GameName, noofscores) == nil then
       highScores.highscoreTable = {{mac = "MAC", score = "Failed", user_id = "Server Connection"}}
     else  
-      highScores.highscoreTable = JSON:decode(HighscoreHandler:getGlobalHighscore(GameName, 5))
+      highScores.highscoreTable = JSON:decode(HighscoreHandler:getGlobalHighscore(GameName, noofscores))
     end  
   else
     highScores.highscoreTable = {{mac = "MAC", score = "Connection", user_id = "No Internet"}}

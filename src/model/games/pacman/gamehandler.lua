@@ -1,5 +1,6 @@
+-- The gamehandler class
 Gamehandler = {}
-
+-- Needed classes to load
 Gameplan = require "model.games.pacman.gameplan"
 GameplanGraphics = require("model.games.pacman.gameplangraphics")
 Score = require("model.commongame.scorehandler")
@@ -9,6 +10,7 @@ menuView = nil
 
 --
 -- Load a game of pacman 
+-- Resets all variables, and could be used as restart as well as start for the first time
 --
 function Gamehandler.loadPacman(width, height)
   -- Set the background for the view. 
@@ -28,7 +30,6 @@ function Gamehandler.loadPacman(width, height)
   Gamehandler.containerPos = {x = 300, y = 150}
   -- Initiate pacman 
   Gamehandler.startPacman()
-  --ADLogger.trace(collectgarbage("count")*1024)
 end
 
 -- This function is a help function for the loadPacman
@@ -36,6 +37,7 @@ end
 function Gamehandler.startPacman()
   -- Initiate gameplan 
   gameplan = Gameplan:new()
+  GameplanGraphics.loadSprites()
   
   -- Choose map to load 
   local map = 'map2.txt'  
@@ -68,6 +70,7 @@ ADLogger.trace(collectgarbage("count")*1024)
     end
     Gamehandler.checkVictory()
   elseif gameStatus == false and gameplan:getLives() < 1 then
+    -- If it enters here, all lives are lost, hence: GAMEOVER
     gameTimer:stop()
     Score.submitHighScore()
     InGameMenu.gameOver('views/pacman/data/gameover.png', Score:getScore())
@@ -77,8 +80,8 @@ ADLogger.trace(collectgarbage("count")*1024)
 end
 
 -- This function end game if no yelowdots remaining
--- RESET FUNCTION NEEDS TO BE ADDED
---     
+-- Loads a winning game menu if victory
+--    
 function Gamehandler.checkVictory()
     if noDotsRemaining == 0 then  
       gameTimer:stop()
@@ -91,9 +94,9 @@ function Gamehandler.checkVictory()
 end
 
 -- The onKey-function for the pacman game
+-- @key: The pressed key
 function Gamehandler.pacmanOnKey(key)
   -- -----------------------------------------------------------------
-  -- For testing
   if key == "exit" then
     gameStatus = false
     if gameTimer then
@@ -102,6 +105,9 @@ function Gamehandler.pacmanOnKey(key)
     screen:clear({r=100,g=0,b=0})
     return false
   end
+  -- ------------------------------------------------------------------
+  -- When game is running, do these actions on keypress
+  -- ------------------------------------------------------------------
   if gameStatus == true then
   
     if key == "0" then
@@ -131,7 +137,9 @@ function Gamehandler.pacmanOnKey(key)
       Gamehandler.startPacman()
     end
   end
--- -----------------------------------------------------------------
+  -- ------------------------------------------------------------------
+  -- When game is not running, do these actions on keypress
+  -- ------------------------------------------------------------------  
   if gameStatus == false then
   -- This is probably going to be part of the common game menu. 
     if menuView == "pauseMenu" then
@@ -171,8 +179,10 @@ function Gamehandler.pacmanOnKey(key)
   return true
 end
 
+
+-- The callback function fot the gametimer
+-- Calls the refresh function
 callback = function(timer)
     Gamehandler.refresh()
-    --ADLogger.trace(collectgarbage("count")*1024)
 end
 return Gamehandler

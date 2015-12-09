@@ -1,6 +1,7 @@
 -- The In Game Menu class
 InGameMenu = {}
 
+-- This function loads the in game pause menu.
 function InGameMenu.loadPauseMenu()
   pauseMenuContainer = gfx.new_surface(250, 200)
   local pauseMenu = gfx.loadpng('views/pacman/data/pause-menu.png')
@@ -13,6 +14,10 @@ function InGameMenu.loadPauseMenu()
   gfx.update()
 end
 
+--
+-- This function changes the position of the marker of the pause menu if input is "up" or "down"
+-- @key: The pressed key
+--
 function InGameMenu.changePausePos(key)
   local delta = 0
       if key == "down" then
@@ -34,6 +39,9 @@ function InGameMenu.changePausePos(key)
       gfx.update()
 end
 
+--
+-- This function loads the GameOver menu.
+--
 function InGameMenu.gameOver(picpath, score)
     gameOverContainer = gfx.new_surface(320, 180) 
     local gameOver = gfx.loadpng(picpath)
@@ -49,6 +57,10 @@ function InGameMenu.gameOver(picpath, score)
     gfx.update()
 end
 
+--
+-- This function changes the position of the marker if input is "up" or "down"
+-- @key: The pressed key
+--
 function InGameMenu.changeGameOverPos(key)
         local delta = 0
         if key == "down" then
@@ -65,6 +77,13 @@ function InGameMenu.changeGameOverPos(key)
         gameOverContainer:copyfrom(w,nil,{x=30, y=(100 + menuoption*40)})
         screen:copyfrom(gameOverContainer,nil,{x=450,y=250})
         gfx.update()
+end
+
+-- This function returns the marked option (0/1/2)
+-- @return: menuoption: Added marked option
+--
+function InGameMenu.getMenuoption()
+  return menuoption
 end
 
 return InGameMenu

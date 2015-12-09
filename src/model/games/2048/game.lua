@@ -1,9 +1,19 @@
+--------------------------------------------------------------------
+--class: game                                               --------
+--description: start class of game(2048)                    --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
 Boxes = require("model.games.2048.box")
 InGameMenu = require("model.commongame.ingamemenuclass")
 Score = require("model.commongame.scorehandler")
 Game = {current = 0}
 menuView = nil
 
+--------------------------------------------------------------------
+--function: registerKey                                     --------
+--description: key functions                                --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
 function Game.registerKey(key, state)
     if state == "down" then
       if menuView == "pauseMenu" then
@@ -45,29 +55,30 @@ function Game.registerKey(key, state)
           InGameMenu.loadPauseMenu()
           menuView = "pauseMenu"
         end
-      end
-    end
-    if current_menu =="2048_game_over" then
-       if state == "down" then
-          if key == "exit" then
-	     current_menu = "mainmenu"
-             activeView = "menu"
-          end
+     elseif menuView == "2048_game_over" then 
+       if key == "exit" then
+          current_menu = "mainmenu"
+          activeView = "menu"
+          menuView = nil
+          Score.resetScore()
+           Boxes.clear()
+          showmenu.loadMainMenu()
+       else 
+          ADLogger.trace("still in game over")
        end
-    end
-    if current_menu =="2048_win" then
-       if state == "down" then
-          if key == "exit" then
-       current_menu = "mainmenu"
-             activeView = "menu"
-          end
-       end
+     end
     end
 end
 
 -- 5px between each square
 --128, 272,105
 ---{x=400,y=100,w = 537, h=537}
+--------------------------------------------------------------------
+--function: showGamePage                                    --------
+--@param flag if flag == 1 resume                           --------
+--description: show Game function,define position           --------
+--last modified Nov 22, 2015                                --------
+--------------------------------------------------------------------
 function Game.showGamePage(flag)         --- if flag == 1 , resume
    screen2048 = screen
    local width_2048 = screen2048:get_width()
@@ -99,6 +110,7 @@ end
 
 function Game.startGame()
  Game.showGamePage(0)
+ Score.setGame("4096")
  --Game.multiplayer()
 end
 
