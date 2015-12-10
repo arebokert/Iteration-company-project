@@ -74,7 +74,8 @@ function NH.sendJSON(JSONObject, request)
             -- Concatenates the operation with the JSONObject
             object = requestPrefix .. JSONObject
             -- Sends the object to the server
-            assert(connection:send(object), "Object could not be delivered!")
+            --assert(connection:send(object), "Object could not be delivered!")
+            connection:send(object)
             serverResponse = connection:receive('*a')
             -- Closes the connection
             connection:close()

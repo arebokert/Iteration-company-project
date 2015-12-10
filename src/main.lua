@@ -26,7 +26,7 @@ function onKey(key, state)
     ADLogger.trace("OnKey("..key..","..state..")")
     
     -- This statement is used when switching to the picture of the TV appSurface
-    if key=="3" and state == "down" then 
+    if key=="3" and state == "down" and (activeView=="pacman" or activeView == "menu") then 
       ADLogger.trace("TV-Screen loaded!")
       appSurface:destroy()
       highScoreMenu.resetRecursive()
@@ -111,8 +111,7 @@ function onStart()
   else
     hasInternet=false
   end
-  
-    --ADLogger.trace("Memory limit: " .. gfx.get_memory_limit())
+
     showmenu.loadMainMenu()
     
     _G.activeMenu = mainMenu

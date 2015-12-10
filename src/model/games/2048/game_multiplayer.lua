@@ -25,7 +25,7 @@ PLAYER_WON = 5
 --last modified: Dec 9 2015                                 --------
 --------------------------------------------------------------------
 function Game_multiplayer.getPlayerId()
-  local id = 1338
+  local id = 1222
   return id
 end
 
